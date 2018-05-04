@@ -1,0 +1,11 @@
+---
+state: present
+
+NUXEO_BACKINGS_NAME: nuxeo-backings
+
+certificate_validity: 365
+country_name: us
+state_or_province_name: ca
+locality_name: irvine
+organization_name: nuxeo
+organizational_unit_name: engineering

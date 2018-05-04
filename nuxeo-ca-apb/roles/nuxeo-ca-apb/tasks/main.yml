@@ -1,0 +1,41 @@
+- name: Verify key is not already created
+  shell: kubectl get secret -n {{ namespace }} -l app={{ NUXEO_BACKINGS_NAME }} -o custom-columns=name:.metadata.name --no-headers
+  register: oldsecret
+  changed_when: False
+  check_mode: no
+
+- block:
+  - name: Create temporary build directory
+    tempfile:
+      state: directory
+      suffix: key
+    register: tmpdir
+
+  - name: Generate CA private key and selfsigned certificate
+    command: 'openssl req -nodes -x509 -newkey rsa:4096 -keyout {{tmpdir.path}}/ca_key.pem -out {{tmpdir.path}}/ca_cert.pem -days {{certificate_validity}} -subj "/CN={{ NUXEO_BACKINGS_NAME }}-ca/OU={{organizational_unit_name}}/O={{organization_name}}/L={{locality_name}}/ST={{state_or_province_name}}/C={{ country_name}}"'
+
+  - name: Set CA secret to {{ state }}
+    k8s_v1_secret:
+      namespace: '{{ namespace }}'
+      name: "{{ NUXEO_BACKINGS_NAME }}-ca"
+      labels:
+        app: "{{ NUXEO_BACKINGS_NAME }}"
+      data:
+        ca.key: "{{lookup('file', tmpdir.path + '/ca_key.pem' ) | b64encode }}"
+        ca.crt: "{{lookup('file', tmpdir.path + '/ca_cert.pem' ) | b64encode }}"
+      state: "{{ state }}"
+  - name: Delete build directory
+    file:
+      path: "{{tmpdir.path}}"
+  when:
+    - oldsecret.stdout == ""
+    - state == "present"
+
+- name: Set CA secret to {{ state }}
+  k8s_v1_secret:
+    namespace: '{{ namespace }}'
+    name: "{{ NUXEO_BACKINGS_NAME }}-ca"    
+    state: "{{ state }}"
+  when:
+    - state == "absent"
+    - oldsecret.stdout != ""

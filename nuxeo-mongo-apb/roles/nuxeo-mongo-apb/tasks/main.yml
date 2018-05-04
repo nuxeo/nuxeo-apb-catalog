@@ -1,0 +1,95 @@
+---
+
+- include_tasks: secured-prerequisites.yml
+  when: 
+    - _apb_plan_id == "secured"    
+    - state == "present"
+
+- name: Verify MongoDB service is not already created
+  shell: kubectl get service {{ NUXEO_BACKINGS_NAME }}-mongodb -o custom-columns=name:.metadata.name --no-headers
+  register: mongo_service
+  changed_when: False
+  ignore_errors: yes
+  check_mode: no
+
+- name : Suppress MongoDB service if it already exists
+  k8s_v1_service:
+    name: '{{ NUXEO_BACKINGS_NAME }}-mongodb'
+    namespace: '{{ namespace }}'
+    state: absent
+  when: mongo_service.rc == 0
+
+# We create the service manually because of https://github.com/ansible/ansible/issues/38875
+- block:
+  - name: Create MongoDB service template
+    template:
+      src: templates/mongo-service.yaml.j2
+      dest: /tmp/mongo-service.yaml
+      mode: 0644  
+
+  - name: Set MongoDB service to {{ state }}
+    shell: kubectl create -n {{ namespace }} -f /tmp/mongo-service.yaml
+  when: state == "present"
+
+- name: Set MongoDB service  {{ state }}
+  k8s_v1_service:
+    name: '{{ NUXEO_BACKINGS_NAME }}-mongodb'
+    namespace: '{{ namespace }}'
+    state: "{{ state }}"
+  when: state == "absent"
+
+- name: Set MongoDB Init script to {{ state }}
+  k8s_v1_config_map:
+    namespace: '{{ namespace }}'
+    name: "{{ NUXEO_BACKINGS_NAME }}-mongodb-init"
+    labels:
+      app: "{{ NUXEO_BACKINGS_NAME }}"
+      component: mongodb          
+    data:
+      on-start.sh: "{{lookup('file', 'files/on-start.sh' ) }}"
+    state: "{{ state }}"
+
+- name: Set MongoDB credentials secret to {{ state }}
+  k8s_v1_secret:
+    namespace: '{{ namespace }}'
+    name: "{{ NUXEO_BACKINGS_NAME }}-mongodb-credentials"    
+    labels:
+      app: "{{ NUXEO_BACKINGS_NAME }}"
+      component: mongodb
+    string_data:
+      user: "{{ MONGODB_ADMIN_USER }}"
+      password: "{{ MONGODB_ADMIN_PASSWORD }}"
+    state: "{{ state }}"
+  when: secured
+
+- name: Set MongoDB config Map to {{ state }}
+  k8s_v1_config_map:
+    namespace: '{{ namespace }}'
+    name: "{{ NUXEO_BACKINGS_NAME }}-mongodb-config"
+    labels:
+      app: "{{ NUXEO_BACKINGS_NAME }}"
+      component: mongodb          
+    data:
+      mongod.conf: |
+        # Put mongod.conf configuration here
+    state: "{{ state }}"
+
+
+
+- include_tasks: default.yml
+  when: secured == false
+
+- include_tasks: secured.yml
+  when: secured == true
+
+
+
+- name: Remove PVC
+  shell: kubectl delete pvc -l component=mongodb,app={{ NUXEO_BACKINGS_NAME }}
+  when: state == "absent"
+
+- name: encode bind credentials
+  asb_encode_binding:
+    fields:
+      MONGODB_ADMIN_USER: '{{ MONGODB_ADMIN_USER }}'
+      MONGODB_ADMIN_PASSWORD: '{{ MONGODB_ADMIN_PASSWORD }}'

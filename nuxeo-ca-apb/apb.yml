@@ -1,0 +1,47 @@
+version: 1.0
+name: nuxeo-ca-apb
+description: CA key to use for secure Nuxeo deployments
+bindable: False
+async: optional
+tags:
+  - nuxeo
+metadata:
+  displayName: CA key deployment for secure Nuxeo deployments.
+  longDescription: An apb that deploys a CA key to be use by Nuxeo backings middlewares.
+  providerDisplayName: "Nuxeo"
+  console.openshift.io/iconClass: icon-sso
+plans:
+  - name: default
+    description: This default plan deploys nuxeo-ca-apb
+    free: True
+    metadata: {}
+    parameters:
+      - name: NUXEO_BACKINGS_NAME
+        title: The name of the backings stack.
+        required: true
+        default: "nuxeo-backings"
+        type: string
+      - name: certificate_validity
+        title: Certificate validity period in days
+        default: 365
+        type: integer
+      - name: country_name
+        title: Certificate Country Name (C)
+        default: us
+        type: string
+      - name: state_or_province_name
+        title: Certificate State name (ST)
+        default: ca
+        type: string
+      - name: locality_name
+        title: Certificate Locality name (L)
+        default: irvine
+        type: string
+      - name: organization_name
+        title: Certificate Organization name (O) 
+        default: nuxeo
+        type: string
+      - name: organizational_unit_name
+        title: Certificate Organization Unit name (OU)
+        default: engineering
+        type: string
