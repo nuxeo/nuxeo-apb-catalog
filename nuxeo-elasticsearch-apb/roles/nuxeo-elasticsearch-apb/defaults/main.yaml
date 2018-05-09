@@ -1,0 +1,15 @@
+---
+state: present
+cluster: openshift
+
+certificate_validity: 365
+country_name: us
+state_or_province_name: ca
+locality_name: irvine
+organization_name: nuxeo
+organizational_unit_name: engineering
+
+
+NUXEO_BACKINGS_NAME: nuxeo-backings
+IMAGE_REPOSITORY: docker.elastic.co/elasticsearch/elasticsearch
+IMAGE_TAG: 5.6.5
