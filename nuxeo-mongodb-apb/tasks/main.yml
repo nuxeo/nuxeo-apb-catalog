@@ -1,0 +1,191 @@
+
+- name: "Update last operation"
+  asb_last_operation:
+    description: "0%: Starting"
+  when: in_cluster
+
+
+- name: "ca secret state={{ state }}"
+  include_tasks: "create_ca_secret.yml"
+  when: state == "present" and tls_enabled
+
+- name: "ca secret state={{ state }}"
+  shell: kubectl delete --ignore-not-found=true secret {{ ca_secret_name }}
+  when: state == "absent" and tls_enabled
+
+
+# Work-around k8s_raw inability to create Secret directly
+- name: "admin secret state={{ state }}"
+  block:
+    - name: "Create admin secret from template"
+      template:
+        src: admin_secret.yml.j2
+        dest: /tmp/admin_secret.yml
+
+    - name: "Create admin secret"
+      shell: kubectl create --filename=/tmp/admin_secret.yml
+  when: state == "present" and auth_enabled and auth_existingAdminSecret is undefined
+
+- name: "admin secret state={{ state }}"
+  shell: kubectl delete --ignore-not-found=true secret {{ admin_secret_name }}
+  when: state == "absent" and auth_enabled and auth_existingAdminSecret is undefined
+
+
+# Work-around k8s_raw inability to create Secret directly
+- name: "user secret state={{ state }}"
+  block:
+    - name: "Create user secret from template"
+      template:
+        src: user_secret.yml.j2
+        dest: /tmp/user_secret.yml
+
+    - name: "Create user secret"
+      shell: kubectl create --filename=/tmp/user_secret.yml
+  when: state == "present" and auth_enabled and auth_existingUserSecret is undefined
+
+- name: "user secret state={{ state }}"
+  shell: kubectl delete --ignore-not-found=true secret {{ user_secret_name }}
+  when: state == "absent" and auth_enabled and auth_existingUserSecret is undefined
+
+
+# Work-around k8s_raw inability to create ConfigMap directly
+- name: "init container config map state={{ state }}"
+  block:
+    - name: "Create init container config from template"
+      template:
+        src: init_configmap.yml.j2
+        dest: /tmp/init_configmap.yml
+
+    - name: "Create init container config map"
+      shell: kubectl create --filename=/tmp/init_configmap.yml
+  when: state == "present"
+
+- name: "init container config map state={{ state }}"
+  shell: kubectl delete --ignore-not-found=true configmap {{ init_configmap_name }}
+  when: state == "absent"
+
+#
+#- name: "init container config map state={{ state }}"
+#  k8s_raw:
+#    state: '{{ state }}'
+#    definition: "{{ lookup('template', 'init_configmap.yml.j2') | from_yaml }}"
+#
+# End Work-around
+
+
+# Work-around k8s_raw inability to create ConfigMap directly
+- name: "mongodb container config map state={{ state }}"
+  block:
+    - name: "Create mongodb container config from template"
+      template:
+        src: mongodb_configmap.yml.j2
+        dest: /tmp/mongodb_configmap.yml
+
+    - name: "Create mongodb container config map"
+      shell: kubectl create --filename=/tmp/mongodb_configmap.yml
+  when: state == "present"
+
+- name: "mongodb container config map state={{ state }}"
+  shell: kubectl delete --ignore-not-found=true configmap {{ mongodb_configmap_name }}
+  when: state == "absent"
+
+
+# Work-around k8s_raw inability to create PodDisruptionBudget directly
+- name: "poddisruptionbudget state={{ state }}"
+  block:
+    - name: "Create poddisruptionbudget from template"
+      template:
+        src: poddisruptionbudget.yml.j2
+        dest: /tmp/poddisruptionbudget.yml
+
+    - name: "Create poddisruptionbudget"
+      shell: kubectl create --filename=/tmp/poddisruptionbudget.yml
+  when: state == "present" and podDisruptionBudget is defined and (podDisruptionBudget | from_yaml)
+
+- name: "poddisruptionbudget state={{ state }}"
+  shell: kubectl delete --ignore-not-found=true poddisruptionbudget {{ name }}
+  when: state == "absent" and podDisruptionBudget is defined and (podDisruptionBudget | from_yaml)
+
+
+#- name: "poddisruptionbudget state={{ state }}"
+#  k8s_raw:
+#    state: '{{ state }}'
+#    definition: "{{ lookup('template', 'poddisruptionbudget.yml.j2') | from_yaml }}"
+#  when podDisruptionBudget is defined and (podDisruptionBudget | from_yaml)
+# End of work-around
+
+
+# Work-around k8s_raw refusal to create service with clusterIP: None
+- name: "service state={{ state }}"
+  block:
+    - name: "Create service from template"
+      template:
+        src: service.yml.j2
+        dest: /tmp/service.yml
+
+    - name: "Create service"
+      shell: kubectl create --filename=/tmp/service.yml
+  when: state == "present"
+
+- name: "service state={{ state }}"
+  k8s_raw:
+    state: '{{ state }}'
+    definition: "{{ lookup('template', 'service.yml.j2') | from_yaml }}"
+  when: state == "absent"
+
+
+- name: "set fact statefulset pvcs state={{ state }}"
+  include_tasks: "set_fact_statefulset_pvcs.yml"
+  when: state == "absent"
+
+
+# Work-around k8s_raw inability to create StatefulSet directly
+- name: "statefulset state={{ state }}"
+  block:
+    - name: "Create statefulset from template"
+      template:
+        src: statefulset.yml.j2
+        dest: /tmp/statefulset.yml
+
+    - name: "Create statefulset"
+      shell: kubectl create --filename=/tmp/statefulset.yml
+  when: state == "present"
+
+- name: "statefulset state={{ state }}"
+  shell: kubectl delete --ignore-not-found=true statefulset {{ name }}
+  when: state == "absent"
+
+#- name: "statefulset state={{ state }}"
+#  k8s_raw:
+#    state: '{{ state }}'
+#    definition: "{{ lookup('template', 'statefulset.yml.j2') | from_yaml }}"
+# End of work-around
+
+
+- name: "statefulset persistentvolumeclaims state={{ state }}"
+  shell: kubectl delete --ignore-not-found=true persistentvolumeclaim {{ item }}
+  with_items: "{{ statefulset_pvcs }}"
+  when: state == "absent"
+
+
+- name: "Update last operation"
+  asb_last_operation:
+    description: "50%: Cluster objects state={{ state }}"
+  when: in_cluster
+
+- include_tasks: "verify_{{ apb_action }}.yml"
+
+# TODO: Fix TASK [nuxeo-mongodb-apb : encode bind credentials] *****************************
+# fatal: [localhost]: FAILED! => {"changed": false, "msg": "Error attempting to get name/namespace from environment: 'POD_NAME'"}
+#- name: encode bind credentials
+#  asb_encode_binding:
+#    fields:
+#      uri: "{{ service_uri }}"
+#      tls_cacert: "{{ tls_cacert_lookup | b64encode }}"
+#  when: state == "present"
+
+
+- name: "Update last operation"
+  asb_last_operation:
+    description: "100%: Done"
+  when: in_cluster
