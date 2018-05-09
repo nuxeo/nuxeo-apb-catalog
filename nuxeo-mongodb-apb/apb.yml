@@ -1,0 +1,449 @@
+---
+version: 1.0
+name: nuxeo-mongodb-apb
+description: MongoDB is a NoSQL document-oriented database
+bindable: "True"
+async: optional
+tags:
+  - database
+  - mongodb
+  - nuxeo
+metadata:
+  displayName: Nuxeo MongoDB (APB)
+  longDescription:
+    MongoDB is a NoSQL document-oriented database that stores JSON-like documents with
+    dynamic schemas, simplifying the integration of data in content-driven applications.
+    This APB covers a replicaset deployment without security and a replicaset deployment secured with
+    TLS encryption, X509 membership authentication, and SCRAM client authentication
+  dependencies:
+    - "docker.io/busybox:latest"
+    - "k8s.gcr.io/mongodb-install:0.6"
+    - "docker.io/mongo"
+  providerDisplayName: "Nuxeo"
+  documentationUrl: "https://github.com/nuxeo-sandbox/nuxeo-apb-catalog/nuxeo-mongodb-apb/README.md"
+  imageUrl: "http://nightdeveloper.net/wp-content/uploads/2014/12/mongo_db.png"
+plans:
+  - name: replicaset
+    description: Replicaset MongoDB deployment without security
+    free: True
+    metadata:
+      displayName: Replica Set Deployment without security
+      longDescription: This plan deploys a MongoDB replicaset without security
+      cost: €0.00
+    parameters:
+      - name: replicas
+        default: '3'
+        type: number
+        title: Number of replicas in the replica set
+        display_group: Container Specs
+      - name: replicaSetName
+        default: 'rs0'
+        type: string
+        title: The name of the replica set
+        display_group: Container Specs
+      - name: podDisruptionBudget
+        default: '{}'
+        # default: '{minAvailable: 2}'
+        type: string
+        title: Pod disruption budget
+        display_type: textarea
+        display_group: Container Specs
+      - name: port
+        default: '27017'
+        type: number
+        title: MongoDB port
+        display_type: textarea
+        display_group: Container Specs
+      - name: installImage_repository
+        default: 'k8s.gcr.io/mongodb-install'
+        type: string
+        title: Image name for the install container
+        display_group: Container Specs
+      - name: installImage_tag
+        default: '0.6'
+        type: string
+        title: Image tag for the install container
+        display_group: Container Specs
+      - name: installImage_pullPolicy
+        default: 'IfNotPresent'
+        type: string
+        title: Image pull policy for the init container that establishes the replica set
+        display_group: Container Specs
+      - name: image_repository
+        default: 'docker.io/mongo'
+        type: string
+        title: MongoDB image name
+        display_group: Container Specs
+      - name: image_tag
+        default: '3.4'
+        type: string
+        title: MongoDB image tag
+        display_group: Container Specs
+      - name: image_pullPolicy
+        default: 'IfNotPresent'
+        type: string
+        title: MongoDB image pull policy
+        display_group: Container Specs
+      - name: podAnnotations
+        default: '{}'
+        type: string
+        title: Annotations to be added to MongoDB pods
+        display_type: textarea
+        display_group: Container Specs
+      - name: securityContext
+        default: '{}'
+        type: string
+        title: Security context for the pod
+        display_type: textarea
+        display_group: Container Specs
+      - name: resources
+        default: '{}'
+        # default: '{limits: {cpu: 500m, memory: 512Mi}, requests: {cpu: 100m, memory: 256Mi}}'
+        type: string
+        title: Pod resource requests and limits
+        display_type: textarea
+        display_group: Container Specs
+      - name: persistentVolume_storageClass
+        default: '-'
+        type: string
+        title: Persistent volume storage class
+        display_group: Container Specs
+      - name: persistentVolume_accessMode
+        default: 'ReadWriteOnce'
+        type: enum
+        enum: ['ReadWriteOnce', 'ReadWriteMany']
+        title: Persistent volume storage class
+        display_type: select
+        display_group: Container Specs
+      - name: persistentVolume_size
+        default: '10Gi'
+        type: string
+        title: Persistent volume size in Gi
+        display_group: Container Specs
+      - name: persistentVolume_annotations
+        default: '{}'
+        type: string
+        title: Persistent volume annotations
+        display_type: textarea
+        display_group: Container Specs
+      - name: serviceAnnotations
+        default: '{}'
+        type: string
+        title: Annotations to be added to the service
+        display_type: textarea
+        display_group: MongoDB Config
+      - name: nodeSelector
+        default: '{}'
+        type: string
+        title: Node labels for pod assignment
+        display_group: MongoDB Config
+      - name: affinity
+        default: '{}'
+        type: string
+        title: Node/pod affinities
+        display_group: MongoDB Config
+      - name: tolerations
+        default: '{}'
+        type: string
+        title: List of node taints to tolerate
+        display_group: MongoDB Config
+      - name: configmap
+        default: '{}'
+        type: string
+        title: Entries for the MongoDB config file
+        display_group: MongoDB Config
+      - name: livenessProbe_initialDelaySeconds
+        default: '5'
+        type: number
+        title: Liveness probe initial delay in seconds
+        display_group: Container Specs
+      - name: livenessProbe_initialDelaySeconds
+        default: '5'
+        type: number
+        title: Liveness probe initial delay in seconds
+        display_group: Container Specs
+      - name: livenessProbe_timeoutSeconds
+        default: '1'
+        type: number
+        title: Liveness probe timeout in seconds
+        display_group: Container Specs
+      - name: livenessProbe_failureThreshold
+        default: '3'
+        type: number
+        title: Liveness probe failure threshold
+        display_group: Container Specs
+      - name: livenessProbe_periodSeconds
+        default: '10'
+        type: number
+        title: Liveness probe period in seconds
+        display_group: Container Specs
+      - name: livenessProbe_successThreshold
+        default: '1'
+        type: number
+        title: Liveness probe success threshold
+        display_group: Container Specs
+      - name: readinessProbe_initialDelaySeconds
+        default: '5'
+        type: number
+        title: Readiness probe initial delay in seconds
+        display_group: Container Specs
+      - name: readinessProbe_timeoutSeconds
+        default: '1'
+        type: number
+        title: Readiness probe timeout in seconds
+        display_group: Container Specs
+      - name: readinessProbe_failureThreshold
+        default: '3'
+        type: number
+        title: Readiness probe failure threshold
+        display_group: Container Specs
+      - name: readinessProbe_periodSeconds
+        default: '10'
+        type: number
+        title: Readiness probe period in seconds
+        display_group: Container Specs
+      - name: readinessProbe_successThreshold
+        default: '1'
+        type: number
+        title: Readiness probe success threshold
+        display_group: Container Specs
+      - name: extraVars
+        default: '{}'
+        type: string
+        title: Set environment variables for the main container
+        display_group: MongoDB Config
+
+  - name: secure-replicaset
+    description: Replicaset MongoDB deployment with security enabled
+    free: True
+    metadata:
+      displayName: Replica Set Deployment with security enabled
+      longDescription:
+        This plan deploys a MongoDB replicaset that is secured with
+        TLS encryption, X509 membership authentication, and SCRAM client authentication
+      cost: €0.00
+    parameters:
+      - name: replicas
+        default: '3'
+        type: number
+        title: Number of replicas in the replica set
+        display_group: Container Specs
+      - name: replicaSetName
+        default: 'rs0'
+        type: string
+        title: The name of the replica set
+        display_group: Container Specs
+      - name: podDisruptionBudget
+        default: '{}'
+        # default: '{minAvailable: 2}'
+        type: string
+        title: Pod disruption budget
+        display_type: textarea
+        display_group: Container Specs
+      - name: port
+        default: '27017'
+        type: number
+        title: MongoDB port
+        display_type: textarea
+        display_group: Container Specs
+      - name: installImage_repository
+        default: 'k8s.gcr.io/mongodb-install'
+        type: string
+        title: Image name for the install container
+        display_group: Container Specs
+      - name: installImage_tag
+        default: '0.6'
+        type: string
+        title: Image tag for the install container
+        display_group: Container Specs
+      - name: installImage_pullPolicy
+        default: 'IfNotPresent'
+        type: string
+        title: Image pull policy for the init container that establishes the replica set
+        display_group: Container Specs
+      - name: image_repository
+        default: 'docker.io/mongo'
+        type: string
+        title: MongoDB image name
+        display_group: Container Specs
+      - name: image_tag
+        default: '3.4'
+        type: string
+        title: MongoDB image tag
+        display_group: Container Specs
+      - name: image_pullPolicy
+        default: 'IfNotPresent'
+        type: string
+        title: MongoDB image pull policy
+        display_group: Container Specs
+      - name: podAnnotations
+        default: '{}'
+        type: string
+        title: Annotations to be added to MongoDB pods
+        display_type: textarea
+        display_group: Container Specs
+      - name: securityContext
+        default: '{}'
+        type: string
+        title: Security context for the pod
+        display_type: textarea
+        display_group: Container Specs
+      - name: resources
+        default: '{}'
+        # default: '{limits: {cpu: 500m, memory: 512Mi}, requests: {cpu: 100m, memory: 256Mi}}'
+        type: string
+        title: Pod resource requests and limits
+        display_type: textarea
+        display_group: Container Specs
+      - name: persistentVolume_storageClass
+        default: '-'
+        type: string
+        title: Persistent volume storage class
+        display_group: Container Specs
+      - name: persistentVolume_accessMode
+        default: 'ReadWriteOnce'
+        type: enum
+        enum: ['ReadWriteOnce', 'ReadWriteMany']
+        title: Persistent volume storage class
+        display_type: select
+        display_group: Container Specs
+      - name: persistentVolume_size
+        default: '10Gi'
+        type: string
+        title: Persistent volume size in Gi
+        display_group: Container Specs
+      - name: persistentVolume_annotations
+        default: '{}'
+        type: string
+        title: Persistent volume annotations
+        display_type: textarea
+        display_group: Container Specs
+      - name: serviceAnnotations
+        default: '{}'
+        type: string
+        title: Annotations to be added to the service
+        display_type: textarea
+        display_group: MongoDB Config
+      - name: nodeSelector
+        default: '{}'
+        type: string
+        title: Node labels for pod assignment
+        display_group: MongoDB Config
+      - name: affinity
+        default: '{}'
+        type: string
+        title: Node/pod affinities
+        display_group: MongoDB Config
+      - name: tolerations
+        default: '{}'
+        type: string
+        title: List of node taints to tolerate
+        display_group: MongoDB Config
+      - name: configmap
+        default: '{}'
+        type: string
+        title: Entries for the MongoDB config file
+        display_group: MongoDB Config
+      - name: livenessProbe_initialDelaySeconds
+        default: '5'
+        type: number
+        title: Liveness probe initial delay in seconds
+        display_group: Container Specs
+      - name: livenessProbe_initialDelaySeconds
+        default: '5'
+        type: number
+        title: Liveness probe initial delay in seconds
+        display_group: Container Specs
+      - name: livenessProbe_timeoutSeconds
+        default: '1'
+        type: number
+        title: Liveness probe timeout in seconds
+        display_group: Container Specs
+      - name: livenessProbe_failureThreshold
+        default: '3'
+        type: number
+        title: Liveness probe failure threshold
+        display_group: Container Specs
+      - name: livenessProbe_periodSeconds
+        default: '10'
+        type: number
+        title: Liveness probe period in seconds
+        display_group: Container Specs
+      - name: livenessProbe_successThreshold
+        default: '1'
+        type: number
+        title: Liveness probe success threshold
+        display_group: Container Specs
+      - name: readinessProbe_initialDelaySeconds
+        default: '5'
+        type: number
+        title: Readiness probe initial delay in seconds
+        display_group: Container Specs
+      - name: readinessProbe_timeoutSeconds
+        default: '1'
+        type: number
+        title: Readiness probe timeout in seconds
+        display_group: Container Specs
+      - name: readinessProbe_failureThreshold
+        default: '3'
+        type: number
+        title: Readiness probe failure threshold
+        display_group: Container Specs
+      - name: readinessProbe_periodSeconds
+        default: '10'
+        type: number
+        title: Readiness probe period in seconds
+        display_group: Container Specs
+      - name: readinessProbe_successThreshold
+        default: '1'
+        type: number
+        title: Readiness probe success threshold
+        display_group: Container Specs
+      - name: extraVars
+        default: '{}'
+        type: string
+        title: Set environment variables for the main container
+        display_group: MongoDB Config
+
+      - name: tls_casubjectDistinguishedName
+        default: '/CN=nuxeo-backings.mongodb.svc/OU=engineering/O=nuxeo/L=irvine/S=ca/C=us'
+        type: string
+        title: Certificate Authority Subject Distinguished Name for the MongoDB cluster in single string format
+        display_group: MongoDB Security Config
+      - name: auth_adminUser
+        default: 'admin'
+        type: string
+        pattern: "^[a-zA-Z0-9_.-]*$"
+        title: MongoDB admin user
+        display_group: MongoDB Security Config
+      - name: auth_adminPassword
+        type: string
+        pattern: "^[a-zA-Z0-9_.-]*$"
+        title: MongoDB admin password
+        display_type: password
+        display_group: MongoDB Security Config
+      - name: auth_existingAdminSecret
+        type: string
+        title: If set, an existing secret with this name is used for the admin user
+        display_group: MongoDB Security Config
+      - name: auth_username
+        default: 'nuxeo'
+        type: string
+        pattern: "^[a-zA-Z0-9_.-]*$"
+        title: MongoDB custom user
+        display_group: MongoDB Security Config
+      - name: auth_password
+        type: string
+        pattern: "^[a-zA-Z0-9_.-]*$"
+        title: MongoDB custom user password
+        display_type: password
+        display_group: MongoDB Security Config
+      - name: auth_existingUserSecret
+        type: string
+        title: If set, an existing secret with this name is used for the custom user
+        display_group: MongoDB Security Config
+      - name: database
+        default: 'nuxeo'
+        type: string
+        title: Name of the MongoDB database accessed
+        display_group: MongoDB Security Config

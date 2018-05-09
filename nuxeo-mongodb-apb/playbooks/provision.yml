@@ -1,0 +1,9 @@
+- name: nuxeo-mongodb-apb provision
+  hosts: localhost
+  gather_facts: false
+  connection: local
+  roles:
+  - role: ansibleplaybookbundle.asb-modules
+  - role: nuxeo-mongodb-apb
+  vars:
+    apb_action: provision
