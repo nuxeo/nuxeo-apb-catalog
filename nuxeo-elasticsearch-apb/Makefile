@@ -1,5 +1,5 @@
 DOCKERHOST = docker.io
-DOCKERORG = nuxeoapb
+DOCKERORG = nuxeoapbcatalog
 IMAGENAME = nuxeo-elasticsearch-apb
 TAG = latest
 USER=$(shell id -u)

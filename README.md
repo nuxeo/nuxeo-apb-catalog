@@ -1,17 +1,17 @@
-# Ansible Playbook Bundle collection for Nuxeo
+# Catalog of Ansible Playbook Bundles for Nuxeo
 
-This repository contains several APB designed to deploy the service needed by Nuxeo in platform that support Ansible Service Broker. 
+This repository contains Ansible Playbook Bundles for deploying the Nuxeo content services platform container itself as well as the backing service containers upon which it depends. See the [Ansible PlayBook Bundle](https://github.com/ansibleplaybookbundle/ansible-playbook-bundle) documentation and the [Automation Broker](http://automationbroker.io) documentation pages for details.
 
-Those APB are pushed in the [Nuxeo APB](https://hub.docker.com/r/nuxeoapb/) organization in DockerHub.
+The APBs are pushed in the [Nuxeo APB Catalog](https://hub.docker.com/r/nuxeoapbcatalog/) organization in DockerHub.
 
 To activate them, simply add the following snippet in the Ansible Service Broker configuration:
 
 ```
 registry:
  - type: dockerhub
-    name: nuxeo-apb
+    name: nuxeo-apb-catalog
     url:  
-    org:  nuxeoapb
+    org:  nuxeoapbcatalog
     tag:  latest
     white_list:
      - ".*-apb$"
