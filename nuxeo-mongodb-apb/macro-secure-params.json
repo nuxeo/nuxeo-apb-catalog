@@ -1,0 +1,50 @@
+{
+  "_apb_plan_id": "secure-replicaset",
+  "replicas": "3",
+  "replicaSetName": "rs0",
+  "podDisruptionBudget": {
+    "minAvailable": 2
+  },
+  "port": "27017",
+  "installImage_repository": "k8s.gcr.io/mongodb-install",
+  "installImage_tag": "0.6",
+  "installImage_pullPolicy": "IfNotPresent",
+  "image_repository": "docker.io/mongo",
+  "image_tag": "3.4",
+  "image_pullPolicy": "IfNotPresent",
+  "podAnnotations": {},
+  "securityContext": {},
+  "resources": {
+    "limits": {
+      "cpu": "500m",
+      "memory": "512Mi"
+    },
+    "requests": {
+      "cpu": "100m",
+      "memory": "256Mi"
+    }
+  },
+  "persistentVolume_storageClass": "-",
+  "persistentVolume_accessMode": "ReadWriteOnce",
+  "persistentVolume_size": "10Gi",
+  "persistentVolume_annotations": {},
+  "tls_casubjectDistinguishedName": "/CN=nuxeo-backings.mongodb.svc/OU=engineering/O=nuxeo/L=irvine/S=ca/C=us",
+  "auth_adminUser": "admin",
+  "auth_adminPassword": "admin",
+  "auth_username": "nuxeo",
+  "database": "nuxeo",
+  "serviceAnnotations": {},
+  "nodeSelector": {},
+  "affinity": {},
+  "tolerations": {},
+  "livenessProbe_initialDelaySeconds": "5",
+  "livenessProbe_timeoutSeconds": "1",
+  "livenessProbe_failureThreshold": "3",
+  "livenessProbe_periodSeconds": "10",
+  "livenessProbe_successThreshold": "1",
+  "readinessProbe_initialDelaySeconds": "5",
+  "readinessProbe_timeoutSeconds": "1",
+  "readinessProbe_failureThreshold": "3",
+  "readinessProbe_periodSeconds": "10",
+  "readinessProbe_successThreshold": "1"
+}
