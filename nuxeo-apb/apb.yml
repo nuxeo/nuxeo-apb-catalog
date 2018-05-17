@@ -1,0 +1,325 @@
+version: 1.0
+name: nuxeo-apb
+description: Nuxeo deployment
+bindable: False
+async: optional
+metadata:
+  displayName: nuxeo
+plans:
+  - name: nuxeo-mongo-cluster
+    description: This plans deploy Nuxeo with its metadata store in MongoDB  
+    free: true
+    metadata:
+      displayName: Nuxeo on MongoDB
+      longDescription:
+        This plan provides a Nuxeo deployment with its metadata stored in MongoDB.
+        A MongoDB service and an Elasticsearch service has to be deployed beforehand as
+        this plan tries to bind to them.
+      cost: $0.00
+    parameters:
+      - name: interactive_replicas
+        default: 3
+        type: number
+        title: Number of interactive Nuxeo nodes
+        display_group: Container Specs
+      - name: worker_replicas
+        default: 0
+        type: number
+        title: Number of Worker nuxeo nodes
+        display_group: Container Specs
+      - name: podDisruptionBudget
+        default: '{minAvailable: 1}'        
+        type: string
+        title: Pod disruption budget
+        display_type: textarea
+        display_group: Container Specs
+      - name: image_repository
+        default: 'nuxeo'
+        type: string
+        title: Nuxeo image name
+        display_group: Container Specs
+      - name: image_tag
+        default: 'LTS'
+        type: string
+        title: Nuxeo Image tag
+        display_group: Container Specs
+      - name: image_pullPolicy
+        default: 'IfNotPresent'
+        type: enum
+        enum: ['IfNotPresent', 'Always', 'Never']
+        title: Nuxeo image pull policy
+        display_group: Container Specs
+      - name: podAnnotations
+        default: '{}'
+        type: string
+        title: Annotations to be added to Nuxeo pods
+        display_type: textarea
+        display_group: Container Specs
+      - name: securityContext
+        default: '{}'
+        type: string
+        title: Security context for the pod
+        display_type: textarea
+        display_group: Container Specs
+      - name: resources
+        default: '{}'
+        # default: '{limits: {cpu: 500m, memory: 512Mi}, requests: {cpu: 100m, memory: 256Mi}}'
+        type: string
+        title: Pod resource requests and limits
+        display_type: textarea
+        display_group: Container Specs      
+
+      - name: binaries_storageClass
+        type: string
+        title: Binaries volume storage class (Must be RWX capable in cluster)
+        display_group: Storage specs
+      - name: binaries_size
+        default: '10Gi'
+        type: string
+        title: Binaries volume size in Gi
+        display_group: Storage specs
+      - name: binaries_annotations
+        default: '{}'
+        type: string
+        title: Binaries volume annotations
+        display_type: textarea
+        display_group: Storage specs
+
+      - name: transientstore_storageClass
+        type: string
+        title: Transient store volume storage class
+        display_group: Storage specs
+      - name: transientstore_size
+        default: '10Gi'
+        type: string
+        title: Transient store volume size in Gi
+        display_group: Storage specs
+      - name: transientstore_annotations
+        default: '{}'
+        type: string
+        title: Transient store volume annotations
+        display_type: textarea
+        display_group: Storage specs
+
+      - name: data_useVolume
+        default: false
+        type: boolean
+        title: Use volume for NUXEO_DATA (if not uses emptyDir{})
+        display_group: Storage specs
+      - name: data_storageClass
+        type: string
+        title: Data folder volume storage class
+        display_group: Storage specs
+      - name: data_size
+        default: '10Gi'
+        type: string
+        title: Data folder volume size in Gi
+        display_group: Storage specs
+      - name: data_annotations
+        default: '{}'
+        type: string
+        title: Data folder volume annotations
+        display_type: textarea
+        display_group: Storage specs
+
+      - name: tmp_useVolume
+        default: false
+        type: boolean
+        title: Use volume for temporary (if not uses emptyDir{})
+        display_group: Storage specs
+      - name: tmp_storageClass
+        type: string
+        title: Temporary folder volume storage class
+        display_group: Storage specs
+      - name: tmp_size
+        default: '10Gi'
+        type: string
+        title: Temporary folder volume size in Gi
+        display_group: Storage specs
+      - name: tmp_annotations
+        default: '{}'
+        type: string
+        title: Temporary folder volume annotations
+        display_type: textarea
+        display_group: Storage specs
+
+      - name: serviceAnnotations
+        default: '{}'
+        type: string
+        title: Annotations to be added to the service
+        display_type: textarea
+        display_group: Container Specs
+      - name: interactiveNodeSelector
+        default: '{}'
+        type: string
+        title: Node labels for interactive pod assignment
+        display_group: Container Specs
+      - name: workerNodeSelector
+        default: '{}'
+        type: string
+        title: Node labels for worker pod assignment
+        display_group: Container Specs
+      - name: affinity
+        default: '{}'
+        type: string
+        title: Node/pod affinities
+        display_group: Container Specs
+      - name: tolerations
+        default: '{}'
+        type: string
+        title: List of node taints to tolerate
+        display_group: Container Specs
+
+      
+      - name: livenessProbe_initialDelaySeconds
+        default: '5'
+        type: number
+        title: Liveness probe initial delay in seconds
+        display_group: Container Specs
+      - name: livenessProbe_timeoutSeconds
+        default: '1'
+        type: number
+        title: Liveness probe timeout in seconds
+        display_group: Container Specs
+      - name: livenessProbe_failureThreshold
+        default: '3'
+        type: number
+        title: Liveness probe failure threshold
+        display_group: Container Specs
+      - name: livenessProbe_periodSeconds
+        default: '10'
+        type: number
+        title: Liveness probe period in seconds
+        display_group: Container Specs
+      - name: livenessProbe_successThreshold
+        default: '1'
+        type: number
+        title: Liveness probe success threshold
+        display_group: Container Specs
+      - name: readinessProbe_initialDelaySeconds
+        default: '5'
+        type: number
+        title: Readiness probe initial delay in seconds
+        display_group: Container Specs
+      - name: readinessProbe_timeoutSeconds
+        default: '1'
+        type: number
+        title: Readiness probe timeout in seconds
+        display_group: Container Specs
+      - name: readinessProbe_failureThreshold
+        default: '3'
+        type: number
+        title: Readiness probe failure threshold
+        display_group: Container Specs
+      - name: readinessProbe_periodSeconds
+        default: '10'
+        type: number
+        title: Readiness probe period in seconds
+        display_group: Container Specs
+      - name: readinessProbe_successThreshold
+        default: '1'
+        type: number
+        title: Readiness probe success threshold
+        display_group: Container Specs
+
+      - name: applicationUrl
+        type: string
+        title: The final URL of the application
+        display_group: Nuxeo Config
+
+      - name: connectEnabled
+        title: Register to Nuxeo Connect
+        type: boolean
+        default: true
+        display_group: Nuxeo Config    
+      - name: nuxeoConnectUsername
+        title: A Nuxeo Connect userId passed to register the instances.
+        type: string
+        display_group: Nuxeo Config
+      - name: nuxeoConnectPassword
+        title: The password of the Nuxeo Connect account
+        type: string
+        display_group: Nuxeo Config
+      - name: nuxeoStudioProject
+        title: The name of the studio project passed to register the instances.
+        type: string
+        display_group: Nuxeo Config
+      - name: nuxeoStudioVersion
+        default: '0.0.0-SNAPSHOT'
+        title: The name of the studio project passed to register the instances.
+        type: string
+        display_group: Nuxeo Config
+      - name: nuxeoStudioInstall
+        default: false
+        title: Install the Studio project before starting the container.
+        type: boolean
+        display_group: Nuxeo Config
+      - name: connectExistingSecret
+        title: If set, an existing secret with this name is used for the Connect credentials.
+        type: string
+        display_group: Nuxeo Config
+
+      - name: nuxeoconf
+        default: '{}'
+        type: string
+        display_type: textarea
+        title: Entries to be added to nuxeo.conf file
+        display_group: Nuxeo Config
+      
+      - name: extraVars
+        default: '{}'
+        type: string
+        title: Set environment variables for the main container
+        display_group: Nuxeo Config
+
+      - name: useExternalMongoDB
+        default: true
+        type: boolean
+        title: Use an external MongoDB storage for metadata
+        display_group: Nuxeo Config
+
+      - name: mongoServiceName
+        default: 'nuxeo-mongo-backing'
+        type: string
+        title: Name of MongoDB service to bind to
+        display_group: Nuxeo Config
+
+      - name: useExternalElasticsearch
+        default: true
+        type: boolean
+        title: Use an external Elasticsearch storage for indices
+        display_group: Nuxeo Config
+      - name: elasticsearchServiceName
+        default: 'nuxeo-elasticsearch-backing'
+        type: string
+        title: Name of Elasticsearch service to bind to
+        display_group: Nuxeo Config
+
+      - name: useKafkaForStream
+        default: true
+        type: boolean
+        title: Use Kafka to back Nuxeo stream
+        display_group: Nuxeo Config
+      - name: kafkaServiceName
+        default: 'nuxeo-kafka-backing'
+        type: string
+        title: Name of Kafka service to bind to
+        display_group: Nuxeo Config
+
+      - name: auth_adminUser
+        default: 'Administrator'
+        type: string
+        pattern: "^[a-zA-Z0-9_.-]*$"
+        title: Nuxeo admin user
+        display_group: Nuxeo Security Config
+      - name: auth_adminPassword
+        type: string
+        pattern: "^[a-zA-Z0-9_.-]*$"
+        title: Nuxeo admin password
+        display_type: password
+        display_group: Nuxeo Security Config
+      - name: auth_existingAdminSecret
+        type: string
+        title: If set, an existing secret with this name is used for the admin user
+        display_group: Nuxeo Security Config
+      

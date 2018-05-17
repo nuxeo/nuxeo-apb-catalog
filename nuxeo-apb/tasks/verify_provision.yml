@@ -1,0 +1,12 @@
+---
+
+- name: "Verify {{ name }} objects exist"
+  set_fact:
+    admin_secret: "{{ admin_secret_lookup }}"
+    connect_secret: "{{ connect_secret_lookup }}"
+  retries: 10
+  delay: 5
+  until:
+    - admin_secret_lookup
+    - connect_secret_lookup
+    
