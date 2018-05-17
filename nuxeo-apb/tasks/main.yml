@@ -1,0 +1,60 @@
+
+- name: "Update last operation"
+  asb_last_operation:
+    description: "0%: Starting"
+  when: in_cluster
+
+# Work-around k8s_raw inability to create Secret directly
+- name: "Admin user secret state={{ state }}"
+  block:
+    - name: "Create Admin user secret from template"
+      template:
+        src: admin_secret.yml.j2
+        dest: /tmp/admin_secret.yml
+
+    - name: "Create Admin secret"
+      shell: kubectl create --filename=/tmp/admin_secret.yml
+  when: state == "present" and auth_existingAdminSecret is undefined
+
+- name: "admin secret state={{ state }}"
+  shell: kubectl delete --ignore-not-found=true secret {{ admin_secret_name }}
+  when: state == "absent" and auth_existingAdminSecret is undefined
+
+
+# Work-around k8s_raw inability to create Secret directly
+- name: "Connect secret state={{ state }}"
+  block:
+    - name: "Create Connect secret from template"
+      template:
+        src: connect_secret.yml.j2
+        dest: /tmp/connect_secret.yml
+
+    - name: "Create user secret"
+      shell: kubectl create --filename=/tmp/connect_secret.yml
+  when: state == "present" and connectEnabled and auth_existingUserSecret is undefined
+
+- name: "user secret state={{ state }}"
+  shell: kubectl delete --ignore-not-found=true secret {{ connect_secret_name }}
+  when: state == "absent" and connectEnabled and existingConnnectSecret is undefined
+
+- name: "Update last operation"
+  asb_last_operation:
+    description: "50%: Cluster objects state={{ state }}"
+  when: in_cluster
+
+- include_tasks: "verify_{{ apb_action }}.yml"
+
+# TODO: Fix TASK [nuxeo-mongodb-apb : encode bind credentials] *****************************
+# fatal: [localhost]: FAILED! => {"changed": false, "msg": "Error attempting to get name/namespace from environment: 'POD_NAME'"}
+#- name: encode bind credentials
+#  asb_encode_binding:
+#    fields:
+#      uri: "{{ service_uri }}"
+#      tls_cacert: "{{ tls_cacert_lookup | b64encode }}"
+#  when: state == "present"
+
+
+- name: "Update last operation"
+  asb_last_operation:
+    description: "100%: Done"
+  when: in_cluster

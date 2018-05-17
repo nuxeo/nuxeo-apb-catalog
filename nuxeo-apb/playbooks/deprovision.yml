@@ -1,0 +1,9 @@
+- name: nuxeo-apb provision
+  hosts: localhost
+  gather_facts: false
+  connection: local
+  roles:
+  - role: ansibleplaybookbundle.asb-modules
+  - role: nuxeo-apb
+  vars:
+    apb_action: deprovision

@@ -1,0 +1,14 @@
+---
+
+# Variables to hold lookup functions
+admin_secret_lookup: "{{ lookup('k8s', kind='Secret', namespace=namespace, resource_name=admin_secret_name) }}"
+connect_secret_lookup: "{{ lookup('k8s', kind='Secret', namespace=namespace, resource_name=connect_secret_name) }}"
+
+# Whether we are in a cluster or not.
+pod_name: "{{ lookup('env', 'POD_NAME') }}"
+pod_namespace: "{{ lookup('env', 'POD_NAMESPACE') }}"
+in_cluster: "{{ True if (pod_name and pod_namespace) else False }}"
+
+# Variables to hold resource names
+admin_secret_name: "{{ name + '-admin' if auth_existingAdminSecret is undefined else auth_existingAdminSecret }}"
+connect_secret_name: "{{ name + '-conect' if connectExistingSecret is undefined else connectExistingSecret }}"
