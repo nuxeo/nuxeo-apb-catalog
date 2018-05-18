@@ -227,6 +227,12 @@ plans:
         title: The final URL of the application
         display_group: Nuxeo Config
 
+      - name: useExternalLoadBalancer
+        title: Use an external LoadBalancer for Nuxeo Service
+        type: boolean
+        default: false
+        display_group: Nuxeo Config
+
       - name: connectEnabled
         title: Register to Nuxeo Connect
         type: boolean
@@ -321,5 +327,11 @@ plans:
       - name: auth_existingAdminSecret
         type: string
         title: If set, an existing secret with this name is used for the admin user
+        display_group: Nuxeo Security Config
+
+      - name: secure_route_tls_termination_type
+        title: TLS termination type
+        type: enum
+        enum: ['edge', 'passthrough', 're-encryption']
         display_group: Nuxeo Security Config
       
