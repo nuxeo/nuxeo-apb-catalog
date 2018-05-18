@@ -12,3 +12,4 @@
     - not connect_secret_lookup or (connectEnabled and existingConnnectSecret is undefined)
     - not init_configmap_lookup
     - not nuxeo_service_lookup
+    - not nuxeo_route_lookup
