@@ -19,15 +19,13 @@ metadata:
   documentationUrl: "https://github.com/nuxeo-sandbox/nuxeo-apb-catalog/nuxeo-apb/README.md"
   imageUrl: "https://www.nuxeo.com/assets/imgs/logo340x60.png"
 plans:
-  - name: nuxeo-mongo-cluster
-    description: This plans deploy Nuxeo with its metadata store in MongoDB  
+  - name: nuxeo-cluster
+    description: This plans deploy a cluster of Nuxeo nodes
     free: true
     metadata:
-      displayName: Nuxeo on MongoDB
+      displayName: Nuxeo
       longDescription:
-        This plan provides a Nuxeo deployment with its metadata stored in MongoDB.
-        A MongoDB service and an Elasticsearch service has to be deployed beforehand as
-        this plan tries to bind to them.
+        This plan provides a clustered Nuxeo deployment.
       cost: $0.00
     parameters:
       - name: interactive_replicas

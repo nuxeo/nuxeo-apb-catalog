@@ -3,13 +3,16 @@
 - name: "Verify {{ name }} objects removed"
   set_fact:
     admin_secret: "{{ admin_secret_lookup }}"
-    connect_secret: "{{ connect_secret_lookup }}"    
-    init_config: "{{ init_configmap_lookup }}" 
+    connect_secret: "{{ connect_secret_lookup }}"
+    init_config: "{{ init_configmap_lookup }}"
+    nuxeo_route: "{{ route_lookup }}"
+    binaries_pvc: "{{ binaries_pvc_lookup }}"
   retries: 10
   delay: 5
   until:
     - not admin_secret_lookup or auth_existingAdminSecret is undefined
     - not connect_secret_lookup or (connectEnabled and existingConnnectSecret is undefined)
     - not init_configmap_lookup
-    - not nuxeo_service_lookup
-    - not nuxeo_route_lookup
+    - not service_lookup
+    - not route_lookup
+    - not binaries_pvc_lookup
