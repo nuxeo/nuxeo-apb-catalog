@@ -64,7 +64,7 @@
         dest: /tmp/nuxeo_service.yml
 
     - name: "Create service"
-      shell: kubectl create --filename=/tmp/nuxeo_service.yml -n {{ namespace }}
+      shell: kubectl create --filename=/tmp/nuxeo_service.yml
   when: state == "present"
 
 - name: "Nuxeo service state={{ state }}"
@@ -72,6 +72,28 @@
     state: '{{ state }}'
     definition: "{{ lookup('template', 'nuxeo_service.yml.j2') | from_yaml }}"
   when: state == "absent"
+
+
+
+# Work-around k8s_raw inability to create ConfigMap directly
+- name: "Nuxeo route state={{ state }}"
+  block:
+    - name: "Create Nuxeo route from template"
+      template:
+        src: nuxeo_route.yml.j2
+        dest: /tmp/nuxeo_route.yml
+
+    - name: "Create Nuxeo route"
+      shell: oc create --filename=/tmp/nuxeo_route.yml
+  when: 
+    - cluster == "openshift"
+    - state == "present"
+
+- name: "Nuxeo container config map state={{ state }}"
+  shell: oc delete --ignore-not-found=true route {{ nuxeo_route_name }} -n {{ namespace }}
+  when: 
+    - cluster == "openshift"
+    - state == "absent"
 
 
 

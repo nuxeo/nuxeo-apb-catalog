@@ -6,6 +6,7 @@ connect_secret_lookup: "{{ lookup('k8s', kind='Secret', namespace=namespace, res
 password_lookup: "{{ lookup('password', '/dev/null') }}"
 init_configmap_lookup: "{{ lookup('k8s', kind='ConfigMap', namespace=namespace, resource_name=init_configmap_name) }}"
 nuxeo_service_lookup: "{{ lookup('k8s', kind='Service', namespace=namespace, resource_name=nuxeo_service_name) }}"
+nuxeo_route_lookup: "{{ lookup('openshift', kind='Route', namespace=namespace, resource_name=nuxeo_route_name) }}"
 
 # Whether we are in a cluster or not.
 pod_name: "{{ lookup('env', 'POD_NAME') }}"
@@ -18,3 +19,4 @@ connect_secret_name: "{{ name + '-connect' if connectExistingSecret is undefined
 admin_password: "{{ password_lookup if auth_adminPassword is undefined else auth_adminPassword }}"
 init_configmap_name: "{{ name + '-config'}}"
 nuxeo_service_name: "{{ name + '-service'}}"
+nuxeo_route_name: "{{ name + '-route'}}"
