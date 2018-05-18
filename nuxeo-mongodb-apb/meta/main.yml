@@ -1,7 +1,7 @@
 galaxy_info:
-  author: Automation Broker Team
+  author: Nuxeo
   description: Deploys nuxeo-mongodb in OpenShift/Kubernetes
-  company: Red Hat
+  company: Nuxeo
 
   # If the issue tracker for your role is not on github, uncomment the
   # next line and provide a value
@@ -14,7 +14,7 @@ galaxy_info:
   # - GPLv3
   # - Apache
   # - CC-BY
-  license: license (GPLv2, CC-BY, etc)
+  license: license (Apache)
 
   min_ansible_version: 1.5
 
