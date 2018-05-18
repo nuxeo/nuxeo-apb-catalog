@@ -4,9 +4,11 @@
   set_fact:
     admin_secret: "{{ admin_secret_lookup }}"
     connect_secret: "{{ connect_secret_lookup }}"
+    init_config: "{{ init_configmap_lookup}}"
   retries: 10
   delay: 5
   until:
     - admin_secret_lookup
     - connect_secret_lookup
+    - init_configmap_lookup
     

@@ -4,8 +4,10 @@
   set_fact:
     admin_secret: "{{ admin_secret_lookup }}"
     connect_secret: "{{ connect_secret_lookup }}"    
+    init_config: "{{ init_configmap_lookup }}" 
   retries: 10
   delay: 5
   until:
-    - not admin_secret_lookup or (auth_enabled and auth_existingAdminSecret is undefined)
+    - not admin_secret_lookup or auth_existingAdminSecret is undefined
     - not connect_secret_lookup or (connectEnabled and existingConnnectSecret is undefined)
+    - not init_configmap_lookup

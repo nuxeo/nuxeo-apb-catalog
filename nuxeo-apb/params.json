@@ -1,5 +1,5 @@
 {
-"namespace":"bbb",
+"namespace":"aaa",
 "interactive_replicas":3,
 "worker_replicas":0,
 "podDisruptionBudget":"{}",
