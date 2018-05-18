@@ -291,7 +291,7 @@ spec:
         resources:
           requests:
             storage: {{ persistentVolume_size | quote }}
-{% if persistentVolume_storageClass is defined %}
+{% if persistentVolume_storageClass is defined and (persistentVolume_storageClass | trim | length) > 0 %}
 {% if '-' == persistentVolume_storageClass %}
         storageClassName: ""
 {% else %}

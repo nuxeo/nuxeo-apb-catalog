@@ -104,7 +104,6 @@ plans:
         display_type: textarea
         display_group: Container Specs
       - name: persistentVolume_storageClass
-        default: '-'
         type: string
         title: Persistent volume storage class
         display_group: Container Specs
@@ -112,7 +111,7 @@ plans:
         default: 'ReadWriteOnce'
         type: enum
         enum: ['ReadWriteOnce', 'ReadWriteMany']
-        title: Persistent volume storage class
+        title: Persistent volume access mode
         display_type: select
         display_group: Container Specs
       - name: persistentVolume_size
