@@ -89,11 +89,34 @@
     - cluster == "openshift"
     - state == "present"
 
-- name: "Nuxeo container config map state={{ state }}"
-  shell: oc delete --ignore-not-found=true route {{ nuxeo_route_name }} -n {{ namespace }}
+- name: "Nuxeo route state={{ state }}"
+  shell: oc delete --ignore-not-found=true route {{ route_name }} -n {{ namespace }}
+  when:
+    - cluster == "openshift"
+    - state == "absent"
+
+
+# Work-around k8s_raw inability to create ConfigMap directly
+- name: "Nuxeo binaries PVC state={{ state }}"
+  block:
+    - name: "Create Nuxeo binaries PVC from template"
+      template:
+        src: binaries_pvc.yml.j2
+        dest: /tmp/binaries_pvc.yml
+
+    - name: "Create Nuxeo route"
+      shell: oc create --filename=/tmp/binaries_pvc.yml
+  when:
+    - state == "present"
+
+- name: "Nuxeo binaries PVC state={{ state }}"
+  shell: oc delete --ignore-not-found=true route {{ binaries_pvc_name }} -n {{ namespace }}
   when: 
     - cluster == "openshift"
     - state == "absent"
+
+
+
 
 
 

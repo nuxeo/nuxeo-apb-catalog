@@ -8,13 +8,13 @@ metadata:
     apb_service_class_id: '{{ _apb_service_class_id }}'
     apb_service_instance_id: '{{ _apb_service_instance_id }}'
     component: {{ component }}  
-  name: {{ nuxeo_route_name }}
+  name: {{ route_name }}
   namespace: {{ namespace }}
 spec:
   host: {{ applicationUrl }}
   to:
     kind: Service
-    name: {{ nuxeo_service_name }}
+    name: {{ service_name }}
   port:
 {% if secure_route_tls_termination_type != "edge" %}
     targetPort: 443-tcp

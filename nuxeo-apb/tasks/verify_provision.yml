@@ -5,13 +5,15 @@
     admin_secret: "{{ admin_secret_lookup }}"
     connect_secret: "{{ connect_secret_lookup }}"
     init_config: "{{ init_configmap_lookup }}"
-    nuxeo_route: "{{ nuxeo_route_lookup }}"
+    nuxeo_route: "{{ route_lookup }}"
+    binaries_pvc: "{{ binaries_pvc_lookup }}"
   retries: 10
   delay: 5
   until:
     - admin_secret_lookup
     - connect_secret_lookup
     - init_configmap_lookup
-    - nuxeo_service_lookup
-    - nuxeo_route_lookup
+    - service_lookup
+    - route_lookup
+    - binaries_pvc_lookup
     
