@@ -1,10 +1,23 @@
 version: 1.0
 name: nuxeo-apb
 description: Nuxeo deployment
-bindable: False
 async: optional
+bindable: "True"
+async: optional
+tags:
+  - nuxeo
 metadata:
-  displayName: nuxeo
+  displayName: Nuxeo
+  longDescription:
+    Nuxeo is a Content Services platform that allows its user to store, manage and process
+    their content in a service oriented manner.
+    This APB covers the deployment of a Nuxeo platform cluster to be used with
+    several backends.
+  dependencies:
+    - "nuxeo:LTS"
+  providerDisplayName: "Nuxeo"
+  documentationUrl: "https://github.com/nuxeo-sandbox/nuxeo-apb-catalog/nuxeo-apb/README.md"
+  imageUrl: "https://www.nuxeo.com/assets/imgs/logo340x60.png"
 plans:
   - name: nuxeo-mongo-cluster
     description: This plans deploy Nuxeo with its metadata store in MongoDB  
@@ -69,6 +82,11 @@ plans:
         display_type: textarea
         display_group: Container Specs      
 
+      - name: binariePVC
+        default: true
+        type: boolean
+        title: Use PVC for binaries (if not uses emptyDir{})
+        display_group: Storage specs
       - name: binaries_storageClass
         type: string
         title: Binaries volume storage class (Must be RWX capable in cluster)
@@ -101,10 +119,10 @@ plans:
         display_type: textarea
         display_group: Storage specs
 
-      - name: data_useVolume
+      - name: data_usPVC
         default: false
         type: boolean
-        title: Use volume for NUXEO_DATA (if not uses emptyDir{})
+        title: Use PVC for NUXEO_DATA (if not uses emptyDir{})
         display_group: Storage specs
       - name: data_storageClass
         type: string
@@ -122,10 +140,10 @@ plans:
         display_type: textarea
         display_group: Storage specs
 
-      - name: tmp_useVolume
+      - name: tmp_usePVC
         default: false
         type: boolean
-        title: Use volume for temporary (if not uses emptyDir{})
+        title: Use PVC for temporary (if not uses emptyDir{})
         display_group: Storage specs
       - name: tmp_storageClass
         type: string
@@ -154,23 +172,32 @@ plans:
         type: string
         title: Node labels for interactive pod assignment
         display_group: Container Specs
+      - name: interactiveAffinity
+        default: '{}'
+        type: string
+        title: Node/pod affinities for interactive pods
+        display_group: Container Specs
+      - name: interactiveTolerations
+        default: '{}'
+        type: string
+        title: List of node taints to tolerate for interactive pods
+        display_group: Container Specs
       - name: workerNodeSelector
         default: '{}'
         type: string
         title: Node labels for worker pod assignment
         display_group: Container Specs
-      - name: affinity
+      - name: workerAffinity
         default: '{}'
         type: string
-        title: Node/pod affinities
+        title: Node/pod affinities for worker pods
         display_group: Container Specs
-      - name: tolerations
+      - name: workerTolerations
         default: '{}'
         type: string
-        title: List of node taints to tolerate
+        title: List of node taints to tolerate for worker pods
         display_group: Container Specs
 
-      
       - name: livenessProbe_initialDelaySeconds
         default: '5'
         type: number
@@ -225,6 +252,10 @@ plans:
       - name: applicationUrl
         type: string
         title: The final URL of the application
+        display_group: Nuxeo Config
+      - name: nuxeoPackages
+        type: string
+        title: Additional Nuxeo packages to install a startup
         display_group: Nuxeo Config
 
       - name: useExternalLoadBalancer

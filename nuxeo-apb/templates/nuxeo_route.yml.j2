@@ -16,5 +16,12 @@ spec:
     kind: Service
     name: {{ nuxeo_service_name }}
   port:
+{% if secure_route_tls_termination_type != "edge" %}
+    targetPort: 443-tcp
+{% elif 
     targetPort: 8080-tcp
+{% endif %}
   wildcardPolicy: None
+  tls:
+    termination: {{ secure_route_tls_termination_type }}
+    insecureEdgeTerminationPolicy: Redirect    

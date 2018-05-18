@@ -1,0 +1,140 @@
+apiVersion: v1
+kind: DeploymentConfig
+metadata:
+  labels:
+    app: {{ name }}
+    apb_name: '{{ apb_name }}'
+    apb_plan_id: '{{ _apb_plan_id }}'
+    apb_service_class_id: '{{ _apb_service_class_id }}'
+    apb_service_instance_id: '{{ _apb_service_instance_id }}'
+    component: {{ component }}
+    pod_type: {{ pod_type }}  
+  name: {{ name }}-{{ pod_type }}
+spec:
+  strategy:
+    #TODO review params
+    type: Rolling
+    activeDeadlineSeconds: 21600
+    resources: {}
+    rollingParams:
+      intervalSeconds: 1
+      maxSurge: 25%
+      maxUnavailable: 25%
+      timeoutSeconds: 600
+      updatePeriodSeconds: 1
+{% if pod_type == "interactive" %}
+  replicas: {{ interactive_replicas }}
+{% endif %}
+{% if pod_type == "worker" %}
+  replicas: {{ worker_replicas }}
+{% endif %}
+
+  selector:
+    app: {{ name }}
+    component: nuxeo
+    pod_type: {{ pod_type }}  
+    deploymentconfig: {{ name }}-{{ pod_type }}
+  
+  template:
+    metadata:
+      labels:
+        app: {{ name }}
+        component: nuxeo
+        pod_type: {{ pod_type }}  
+        deploymentconfig: {{ name }}-{{ pod_type }}
+{% if podAnnotations is defined and (podAnnotations | from_yaml) %}
+      annotations:
+{{ podAnnotations | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
+{% endif %}
+    spec:
+{% if securityContext is defined and (securityContext | from_yaml) %}
+      securityContext:
+{{ securityContext | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
+{% endif %}
+
+    spec:
+      containers:
+{% if secure_route_tls_termination_type != "edge" %}
+      - name: nginx
+        # TODO Bake a nuxeo image and allow parametrization
+        image: ployst/nginx-ssl-proxy
+        env:
+        - name: SERVER_NAME
+          value: "{{ applicationUrl }}"
+        - name: ENABLE_SSL
+          value: "true"
+        - name: TARGET_SERVICE
+          value: "localhost:8080"
+        volumeMounts:
+          - name: ssl-keys
+            readOnly: true
+            mountPath: "/opt/nginx/secrets"          
+        ports:
+        - containerPort: 443
+          protocol: TCP
+{% endif %}
+      - image: {{ image_repository }}:{{ image_tag }}
+        imagePullPolicy: {{ image_pullPolicy }}
+        livenessProbe:
+          httpGet:
+            path: /nuxeo/runningstatus
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: {{ livenessProbe_initialDelaySeconds }}
+          timeoutSeconds: {{ livenessProbe_timeoutSeconds }}
+          failureThreshold: {{ livenessProbe_failureThreshold }}
+          periodSeconds: {{ livenessProbe_periodSeconds }}
+          successThreshold: {{ livenessProbe_successThreshold }}
+        readinessProbe:
+          httpGet:
+            path: /nuxeo/runningstatus
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: {{ readinessProbe_initialDelaySeconds }}
+          timeoutSeconds: {{ readinessProbe_timeoutSeconds }}
+          failureThreshold: {{ readinessProbe_failureThreshold }}
+          periodSeconds: {{ readinessProbe_periodSeconds }}
+          successThreshold: {{ readinessProbe_successThreshold }}
+        name: {{ name }}
+        env:
+        - name: NUXEO_TEMPLATES
+          value: "default"
+{% if nuxeoPackages is defined %}            
+        - name: NUXEO_PACKAGES
+          value: {{ nuxeoPackages }}
+{% endif %}
+        - name: NUXEO_URL
+          value: {{ applicationUrl }}
+        # TODO add params base on defined backends (Mongo, ES, Kafka)
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        resources:
+{% if resources is defined and (resources | from_yaml) %}
+{{ resources | from_yaml | to_nice_yaml(indent=2) | indent(10, true) }}
+{% endif %}
+        volumeMounts:
+        # TODO add conditions and more mount (tmp, data)
+        - name: binaries
+          mountPath: /binaries
+        - name: nuxeoconf
+          mountPath: /docker-entrypoint-initnuxeo.d
+        - name: connect-secret
+          mountPath: /opt/nuxeo/connect
+      volumes:
+      - name: binaries
+        persistentVolumeClaim:
+          claimName: {{ binaries_pvc_name }}
+      - name: nuxeoconf
+        configMap:
+          name: {{ init_configmap_name }}
+      - name: connect-secret
+        secret:
+          secretName: {{ connect_secret_name }}
+
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+  test: false
+  triggers:
+  - type: ConfigChange  
