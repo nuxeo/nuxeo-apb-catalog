@@ -175,14 +175,12 @@
 
 - include_tasks: "verify_{{ apb_action }}.yml"
 
-# TODO: Fix TASK [nuxeo-mongodb-apb : encode bind credentials] *****************************
-# fatal: [localhost]: FAILED! => {"changed": false, "msg": "Error attempting to get name/namespace from environment: 'POD_NAME'"}
-#- name: encode bind credentials
-#  asb_encode_binding:
-#    fields:
-#      uri: "{{ service_uri }}"
-#      tls_cacert: "{{ tls_cacert_lookup | b64encode }}"
-#  when: state == "present"
+- name: encode bind credentials
+  asb_encode_binding:
+    fields:
+      uri: "{{ service_uri }}"
+      tls_cacert: "{{ tls_cacert_lookup | b64encode }}"
+  when: state == "present"
 
 
 - name: "Update last operation"
