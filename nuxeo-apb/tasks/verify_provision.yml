@@ -11,4 +11,5 @@
     - admin_secret_lookup
     - connect_secret_lookup
     - init_configmap_lookup
+    - nuxeo_service_lookup
     
