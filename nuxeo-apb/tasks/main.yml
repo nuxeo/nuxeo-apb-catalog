@@ -55,6 +55,24 @@
   when: state == "absent"
 
 
+# Work-around k8s_raw refusal to create service with clusterIP: None
+- name: "Nuxeo service state={{ state }}"
+  block:
+    - name: "Create Nuxeo service from template"
+      template:
+        src: nuxeo_service.yml.j2
+        dest: /tmp/nuxeo_service.yml
+
+    - name: "Create service"
+      shell: kubectl create --filename=/tmp/nuxeo_service.yml -n {{ namespace }}
+  when: state == "present"
+
+- name: "Nuxeo service state={{ state }}"
+  k8s_raw:
+    state: '{{ state }}'
+    definition: "{{ lookup('template', 'nuxeo_service.yml.j2') | from_yaml }}"
+  when: state == "absent"
+
 
 
 
