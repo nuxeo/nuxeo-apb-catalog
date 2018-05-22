@@ -1,0 +1,8 @@
+---
+# Play:   run_role.yml
+# Usage:  ansible-playbook run_role.yml -e "ROLE=<role>"
+
+- hosts:  'localhost'
+
+  roles:
+  - { role: '{{ROLE}}' }
