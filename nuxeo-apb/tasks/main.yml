@@ -107,12 +107,13 @@
     - name: "Create Nuxeo route"
       shell: oc create --filename=/tmp/binaries_pvc.yml
   when:
+    - binaries_usePVC
     - state == "present"
 
 - name: "Nuxeo binaries PVC state={{ state }}"
   shell: oc delete --ignore-not-found=true route {{ binaries_pvc_name }} -n {{ namespace }}
   when: 
-    - cluster == "openshift"
+    - binaries_usePVC
     - state == "absent"
 
 

@@ -115,16 +115,20 @@ spec:
 {% endif %}
         volumeMounts:
         # TODO add conditions and more mount (tmp, data)
+{% if binaries_usePVC %}
         - name: binaries
           mountPath: /binaries
+{% endif %}
         - name: nuxeoconf
           mountPath: /docker-entrypoint-initnuxeo.d
         - name: connect-secret
           mountPath: /opt/nuxeo/connect
       volumes:
+{% if binaries_usePVC %}
       - name: binaries
         persistentVolumeClaim:
           claimName: {{ binaries_pvc_name }}
+{% endif %}
       - name: nuxeoconf
         configMap:
           name: {{ init_configmap_name }}
