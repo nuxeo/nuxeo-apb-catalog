@@ -3,9 +3,9 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   annotations:
-    volume.beta.kubernetes.io/storage-class: {{ binaries_storageClass }}
-{% if binaries_annotations is defined and (binaries_annotations | from_yaml) %}
-{{ binaries_annotations | from_yaml | to_nice_yaml(indent=2) | indent(4, true) }}
+    volume.beta.kubernetes.io/storage-class: {{ data_storageClass }}
+{% if data_annotations is defined and (data_annotations | from_yaml) %}
+{{ data_annotations | from_yaml | to_nice_yaml(indent=2) | indent(4, true) }}
 {% endif %}
   labels:
     app: {{ name }}
@@ -14,11 +14,11 @@ metadata:
     apb_service_class_id: '{{ _apb_service_class_id }}'
     apb_service_instance_id: '{{ _apb_service_instance_id }}'
     component: {{ component }}  
-  name: {{ binaries_pvc_name }}
+  name: {{ data_pvc_name }}
   namespace: {{ namespace }}
 spec:
   accessModes:
-  - ReadWriteMany
+  - ReadWriteOnce
   resources:
     requests:
-      storage: {{ binaries_size }}
+      storage: {{ data_size }}

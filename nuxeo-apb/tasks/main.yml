@@ -96,7 +96,6 @@
     - state == "absent"
 
 
-# Work-around k8s_raw inability to create ConfigMap directly
 - name: "Nuxeo binaries PVC state={{ state }}"
   block:
     - name: "Create Nuxeo binaries PVC from template"
@@ -104,22 +103,120 @@
         src: binaries_pvc.yml.j2
         dest: /tmp/binaries_pvc.yml
 
-    - name: "Create Nuxeo route"
-      shell: oc create --filename=/tmp/binaries_pvc.yml
+    - name: "Create binaries PVC"
+      shell: kubectl create --filename=/tmp/binaries_pvc.yml
   when:
     - binaries_usePVC
     - state == "present"
 
 - name: "Nuxeo binaries PVC state={{ state }}"
-  shell: oc delete --ignore-not-found=true route {{ binaries_pvc_name }} -n {{ namespace }}
+  shell: kubectl delete --ignore-not-found=true pvc {{ binaries_pvc_name }} -n {{ namespace }}
   when: 
     - binaries_usePVC
     - state == "absent"
 
 
+- name: "Nuxeo Transient store PVC state={{ state }}"
+  block:
+    - name: "Create Transient store PVC from template"
+      template:
+        src: transient_pvc.yml.j2
+        dest: /tmp/transient_pvc.yml
+
+    - name: "Create Transient store PVC"
+      shell: kubectl create --filename=/tmp/transient_pvc.yml
+  when:
+    - transientstore_usePVC
+    - state == "present"
+
+- name: "Nuxeo Transient store PVC state={{ state }}"
+  shell: kubectl delete --ignore-not-found=true pvc {{ transientstore_pvc_name }} -n {{ namespace }}
+  when:
+    - transientstore_usePVC
+    - state == "absent"
 
 
+- name: "Nuxeo Data PVC state={{ state }}"
+  block:
+    - name: "Create Data PVC from template"
+      template:
+        src: data_pvc.yml.j2
+        dest: /tmp/data_pvc.yml
 
+    - name: "Create Data PVC"
+      shell: kubectl create --filename=/tmp/data_pvc.yml
+  when:
+    - data_usePVC
+    - state == "present"
+
+- name: "Nuxeo Data PVC state={{ state }}"
+  shell: kubectl delete --ignore-not-found=true pvc {{ data_pvc_name }} -n {{ namespace }}
+  when:
+    - data_usePVC
+    - state == "absent"
+
+- name: "Nuxeo Log PVC state={{ state }}"
+  block:
+    - name: "Create Log PVC from template"
+      template:
+        src: log_pvc.yml.j2
+        dest: /tmp/log_pvc.yml
+
+    - name: "Create Log PVC"
+      shell: kubectl create --filename=/tmp/log_pvc.yml
+  when:
+    - log_usePVC
+    - state == "present"
+
+- name: "Nuxeo Log PVC state={{ state }}"
+  shell: kubectl delete --ignore-not-found=true pvc {{ log_pvc_name }} -n {{ namespace }}
+  when:
+    - log_usePVC
+    - state == "absent"
+
+
+- name: "Nuxeo Deployment Config interactive state={{ state }}"
+  block:
+    - name: "Create Nuxeo Deployment config from template"
+      template:
+        src: nuxeo_dc.yml.j2
+        dest: /tmp/nuxeo_dc_interactive.yml
+      vars:
+        nuxeo_type: "interactive"
+
+    - name: "Create Nuxeo Deployment Config interactive"
+      shell: oc create --filename=/tmp/nuxeo_dc_interactive.yml
+  when: 
+    - cluster == "openshift"
+    - state == "present"
+
+- name: "Nuxeo Deployment Config interactive={{ state }}"
+  shell: oc delete --ignore-not-found=true dc {{ interactive_dc_name }} -n {{ namespace }}
+  when:
+    - cluster == "openshift"
+    - state == "absent"
+
+
+- name: "Nuxeo Deployment Config worker state={{ state }}"
+  block:
+    - name: "Create Nuxeo Deployment config from template"
+      template:
+        src: nuxeo_dc.yml.j2
+        dest: /tmp/nuxeo_dc_worker.yml
+      vars:
+        nuxeo_type: "worker"
+
+    - name: "Create Nuxeo Deployment Config worker"
+      shell: oc create --filename=/tmp/nuxeo_dc_worker.yml
+  when: 
+    - cluster == "openshift"
+    - state == "present"
+
+- name: "Nuxeo Deployment Config worker={{ state }}"
+  shell: oc delete --ignore-not-found=true dc {{ worker_dc_name }} -n {{ namespace }}
+  when:
+    - cluster == "openshift"
+    - state == "absent"
 
 
 - name: "Update last operation"
