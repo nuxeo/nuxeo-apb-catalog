@@ -16,12 +16,12 @@ spec:
     kind: Service
     name: {{ service_name }}
   port:
-{% if secure_route_tls_termination_type != "edge" %}
+{% if secure_route_tls_termination_type is defined and secure_route_tls_termination_type != "edge" %}
     targetPort: 443-tcp
-{% elif 
+{% else  %}
     targetPort: 8080-tcp
 {% endif %}
   wildcardPolicy: None
   tls:
-    termination: {{ secure_route_tls_termination_type }}
+    termination: {{ secure_route_tls_termination_type | default("edge")}}
     insecureEdgeTerminationPolicy: Redirect    

@@ -8,40 +8,39 @@ metadata:
     apb_service_class_id: '{{ _apb_service_class_id }}'
     apb_service_instance_id: '{{ _apb_service_instance_id }}'
     component: {{ component }}
-    pod_type: {{ pod_type }}  
-  name: {{ name }}-{{ pod_type }}
+    nuxeo_type: {{ nuxeo_type }}  
+  namespace: {{ namespace }}
+{% if nuxeo_type == "interactive" %}
+  name: {{ interactive_dc_name }}
+{% endif %}
+{% if nuxeo_type == "worker" %}
+  name: {{ worker_dc_name }}
+{% endif %}
 spec:
-  strategy:
-    #TODO review params
-    type: Rolling
-    activeDeadlineSeconds: 21600
-    resources: {}
-    rollingParams:
-      intervalSeconds: 1
-      maxSurge: 25%
-      maxUnavailable: 25%
-      timeoutSeconds: 600
-      updatePeriodSeconds: 1
-{% if pod_type == "interactive" %}
+{% if deploymentStrategy is defined and (deploymentStrategy | from_yaml) %}
+  strategy:    
+{{ deploymentStrategy | from_yaml | to_nice_yaml(indent=2) | indent(4, true) }}
+{% endif %}
+{% if nuxeo_type == "interactive" %}
   replicas: {{ interactive_replicas }}
 {% endif %}
-{% if pod_type == "worker" %}
+{% if nuxeo_type == "worker" %}
   replicas: {{ worker_replicas }}
 {% endif %}
 
   selector:
     app: {{ name }}
     component: nuxeo
-    pod_type: {{ pod_type }}  
-    deploymentconfig: {{ name }}-{{ pod_type }}
+    nuxeo_type: {{ nuxeo_type }}  
+    deploymentconfig: {{ name }}-{{ nuxeo_type }}
   
   template:
     metadata:
       labels:
         app: {{ name }}
         component: nuxeo
-        pod_type: {{ pod_type }}  
-        deploymentconfig: {{ name }}-{{ pod_type }}
+        nuxeo_type: {{ nuxeo_type }}  
+        deploymentconfig: {{ name }}-{{ nuxeo_type }}
 {% if podAnnotations is defined and (podAnnotations | from_yaml) %}
       annotations:
 {{ podAnnotations | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
@@ -97,14 +96,34 @@ spec:
           successThreshold: {{ readinessProbe_successThreshold }}
         name: {{ name }}
         env:
+{% if nuxeoJavaOpts is defined %}
+        - name: JAVA_OPTS
+          value: "{{ nuxeoJavaOpts }}"
+{% endif %}        
+{% if nuxeoJavaOpts is not defined and resources is defined %}
+        # Limit the JVM to the CGroup limits.
+        - name: JAVA_OPTS
+          value: "-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=1"
+{% endif %}
         - name: NUXEO_TEMPLATES
           value: "default"
-{% if nuxeoPackages is defined %}            
+{% if nuxeoPackages is defined %}
         - name: NUXEO_PACKAGES
           value: {{ nuxeoPackages }}
 {% endif %}
+{% if binaries_usePVC %}
+        - name: NUXEO_BINARY_STORE
+          values: /var/lib/nuxeo/binaries
+{% endif %}
+{% if transientstore_usePVC %}
+        - name: NUXEO_TRANSIENT_STORE
+          values: /var/lib/nuxeo/transientstore
+{% endif %}
         - name: NUXEO_URL
           value: {{ applicationUrl }}
+{% if extraVars is defined and (extraVars | from_yaml) %}
+{{ extraVars | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
+{% endif %}
         # TODO add params base on defined backends (Mongo, ES, Kafka)
         ports:
         - containerPort: 8080
@@ -114,11 +133,18 @@ spec:
 {{ resources | from_yaml | to_nice_yaml(indent=2) | indent(10, true) }}
 {% endif %}
         volumeMounts:
-        # TODO add conditions and more mount (tmp, data)
 {% if binaries_usePVC %}
         - name: binaries
-          mountPath: /binaries
+          mountPath: /var/lib/nuxeo/binaries
 {% endif %}
+{% if transientstore_usePVC %}
+        - name: transientstore
+          mountPath: /var/lib/nuxeo/transientstore
+{% endif %}
+        - name: data
+          mountPath: /var/lib/nuxeo/data
+        - name: log
+          mountPath: /var/log/nuxeo
         - name: nuxeoconf
           mountPath: /docker-entrypoint-initnuxeo.d
         - name: connect-secret
@@ -128,6 +154,26 @@ spec:
       - name: binaries
         persistentVolumeClaim:
           claimName: {{ binaries_pvc_name }}
+{% endif %}
+{% if transientstore_usePVC %}
+      - name: transientstore
+        persistentVolumeClaim:
+          claimName: {{ transientstore_pvc_name }}
+{% endif %}
+
+      - name: data
+{% if data_usePVC %}
+        persistentVolumeClaim:
+          claimName: {{ data_pvc_name }}
+{% else %}
+        emptyDir: {}
+{% endif %}
+      - name: log
+{% if log_usePVC %}
+        persistentVolumeClaim:
+          claimName: {{ log_pvc_name }}
+{% else %}
+        emptyDir: {}
 {% endif %}
       - name: nuxeoconf
         configMap:

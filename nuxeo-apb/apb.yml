@@ -92,7 +92,7 @@ plans:
       - name: binaries_size
         default: '10Gi'
         type: string
-        title: Binaries volume size in Gi
+        title: Binaries volume size
         display_group: Storage specs
       - name: binaries_annotations
         default: '{}'
@@ -103,7 +103,7 @@ plans:
 
       - name: transientstore_usePVC
         type: boolean
-        default: false
+        default: true
         title: Transient store volume storage class
         display_group: Storage specs
       - name: transientstore_storageClass
@@ -113,7 +113,7 @@ plans:
       - name: transientstore_size
         default: '10Gi'
         type: string
-        title: Transient store volume size in Gi
+        title: Transient store volume size
         display_group: Storage specs
       - name: transientstore_annotations
         default: '{}'
@@ -143,24 +143,24 @@ plans:
         display_type: textarea
         display_group: Storage specs
 
-      - name: tmp_usePVC
+      - name: log_usePVC
         default: false
         type: boolean
-        title: Use PVC for temporary (if not uses emptyDir{})
+        title: Use PVC for logs (if not uses emptyDir{})
         display_group: Storage specs
-      - name: tmp_storageClass
+      - name: log_storageClass
         type: string
-        title: Temporary folder volume storage class
+        title: Log folder volume storage class
         display_group: Storage specs
-      - name: tmp_size
+      - name: log_size
         default: '10Gi'
         type: string
-        title: Temporary folder volume size in Gi
+        title: Log folder volume size in Gi
         display_group: Storage specs
-      - name: tmp_annotations
+      - name: log_annotations
         default: '{}'
         type: string
-        title: Temporary folder volume annotations
+        title: Log folder volume annotations
         display_type: textarea
         display_group: Storage specs
 
@@ -174,31 +174,43 @@ plans:
         default: '{}'
         type: string
         title: Node labels for interactive pod assignment
+        display_type: textarea
         display_group: Container Specs
       - name: interactiveAffinity
         default: '{}'
         type: string
         title: Node/pod affinities for interactive pods
+        display_type: textarea
         display_group: Container Specs
       - name: interactiveTolerations
         default: '{}'
         type: string
         title: List of node taints to tolerate for interactive pods
+        display_type: textarea
         display_group: Container Specs
       - name: workerNodeSelector
         default: '{}'
         type: string
         title: Node labels for worker pod assignment
+        display_type: textarea
         display_group: Container Specs
       - name: workerAffinity
         default: '{}'
         type: string
         title: Node/pod affinities for worker pods
+        display_type: textarea
         display_group: Container Specs
       - name: workerTolerations
         default: '{}'
         type: string
         title: List of node taints to tolerate for worker pods
+        display_type: textarea
+        display_group: Container Specs
+      - name: deploymentStrategy
+        default: '{}'
+        type: string
+        title: Deployment strategy of Nuxeo pods.
+        display_type: textarea
         display_group: Container Specs
 
       - name: livenessProbe_initialDelaySeconds
@@ -305,11 +317,15 @@ plans:
         display_type: textarea
         title: Entries to be added to nuxeo.conf file
         display_group: Nuxeo Config
-      
+      - name: nuxeoJavaOpts
+        default: '{}'
+        type: string
+        title: JAVA_OPTS to pass to the Nuxe containers.
+        display_group: Nuxeo Config        
       - name: extraVars
         default: '{}'
         type: string
-        title: Set environment variables for the main container
+        title: Set environment variables for the main container.
         display_group: Nuxeo Config
 
       - name: useExternalMongoDB
