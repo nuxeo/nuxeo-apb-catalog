@@ -41,6 +41,23 @@
 # Work-around k8s_raw inability to create ConfigMap directly
 - name: "Nuxeo container config map state={{ state }}"
   block:
+    - name: "Create queue config file names"
+      set_fact:
+        interactive_queues_config_path: "/tmp/interactive-queues-config.xml"
+        worker_queues_config_path: "/tmp/worker-queue-config.xml"
+    - name: "Generate interactive queues config for Nuxeo from templates"
+      template:
+        src: queues-config.xml.j2
+        dest: "{{ interactive_queues_config_path }}"
+      vars:
+        # We don't disable queues if we have no worker
+        disabledQueues: "{{ interactiveNodesDisabledQueues if has_workers else [] }}"
+    - name: "Generate worker queues config for Nuxeo from templates"
+      template:
+        src: queues-config.xml.j2
+        dest: "{{ worker_queues_config_path }}"
+      vars:
+        disabledQueues: "{{ workerNodesDisabledQueues }}"
     - name: "Create Nuxeo container config from template"
       template:
         src: nuxeo_config.yml.j2

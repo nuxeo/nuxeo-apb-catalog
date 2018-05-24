@@ -98,6 +98,10 @@ spec:
           successThreshold: {{ readinessProbe_successThreshold }}
         name: {{ name }}
         env:
+{% if nuxeo_type == "worker" %}
+        - name: IS_WORKER
+          value: "1"
+{% endif %}
 {% if nuxeoJavaOpts is defined %}
         - name: JAVA_OPTS
           value: "{{ nuxeoJavaOpts }}"

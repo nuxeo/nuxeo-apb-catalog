@@ -2,7 +2,7 @@
 "namespace":"int-apbtest",
 "cluster":"openshift",
 "interactive_replicas":3,
-"worker_replicas":0,
+"worker_replicas":2,
 "podDisruptionBudget":"{}",
 "image_repository":"nuxeo/nuxeo",
 "image_tag":"master",

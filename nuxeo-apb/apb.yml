@@ -1,7 +1,7 @@
+---
 version: 1.0
 name: nuxeo-apb
 description: Nuxeo deployment
-async: optional
 bindable: "True"
 async: optional
 tags:
@@ -327,7 +327,16 @@ plans:
         type: string
         title: Set environment variables for the main container.
         display_group: Nuxeo Config
-
+      - name: interactiveNodesDisabledQueues
+        default: '["pictureViewsGeneration","videoConversion","default","fulltextUpdater","collections","escalation","audit","elasticSearchIndexing","csvImporter"]'
+        type: string
+        title: List of disabled queues on interactive nodes
+        display_group: Nuxeo Config
+      - name: workerNodesDisabledQueues
+        default: '[]'
+        type: string
+        title: List of disabled queues on worker nodes
+        display_group: Nuxeo Config
       - name: useExternalMongoDB
         default: true
         type: boolean

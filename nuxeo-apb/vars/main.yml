@@ -21,6 +21,7 @@ ready_replicas_query: "[spec.replicas, status.ready_replicas]"
 dc_interactive_query: "{{ interactive_dc_lookup | json_query(ready_replicas_query) | unique | count == 1 }}"
 dc_worker_query: "{{ worker_dc_lookup | json_query(ready_replicas_query) | unique | count == 1 }}"
 use_front_ssl_proxy: "{{ True if (secure_route_tls_termination_type is defined and secure_route_tls_termination_type != 'edge') else False }}"
+has_workers: "{{ True if (worker_replicas is defined and worker_replicas > 0) else False }}"
 
 # Whether we are in a cluster or not.
 pod_name: "{{ lookup('env', 'POD_NAME') }}"
