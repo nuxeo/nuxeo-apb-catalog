@@ -32,7 +32,7 @@ plans:
       cost: €0.00
     parameters:
       - name: replicas
-        default: '3'
+        default: 3
         type: number
         title: Number of replicas in the replica set
         display_group: Container Specs
@@ -49,7 +49,7 @@ plans:
         display_type: textarea
         display_group: Container Specs
       - name: port
-        default: '27017'
+        default: 27017
         type: number
         title: MongoDB port
         display_type: textarea
@@ -152,57 +152,57 @@ plans:
         title: Entries for the MongoDB config file
         display_group: MongoDB Config
       - name: livenessProbe_initialDelaySeconds
-        default: '5'
+        default: 5
         type: number
         title: Liveness probe initial delay in seconds
         display_group: Container Specs
       - name: livenessProbe_initialDelaySeconds
-        default: '5'
+        default: 5
         type: number
         title: Liveness probe initial delay in seconds
         display_group: Container Specs
       - name: livenessProbe_timeoutSeconds
-        default: '1'
+        default: 1
         type: number
         title: Liveness probe timeout in seconds
         display_group: Container Specs
       - name: livenessProbe_failureThreshold
-        default: '3'
+        default: 3
         type: number
         title: Liveness probe failure threshold
         display_group: Container Specs
       - name: livenessProbe_periodSeconds
-        default: '10'
+        default: 10
         type: number
         title: Liveness probe period in seconds
         display_group: Container Specs
       - name: livenessProbe_successThreshold
-        default: '1'
+        default: 1
         type: number
         title: Liveness probe success threshold
         display_group: Container Specs
       - name: readinessProbe_initialDelaySeconds
-        default: '5'
+        default: 5
         type: number
         title: Readiness probe initial delay in seconds
         display_group: Container Specs
       - name: readinessProbe_timeoutSeconds
-        default: '1'
+        default: 1
         type: number
         title: Readiness probe timeout in seconds
         display_group: Container Specs
       - name: readinessProbe_failureThreshold
-        default: '3'
+        default: 3
         type: number
         title: Readiness probe failure threshold
         display_group: Container Specs
       - name: readinessProbe_periodSeconds
-        default: '10'
+        default: 10
         type: number
         title: Readiness probe period in seconds
         display_group: Container Specs
       - name: readinessProbe_successThreshold
-        default: '1'
+        default: 1
         type: number
         title: Readiness probe success threshold
         display_group: Container Specs
@@ -223,7 +223,7 @@ plans:
       cost: €0.00
     parameters:
       - name: replicas
-        default: '3'
+        default: 3
         type: number
         title: Number of replicas in the replica set
         display_group: Container Specs
@@ -240,7 +240,7 @@ plans:
         display_type: textarea
         display_group: Container Specs
       - name: port
-        default: '27017'
+        default: 27017
         type: number
         title: MongoDB port
         display_type: textarea
@@ -344,57 +344,57 @@ plans:
         title: Entries for the MongoDB config file
         display_group: MongoDB Config
       - name: livenessProbe_initialDelaySeconds
-        default: '5'
+        default: 5
         type: number
         title: Liveness probe initial delay in seconds
         display_group: Container Specs
       - name: livenessProbe_initialDelaySeconds
-        default: '5'
+        default: 5
         type: number
         title: Liveness probe initial delay in seconds
         display_group: Container Specs
       - name: livenessProbe_timeoutSeconds
-        default: '1'
+        default: 1
         type: number
         title: Liveness probe timeout in seconds
         display_group: Container Specs
       - name: livenessProbe_failureThreshold
-        default: '3'
+        default: 3
         type: number
         title: Liveness probe failure threshold
         display_group: Container Specs
       - name: livenessProbe_periodSeconds
-        default: '10'
+        default: 10
         type: number
         title: Liveness probe period in seconds
         display_group: Container Specs
       - name: livenessProbe_successThreshold
-        default: '1'
+        default: 1
         type: number
         title: Liveness probe success threshold
         display_group: Container Specs
       - name: readinessProbe_initialDelaySeconds
-        default: '5'
+        default: 5
         type: number
         title: Readiness probe initial delay in seconds
         display_group: Container Specs
       - name: readinessProbe_timeoutSeconds
-        default: '1'
+        default: 1
         type: number
         title: Readiness probe timeout in seconds
         display_group: Container Specs
       - name: readinessProbe_failureThreshold
-        default: '3'
+        default: 3
         type: number
         title: Readiness probe failure threshold
         display_group: Container Specs
       - name: readinessProbe_periodSeconds
-        default: '10'
+        default: 10
         type: number
         title: Readiness probe period in seconds
         display_group: Container Specs
       - name: readinessProbe_successThreshold
-        default: '1'
+        default: 1
         type: number
         title: Readiness probe success threshold
         display_group: Container Specs
