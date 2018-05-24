@@ -6,10 +6,10 @@ cp -f /docker-entrypoint-initnuxeo.d/log4j.xml $NUXEO_HOME/lib/log4j.xml
 
 # Configure queues handling
 QUEUES_CONFIG=/docker-entrypoint-initnuxeo.d/interactive-queues-config.xml
-if [ $IS_WORKER == "1" ]; then
+if [ "$IS_WORKER" == "1" ]; then
 	QUEUES_CONFIG=/docker-entrypoint-initnuxeo.d/worker-queues-config.xml
 fi
-cp $QUEUES_CONFIG /opt/nuxeo/server/templates/common/config
+cp $QUEUES_CONFIG /opt/nuxeo/server/templates/common/config/queues-config.xml
 
 
 if [ ! -f $NUXEO_DATA/instance.clid -a -f /opt/nuxeo/connect/connect.properties ]; then
