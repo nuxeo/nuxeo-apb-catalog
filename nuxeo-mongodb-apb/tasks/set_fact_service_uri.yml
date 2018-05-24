@@ -2,13 +2,10 @@
 
 - name: "set fact service uri"
   block:
-  - name: "Register host domain name cmd"
-    shell: hostname -d
-    register: host_domain_name_cmd
-
+  
   - name: "Set Fact hosts"
     set_fact:
-      hosts: "{{ hosts  + name + '-' + item.0 + '.' + host_domain_name_cmd.stdout + ':' + port + (',' if (item.0 | int) != ((sts_status_replicas_list | length) - 1) else '') }}"
+      hosts: "{{ hosts  + name + '-' + item.0 + '.' + name + '.' + namespace + '.svc:' + (port|string) + (',' if (item.0 | int) != ((sts_status_replicas_list | length) - 1) else '') }}"
     with_nested:
       - "{{ sts_status_replicas_list }}"
 

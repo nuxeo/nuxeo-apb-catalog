@@ -3,7 +3,7 @@
 - name: "set fact statefulset persistentvolumeclaims"
   block:
   - name: "Register statefulset json cmd"
-    shell: kubectl get statefulset {{ name }} -o json
+    shell: kubectl get statefulset {{ name }} -o json -n {{ namespace }}
     register: sts_cmd
     failed_when: sts_cmd.rc >= 2
 

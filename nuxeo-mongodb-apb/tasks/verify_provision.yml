@@ -32,7 +32,7 @@
 - name: "Wait for statefulset to become ready"
   debug:
     msg: "StatefulSet ready status: {{ statefulset_query }}"
-  retries: 15
+  retries: 20
   delay: 10
   until:
     - statefulset_query
@@ -43,5 +43,5 @@
 
 
 - name: "Verify statefulset persistentvolumeclaims exist"
-  shell: kubectl get persistentvolumeclaim {{ item }}
+  shell: kubectl get persistentvolumeclaim {{ item }} -n {{ namespace }}
   with_items: "{{ statefulset_pvcs }}"

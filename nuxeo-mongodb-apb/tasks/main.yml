@@ -175,6 +175,12 @@
 
 - include_tasks: "verify_{{ apb_action }}.yml"
 
+
+- name: "set fact service_uri state={{ state }}"
+  include_tasks: "set_fact_service_uri.yml"
+  when: state == "present"
+
+
 - name: encode bind credentials
   asb_encode_binding:
     fields:

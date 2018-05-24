@@ -10,7 +10,7 @@ mongodb_configmap_lookup: "{{ lookup('k8s', kind='ConfigMap', namespace=namespac
 poddisruptionbudget_lookup: "{{ lookup('k8s', api_version='v1beta1', kind='PodDisruptionBudget', namespace=namespace, resource_name=name) }}"
 statefulset_lookup: "{{ lookup('k8s', kind='StatefulSet', namespace=namespace, resource_name=name) }}"
 service_lookup: "{{ lookup('openshift', kind='Service', namespace=namespace, resource_name=name) }}"
-password_lookup: "{{ lookup('password', '/dev/null') }}"
+password_lookup: "{{ lookup('password', '/dev/null chars=ascii_letters,digits,hexdigits') }}"
 tls_cacert_lookup: "{{ lookup('file', tls_cacert_path) }}"
 
 # Variables to hold queries
