@@ -102,11 +102,11 @@ spec:
         - name: IS_WORKER
           value: "1"
 {% endif %}
-{% if nuxeoJavaOpts is defined %}
+{% if nuxeoJavaOpts is defined and nuxeoJavaOpts != "" %}
         - name: JAVA_OPTS
           value: "{{ nuxeoJavaOpts }}"
 {% endif %}        
-{% if nuxeoJavaOpts is not defined and resources is defined %}
+{% if (nuxeoJavaOpts is not defined or nuxeoJavaOpts != "") and resources is defined %}
         # Limit the JVM to the CGroup limits.
         - name: JAVA_OPTS
           value: "-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=1"
@@ -119,11 +119,11 @@ spec:
 {% endif %}
 {% if binaries_usePVC %}
         - name: NUXEO_BINARY_STORE
-          values: /var/lib/nuxeo/binaries
+          value: /var/lib/nuxeo/binaries
 {% endif %}
 {% if transientstore_usePVC %}
         - name: NUXEO_TRANSIENT_STORE
-          values: /var/lib/nuxeo/transientstore
+          value: /var/lib/nuxeo/transientstore
 {% endif %}
         - name: NUXEO_URL
           value: {{ applicationUrl }}

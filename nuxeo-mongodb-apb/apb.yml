@@ -1,8 +1,8 @@
 ---
 version: 1.0
 name: nuxeo-mongodb-apb
-description: MongoDB is a NoSQL document-oriented database
-bindable: "True"
+description: MongoDB, the NoSQL document-oriented database
+bindable: True
 async: optional
 tags:
   - database
