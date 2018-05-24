@@ -10,6 +10,10 @@
     transientstore_pvc: "{{ transientstore_pvc_lookup }}"
     data_pvc: "{{ data_pvc_lookup }}"
     log_pvc: "{{ log_pvc_lookup }}"
+    interactive_dc: "{{interactive_dc_lookup}}"
+    worker_dc: "{{worker_dc_lookup}}"
+    nginx_configmap: "{{ nginx_configmap_lookup }}"
+    nginx_secret: "{{ nginx_secret_lookup }}"
   retries: 10
   delay: 5
   until:
@@ -21,7 +25,32 @@
     - binaries_pvc_lookup or not binaries_usePVC
     - transientstore_pvc_lookup or not transientstore_usePVC
     - data_pvc_lookup or not data_usePVC
-    - log_pvc_lookup or not log_usePVC
-    - log_pvc_lookup or not log_usePVC
+    - log_pvc_lookup or not log_usePVC    
+    - cluster == "kubernetes" or interactive_dc_lookup
+    - cluster == "kubernetes" or worker_dc_lookup
+    - nginx_configmap_name and use_front_ssl_proxy
+    - nginx_secret_name and use_front_ssl_proxy
 
-    
+- name: "Wait for interactive Deployment Config to become ready"
+  debug:
+    msg: "Deployment Config status: {{ dc_interactive_query }}"
+  retries: 15
+  delay: 10
+  until:    
+    - dc_interactive_query
+    - cluster == "openshift"
+  when:
+    - interactive_replicas > 0
+
+- name: "Wait for worker Deployment Config to become ready"
+  debug:
+    msg: "Deployment Config status: {{ dc_worker_query }}"
+  retries: 15
+  delay: 10
+  until:    
+    - dc_worker_query
+    - cluster == "openshift"
+  when:
+    - worker_replicas > 0
+
+

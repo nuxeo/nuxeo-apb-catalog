@@ -18,7 +18,7 @@ metadata:
 spec:
 {% if useExternalLoadBalancer is defined and useExternalLoadBalancer %}
   type: LoadBalancer
-{% endif %}  
+{% endif %}
   selector:
     app: {{ name }}
     component: {{ component }}  
@@ -26,3 +26,8 @@ spec:
   - name: 8080-tcp
     port: 8080
     protocol: TCP
+{% if use_front_ssl_proxy  %}
+  - name: 8443-tcp
+    port: 8443
+    protocol: TCP
+{% endif %}

@@ -13,6 +13,15 @@ data_pvc_lookup: "{{ lookup('k8s', kind='PersistentVolumeClaim', namespace=names
 log_pvc_lookup: "{{ lookup('k8s', kind='PersistentVolumeClaim', namespace=namespace, resource_name=log_pvc_name) }}"
 interactive_dc_lookup: "{{ lookup('openshift', kind='DeploymentConfig', namespace=namespace, resource_name=interactive_dc_name) }}"
 worker_dc_lookup: "{{ lookup('openshift', kind='DeploymentConfig', namespace=namespace, resource_name=worker_dc_name) }}"
+nginx_configmap_lookup: "{{ lookup('openshift', kind='ConfigMap', namespace=namespace, resource_name=nginx_configmap_name) }}"
+nginx_secret_lookup: "{{ lookup('openshift', kind='Secret', namespace=namespace, resource_name=nginx_secret_name) }}"
+
+# Variables to hold queries
+ready_replicas_query: "[spec.replicas, status.ready_replicas]"
+dc_interactive_query: "{{ interactive_dc_lookup | json_query(ready_replicas_query) | unique | count == 1 }}"
+dc_worker_query: "{{ worker_dc_lookup | json_query(ready_replicas_query) | unique | count == 1 }}"
+use_front_ssl_proxy: "{{ True if (secure_route_tls_termination_type is defined and secure_route_tls_termination_type != 'edge') else False }}"
+
 # Whether we are in a cluster or not.
 pod_name: "{{ lookup('env', 'POD_NAME') }}"
 pod_namespace: "{{ lookup('env', 'POD_NAMESPACE') }}"
@@ -31,3 +40,5 @@ data_pvc_name: "{{ name + '-data-pvc'}}"
 log_pvc_name: "{{ name + '-log-pvc'}}"
 interactive_dc_name: "{{ name + '-interactive'}}"
 worker_dc_name: "{{ name + '-worker'}}"
+nginx_configmap_name: "{{ name + '-nginx-conf'}}"
+nginx_secret_name: "{{ name + '-cert-secret'}}"

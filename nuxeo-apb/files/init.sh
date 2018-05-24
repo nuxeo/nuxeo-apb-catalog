@@ -1,4 +1,5 @@
 #!/bin/sh
+cp -f /docker-entrypoint-initnuxeo.d/log4j.xml $NUXEO_HOME/lib/log4j.xml
 
 if [ ! -f $NUXEO_DATA/instance.clid -a -f /opt/nuxeo/connect/connect.properties ]; then
   . /opt/nuxeo/connect/connect.properties

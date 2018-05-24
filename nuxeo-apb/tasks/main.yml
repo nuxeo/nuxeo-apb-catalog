@@ -68,12 +68,8 @@
   when: state == "present"
 
 - name: "Nuxeo service state={{ state }}"
-  k8s_raw:
-    state: '{{ state }}'
-    definition: "{{ lookup('template', 'nuxeo_service.yml.j2') | from_yaml }}"
+  shell: kubectl delete --ignore-not-found=true service {{ service_name }} -n {{ namespace }}    
   when: state == "absent"
-
-
 
 # Work-around k8s_raw inability to create ConfigMap directly
 - name: "Nuxeo route state={{ state }}"
@@ -174,6 +170,11 @@
     - log_usePVC
     - state == "absent"
 
+
+# Work-around k8s_raw inability to create ConfigMap directly
+- name: "Nginx configuration ={{ state }}"
+  include_tasks: "create_nginx_conf.yml"
+  when: use_front_ssl_proxy
 
 - name: "Nuxeo Deployment Config interactive state={{ state }}"
   block:
