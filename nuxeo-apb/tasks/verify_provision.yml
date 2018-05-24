@@ -51,6 +51,6 @@
     - dc_worker_query
     - cluster == "openshift"
   when:
-    - worker_replicas > 0
+    - has_workers
 
 

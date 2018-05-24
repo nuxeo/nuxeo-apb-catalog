@@ -1,0 +1,10 @@
+<component name="com.nuxeo.cloud.worker.contrib">
+
+  <require>org.nuxeo.ecm.platform.video.workmanager</require>
+  <require>org.nuxeo.ecm.platform.picture.workmanager</require>
+
+  <extension point="queues" target="org.nuxeo.ecm.core.work.service">
+{% for queue in disabledQueues %}    
+    <queue id="{{ queue }}" processing="false"/>{% endfor %}
+  </extension>
+</component>

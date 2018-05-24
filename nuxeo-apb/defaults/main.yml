@@ -20,3 +20,15 @@ name: "nuxeo-{{ _apb_service_instance_id }}"
 namespace: "{{ lookup('env','NAMESPACE') | default('nuxeo', true) }}"
 component: nuxeo
 pod_type: interactive
+
+interactiveNodesDisabledQueues:
+  - pictureViewsGeneration
+  - videoConversion
+  - default
+  - fulltextUpdater
+  - collections
+  - escalation
+  - audit
+  - elasticSearchIndexing
+  - csvImporter
+workerNodesDisabledQueues: []

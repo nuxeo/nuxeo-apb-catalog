@@ -17,3 +17,7 @@ data:
     {{ lookup('file', '../files/nuxeo.conf') | indent(4) }}
   log4j.xml: |
     {{ lookup('file', '../files/log4j.xml') | indent(4) }}
+  interactive-queues-config.xml: |
+    {{ lookup('file', interactive_queues_config_path ) | indent(4) }}
+  worker-queues-config.xml: |
+    {{ lookup('file', worker_queues_config_path ) | indent(4) }}
