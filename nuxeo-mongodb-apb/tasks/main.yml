@@ -10,7 +10,7 @@
   when: state == "present" and tls_enabled
 
 - name: "ca secret state={{ state }}"
-  shell: kubectl delete --ignore-not-found=true secret {{ ca_secret_name }}
+  shell: kubectl delete --ignore-not-found=true secret {{ ca_secret_name }} -n {{ namespace }}
   when: state == "absent" and tls_enabled
 
 
@@ -27,7 +27,7 @@
   when: state == "present" and auth_enabled and auth_existingAdminSecret is undefined
 
 - name: "admin secret state={{ state }}"
-  shell: kubectl delete --ignore-not-found=true secret {{ admin_secret_name }}
+  shell: kubectl delete --ignore-not-found=true secret {{ admin_secret_name }} -n {{ namespace }}
   when: state == "absent" and auth_enabled and auth_existingAdminSecret is undefined
 
 
@@ -44,7 +44,7 @@
   when: state == "present" and auth_enabled and auth_existingUserSecret is undefined
 
 - name: "user secret state={{ state }}"
-  shell: kubectl delete --ignore-not-found=true secret {{ user_secret_name }}
+  shell: kubectl delete --ignore-not-found=true secret {{ user_secret_name }} -n {{ namespace }}
   when: state == "absent" and auth_enabled and auth_existingUserSecret is undefined
 
 
@@ -61,7 +61,7 @@
   when: state == "present"
 
 - name: "init container config map state={{ state }}"
-  shell: kubectl delete --ignore-not-found=true configmap {{ init_configmap_name }}
+  shell: kubectl delete --ignore-not-found=true configmap {{ init_configmap_name }} -n {{ namespace }}
   when: state == "absent"
 
 #
@@ -86,7 +86,7 @@
   when: state == "present"
 
 - name: "mongodb container config map state={{ state }}"
-  shell: kubectl delete --ignore-not-found=true configmap {{ mongodb_configmap_name }}
+  shell: kubectl delete --ignore-not-found=true configmap {{ mongodb_configmap_name }} -n {{ namespace }}
   when: state == "absent"
 
 
@@ -103,7 +103,7 @@
   when: state == "present" and podDisruptionBudget is defined and (podDisruptionBudget | from_yaml)
 
 - name: "poddisruptionbudget state={{ state }}"
-  shell: kubectl delete --ignore-not-found=true poddisruptionbudget {{ name }}
+  shell: kubectl delete --ignore-not-found=true poddisruptionbudget {{ name }} -n {{ namespace }}
   when: state == "absent" and podDisruptionBudget is defined and (podDisruptionBudget | from_yaml)
 
 
@@ -152,7 +152,7 @@
   when: state == "present"
 
 - name: "statefulset state={{ state }}"
-  shell: kubectl delete --ignore-not-found=true statefulset {{ name }}
+  shell: kubectl delete --ignore-not-found=true statefulset {{ name }} -n {{ namespace }}
   when: state == "absent"
 
 #- name: "statefulset state={{ state }}"
@@ -163,7 +163,7 @@
 
 
 - name: "statefulset persistentvolumeclaims state={{ state }}"
-  shell: kubectl delete --ignore-not-found=true persistentvolumeclaim {{ item }}
+  shell: kubectl delete --ignore-not-found=true persistentvolumeclaim {{ item }} -n {{ namespace }}
   with_items: "{{ statefulset_pvcs }}"
   when: state == "absent"
 
