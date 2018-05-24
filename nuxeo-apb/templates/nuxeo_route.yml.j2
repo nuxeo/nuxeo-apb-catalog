@@ -16,8 +16,8 @@ spec:
     kind: Service
     name: {{ service_name }}
   port:
-{% if secure_route_tls_termination_type is defined and secure_route_tls_termination_type != "edge" %}
-    targetPort: 443-tcp
+{% if use_front_ssl_proxy %}
+    targetPort: 8443-tcp
 {% else  %}
     targetPort: 8080-tcp
 {% endif %}

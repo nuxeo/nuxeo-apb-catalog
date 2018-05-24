@@ -1,0 +1,53 @@
+- name: "Nginx container config map state={{ state }}"
+  block:
+    - name: "Create Nginx container config from template"
+      template:
+        src: nginx_config.yml.j2
+        dest: /tmp/nginx_config.yml
+
+    - name: "Create Nginx container config map"
+      shell: kubectl create --filename=/tmp/nginx_config.yml
+  when:
+      - state == "present"
+
+- name: "Nginx container config map state={{ state }}"
+  shell: kubectl delete --ignore-not-found=true configmap {{ nginx_configmap_name }} -n {{ namespace }}
+  when:
+    - state == "absent"
+
+- name: "Create CA certificate and key file path names"
+  set_fact:
+    # tls_cacert_path: "/tmp/nginx_ca.crt"
+    # tls_cakey_path: "/tmp/nginx_ca.key"
+    tls_dhparam_path: "/tmp/nginx_dhparam"
+    tls_servercert_path: "/tmp/nginx_server.cert"
+    tls_serverkey_path: "/tmp/nginx_server.key"
+    # tls_servercsr_path: "/tmp/nginx_server.csr"
+
+- name: "Create the Diffie Helmann params (takes a long time)"
+  command: >
+    openssl dhparam -out {{ tls_dhparam_path }} 2048
+  when:
+    - state == "present"
+
+- name: "Create the self signed certificate and key"
+  command: >
+    openssl req -x509 -nodes -newkey rsa:4096 -keyout {{ tls_serverkey_path }} -out {{ tls_servercert_path }} -days 3650 -subj "/CN={{ applicationUrl }}"
+  when:
+    - state == "present"
+
+# Work-around k8s_raw inability to create Secret directly
+- name: "NGinx cert secret state={{ state }}"
+  block:
+    - name: "NGinx cert user secret from template"
+      template:
+        src: nginx_secret.yml.j2
+        dest: /tmp/nginx_secret.yml
+
+    - name: "Create Admin secret"
+      shell: kubectl create --filename=/tmp/nginx_secret.yml
+  when: state == "present"
+
+- name: "NGinx cert secret state={{ state }}"
+  shell: kubectl delete --ignore-not-found=true secret {{ nginx_secret_name }} -n {{ namespace }}
+  when: state == "absent"

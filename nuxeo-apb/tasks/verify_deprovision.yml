@@ -1,5 +1,3 @@
----
-
 - name: "Verify {{ name }} objects removed"
   set_fact:
     admin_secret: "{{ admin_secret_lookup }}"
@@ -10,6 +8,10 @@
     transientstore_pvc: "{{ transientstore_pvc_lookup }}"
     data_pvc: "{{ data_pvc_lookup }}"
     log_pvc: "{{ log_pvc_lookup }}"
+    interactive_dc: "{{interactive_dc_lookup}}"
+    worker_dc: "{{worker_dc_lookup}}"
+    nginx_configmap: "{{ nginx_configmap_lookup }}"
+    nginx_secret: "{{ nginx_secret_lookup }}"
   retries: 10
   delay: 5
   until:
@@ -22,3 +24,7 @@
     - not transientstore_pvc_lookup
     - not data_pvc_lookup    
     - not log_pvc_lookup
+    - cluster == "kubernetes" or not interactive_dc_lookup
+    - cluster == "kubernetes" or not worker_dc_lookup
+    - not nginx_configmap_lookup
+    - not nginx_secret_lookup

@@ -8,12 +8,10 @@ metadata:
     apb_service_class_id: '{{ _apb_service_class_id }}'
     apb_service_instance_id: '{{ _apb_service_instance_id }}'
     component: {{ component }}
-  name: {{ init_configmap_name }}
+  name: {{ nginx_configmap_name }}
   namespace: {{ namespace }}
 data:
-  init.sh: |
-    {{ lookup('file', '../files/init.sh') | indent(4) }}
-  nuxeo.conf: |
-    {{ lookup('file', '../files/nuxeo.conf') | indent(4) }}
-  log4j.xml: |
-    {{ lookup('file', '../files/log4j.xml') | indent(4) }}
+  nginx.conf: |
+    {{ lookup('file', '../files/nginx.conf') | indent(4) }}
+  proxy.conf: |
+    {{ lookup('file', '../files/proxy.conf') | indent(4) }}  

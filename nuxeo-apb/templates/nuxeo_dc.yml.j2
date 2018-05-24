@@ -53,23 +53,25 @@ spec:
 
     spec:
       containers:
-{% if secure_route_tls_termination_type != "edge" %}
+{% if use_front_ssl_proxy and nuxeo_type == "interactive" %}
       - name: nginx
         # TODO Bake a nuxeo image and allow parametrization
-        image: ployst/nginx-ssl-proxy
-        env:
-        - name: SERVER_NAME
-          value: "{{ applicationUrl }}"
-        - name: ENABLE_SSL
-          value: "true"
-        - name: TARGET_SERVICE
-          value: "localhost:8080"
+        image: nginx        
         volumeMounts:
-          - name: ssl-keys
+          - name: nginx-cert
             readOnly: true
-            mountPath: "/opt/nginx/secrets"          
+            mountPath: "/etc/secrets/"
+          - name: nginx-conf
+            readOnly: true
+            mountPath: "/etc/nginx/"
+          - name: nginx-log
+            mountPath: "/var/log/nginx"
+          - name: nginx-cache
+            mountPath: "/var/cache/nginx"
+          - name: nginx-tmp
+            mountPath: "/var/tmp"
         ports:
-        - containerPort: 443
+        - containerPort: 8443
           protocol: TCP
 {% endif %}
       - image: {{ image_repository }}:{{ image_tag }}
@@ -145,6 +147,8 @@ spec:
           mountPath: /var/lib/nuxeo/data
         - name: log
           mountPath: /var/log/nuxeo
+        - name: nuxeotmp
+          mountPath: /opt/nuxeo/server/tmp
         - name: nuxeoconf
           mountPath: /docker-entrypoint-initnuxeo.d
         - name: connect-secret
@@ -175,13 +179,28 @@ spec:
 {% else %}
         emptyDir: {}
 {% endif %}
+      - name: nuxeotmp
+        emptyDir: {}
       - name: nuxeoconf
         configMap:
           name: {{ init_configmap_name }}
       - name: connect-secret
         secret:
           secretName: {{ connect_secret_name }}
-
+{% if use_front_ssl_proxy and nuxeo_type == "interactive" %}
+      - name: nginx-conf
+        configMap:
+          name: {{ nginx_configmap_name }}
+      - name: nginx-cert
+        secret:
+          secretName: {{ nginx_secret_name}}
+      - name: nginx-log
+        emptyDir: {}
+      - name: nginx-cache
+        emptyDir: {}
+      - name: nginx-tmp
+        emptyDir: {}
+{% endif %}
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       terminationGracePeriodSeconds: 30
