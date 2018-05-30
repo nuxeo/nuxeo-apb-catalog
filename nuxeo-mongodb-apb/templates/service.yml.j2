@@ -7,13 +7,13 @@ metadata:
 {{ serviceAnnotations | from_yaml | to_nice_yaml(indent=2) | indent(4, true) }}
 {% endif %}
   labels:
-    app: {{ name }}
+    app: {{ app_name }}
     apb_name: '{{ apb_name }}'
     apb_plan_id: '{{ _apb_plan_id }}'
     apb_service_class_id: '{{ _apb_service_class_id }}'
     apb_service_instance_id: '{{ _apb_service_instance_id }}'
     component: {{ component }}
-  name: {{ name }}
+  name: {{ app_name }}
   namespace: {{ namespace }}
 spec:
   type: ClusterIP
@@ -22,5 +22,5 @@ spec:
     - name: peer
       port: {{ port }}
   selector:
-    app: {{ name }}
+    app: {{ app_name }}
     component: {{ component }}
