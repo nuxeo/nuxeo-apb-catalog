@@ -4,6 +4,47 @@
 cp -f /docker-entrypoint-initnuxeo.d/log4j.xml $NUXEO_HOME/lib/log4j.xml
 
 
+# DL libs to be able to log in JSON
+# pushd $NUXEO_HOME/lib
+# wget http://repo1.maven.org/maven2/net/minidev/json-smart/1.1.1/json-smart-1.1.1.jar
+# wget http://repo1.maven.org/maven2/net/logstash/log4j/jsonevent-layout/1.7/jsonevent-layout-1.7.jar
+# popd
+
+cp $JAVA_HOME/jre/lib/security/cacerts $NUXEO_DATA/cacerts
+TRUSTSTORE_PATH=$NUXEO_DATA/cacerts
+
+# Configure MongoDB bindings
+if [ -f /opt/nuxeo/bindings/mongodb/uri ]; then
+	MONGODB_URI=$(< /opt/nuxeo/bindings/mongodb/uri)
+	MONGODB_DBNAME=$(< /opt/nuxeo/bindings/mongodb/dbname)
+	cat >> $NUXEO_CONF <<EOT
+
+nuxeo.mongodb.server=${MONGODB_URI}
+nuxeo.mongodb.dbname=${MONGODB_DBNAME}
+EOT
+	
+	if [ -f /opt/nuxeo/bindings/mongodb/tls_cacert ]; then
+
+		# Temporary hack: Nuxeo launcher doesnt allow to specify Truststore https://jira.nuxeo.com/browse/NXP-25095
+		# So we have to deactivate the mongodb check that require a specific truststore in SSL
+		sed -i /mongodb.check/d /opt/nuxeo/server/templates/mongodb/nuxeo.defaults
+
+		# Remove cert if already set.
+		if [ -f $TRUSTSTORE_PATH ]; then
+			set +e
+			keytool -list -keystore $TRUSTSTORE_PATH -alias MongoDBCaCert -storepass changeit -noprompt
+			if [ "$?" == "0" ]; then 
+				keytool -delete -keystore $TRUSTSTORE_PATH -alias MongoDBCaCert -storepass changeit -noprompt
+			fi
+			set -e
+		fi
+
+		base64 -d /opt/nuxeo/bindings/mongodb/tls_cacert > /tmp/cert 		
+		keytool -import -file /tmp/cert -alias MongoDBCaCert -keystore $TRUSTSTORE_PATH -storepass changeit -noprompt
+	fi 
+
+fi
+
 # Configure queues handling
 QUEUES_CONFIG=/docker-entrypoint-initnuxeo.d/interactive-queues-config.xml
 if [ "$IS_WORKER" == "1" ]; then

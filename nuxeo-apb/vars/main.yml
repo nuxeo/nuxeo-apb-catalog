@@ -15,6 +15,9 @@ interactive_dc_lookup: "{{ lookup('openshift', kind='DeploymentConfig', namespac
 worker_dc_lookup: "{{ lookup('openshift', kind='DeploymentConfig', namespace=namespace, resource_name=worker_dc_name) }}"
 nginx_configmap_lookup: "{{ lookup('openshift', kind='ConfigMap', namespace=namespace, resource_name=nginx_configmap_name) }}"
 nginx_secret_lookup: "{{ lookup('openshift', kind='Secret', namespace=namespace, resource_name=nginx_secret_name) }}"
+mongodb_service_instance_lookup: "{{ lookup('openshift', kind='ServiceInstance', namespace=namespace, resource_name=mongoServiceName) }}"
+mongodb_servicebinding_lookup: "{{ lookup('openshift', kind='Binding', namespace=namespace, resource_name=mongodb_servicebinding_name) }}"
+mongodb_credentials_lookup: "{{ lookup('openshift', kind='Secret', namespace=namespace, resource_name=mongodb_credentials_name) }}"
 
 # Variables to hold queries
 ready_replicas_query: "[spec.replicas, status.ready_replicas]"
@@ -43,3 +46,5 @@ interactive_dc_name: "{{ name + '-interactive'}}"
 worker_dc_name: "{{ name + '-worker'}}"
 nginx_configmap_name: "{{ name + '-nginx-conf'}}"
 nginx_secret_name: "{{ name + '-cert-secret'}}"
+mongodb_servicebinding_name: "{{ name + '-mongodb-service-binding'}}"
+mongodb_credentials_name: "{{ name + '-mongodb-credentials'}}"

@@ -187,6 +187,9 @@
     - log_usePVC
     - state == "absent"
 
+- name: "MongoDB service binding ={{ state }}"
+  include_tasks: "bind_mongodb.yml"
+  when: useExternalMongoDB  
 
 # Work-around k8s_raw inability to create ConfigMap directly
 - name: "Nginx configuration ={{ state }}"

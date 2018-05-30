@@ -1,5 +1,5 @@
 {
-"namespace":"int-apbtest",
+"namespace":"int-apb-dev",
 "cluster":"openshift",
 "interactive_replicas":3,
 "worker_replicas":2,
@@ -51,13 +51,14 @@
 "nuxeoStudioInstall":true,
 "nuxeoconf":"",
 "extraVars":"",
-"useExternalMongoDB":false,
-"mongoServiceName":"",
+"useExternalMongoDB":true,
+"mongoServiceName":"localregistry-nuxeo-mongodb-apb-8xxrl",
 "useExternalElasticsearch":false,
 "elasticsearchServiceName":"",
 "useKafkaForStream":false,
 "kafkaServiceName":"",
 "auth_adminUser":"Administrator",
 "auth_adminPassword":"Administrator123",
-"secure_route_tls_termination_type":"passthrough"
+"secure_route_tls_termination_type":"passthrough",
+"nuxeoTemplates":""
 }
