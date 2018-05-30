@@ -16,4 +16,7 @@ data:
 {{ configmap | from_yaml | to_nice_yaml(indent=2) | indent(4, true) }}
 {% else %}
     # Put mongod.conf configuration here
+    net:
+       ssl:
+          allowConnectionsWithoutCertificates: true
 {% endif %}
