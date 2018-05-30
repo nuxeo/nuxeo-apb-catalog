@@ -159,7 +159,7 @@ if mongo "${ssl_args[@]}" --eval "rs.status()" | grep "no replset config has bee
 
         log "Creating user '$user' in database '$database'..."
         mongo "${admin_creds[@]}" "${ssl_args[@]}" --authenticationDatabase='admin' "$database" \
-            --eval "db.createUser({user: '$user', pwd: '$password', roles: [{role: 'dbAdmin', db: '$database'}]})"
+            --eval "db.createUser({user: '$user', pwd: '$password', roles: [{role: 'dbAdmin', db: '$database'},{role: 'readWrite', db: '$database'},{role: 'clusterMonitor', db: '$database'}]})"
     fi
 
     log "Done."
