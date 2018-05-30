@@ -5,7 +5,7 @@
   
   - name: "Set Fact hosts"
     set_fact:
-      hosts: "{{ hosts  + name + '-' + item.0 + '.' + name + '.' + namespace + '.svc:' + (port|string) + (',' if (item.0 | int) != ((sts_status_replicas_list | length) - 1) else '') }}"
+      hosts: "{{ hosts  + app_name + '-' + item.0 + '.' + app_name + '.' + namespace + '.svc:' + (port|string) + (',' if (item.0 | int) != ((sts_status_replicas_list | length) - 1) else '') }}"
     with_nested:
       - "{{ sts_status_replicas_list }}"
 

@@ -1,0 +1,6 @@
+---
+
+- name: "Create the CA certificate and key"
+  command: >
+    openssl req -newkey rsa:2048 -new -x509 -days 365 -nodes
+    -out {{ tls_cacert_path }} -keyout {{ tls_cakey_path }} -subj "{{ tls_casubjectDistinguishedName }}"

@@ -10,9 +10,11 @@
         name: nuxeo-mongodb-apb
       vars:
         apb_action: provision
+        in_cluster: False
 
     - name: Deprovision test
       include_role:
         name: nuxeo-mongodb-apb
       vars:
         apb_action: deprovision
+        in_cluster: False
