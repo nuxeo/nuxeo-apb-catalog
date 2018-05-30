@@ -32,3 +32,5 @@ interactiveNodesDisabledQueues:
   - elasticSearchIndexing
   - csvImporter
 workerNodesDisabledQueues: []
+
+useExternalMongoDB: false

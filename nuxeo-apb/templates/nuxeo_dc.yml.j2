@@ -109,10 +109,10 @@ spec:
 {% if (nuxeoJavaOpts is not defined or nuxeoJavaOpts != "") and resources is defined %}
         # Limit the JVM to the CGroup limits.
         - name: JAVA_OPTS
-          value: "-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=1"
+          value: "-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=1 -Djavax.net.ssl.trustStore=/var/lib/nuxeo/data/cacerts -Djavax.net.ssl.trustStorePassword=changeit -Djavax.net.ssl.keyStoreType=jks"
 {% endif %}
         - name: NUXEO_TEMPLATES
-          value: "default"
+          value: "default{% if useExternalMongoDB %},mongodb,mongodb-audit{% endif %}{% if nuxeoTemplates != ""%},{{nuxeoTemplates}}{% endif %}"
 {% if nuxeoPackages is defined %}
         - name: NUXEO_PACKAGES
           value: {{ nuxeoPackages }}
@@ -157,6 +157,10 @@ spec:
           mountPath: /docker-entrypoint-initnuxeo.d
         - name: connect-secret
           mountPath: /opt/nuxeo/connect
+{% if useExternalMongoDB %}
+        - name: mongodb-credentials
+          mountPath: /opt/nuxeo/bindings/mongodb
+{% endif %}
       volumes:
 {% if binaries_usePVC %}
       - name: binaries
@@ -168,7 +172,6 @@ spec:
         persistentVolumeClaim:
           claimName: {{ transientstore_pvc_name }}
 {% endif %}
-
       - name: data
 {% if data_usePVC %}
         persistentVolumeClaim:
@@ -191,6 +194,11 @@ spec:
       - name: connect-secret
         secret:
           secretName: {{ connect_secret_name }}
+{% if useExternalMongoDB %}
+      - name: mongodb-credentials
+        secret:
+          secretName: {{ mongodb_credentials_name }}
+{% endif %}
 {% if use_front_ssl_proxy and nuxeo_type == "interactive" %}
       - name: nginx-conf
         configMap:

@@ -309,7 +309,11 @@ plans:
         title: If set, an existing secret with this name is used for the Connect credentials.
         type: string
         display_group: Nuxeo Config
-
+      - name: nuxeoTemplates
+        default: ''
+        type: string        
+        title: Comma separated list of Nuxeo templates to be added to the configuration
+        display_group: Nuxeo Config
       - name: nuxeoconf
         default: '{}'
         type: string
