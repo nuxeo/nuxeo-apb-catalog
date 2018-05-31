@@ -7,7 +7,6 @@
     binaries_pvc: "{{ binaries_pvc_lookup }}"
     transientstore_pvc: "{{ transientstore_pvc_lookup }}"
     data_pvc: "{{ data_pvc_lookup }}"
-    log_pvc: "{{ log_pvc_lookup }}"
     interactive_dc: "{{interactive_dc_lookup}}"
     worker_dc: "{{worker_dc_lookup}}"
     nginx_configmap: "{{ nginx_configmap_lookup }}"
@@ -23,7 +22,6 @@
     - not binaries_pvc_lookup
     - not transientstore_pvc_lookup
     - not data_pvc_lookup    
-    - not log_pvc_lookup
     - cluster == "kubernetes" or not interactive_dc_lookup
     - cluster == "kubernetes" or not worker_dc_lookup
     - not nginx_configmap_lookup

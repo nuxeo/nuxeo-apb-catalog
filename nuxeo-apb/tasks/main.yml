@@ -168,25 +168,6 @@
     - data_usePVC
     - state == "absent"
 
-- name: "Nuxeo Log PVC state={{ state }}"
-  block:
-    - name: "Create Log PVC from template"
-      template:
-        src: log_pvc.yml.j2
-        dest: /tmp/log_pvc.yml
-
-    - name: "Create Log PVC"
-      shell: kubectl create --filename=/tmp/log_pvc.yml
-  when:
-    - log_usePVC
-    - state == "present"
-
-- name: "Nuxeo Log PVC state={{ state }}"
-  shell: kubectl delete --ignore-not-found=true pvc {{ log_pvc_name }} -n {{ namespace }}
-  when:
-    - log_usePVC
-    - state == "absent"
-
 - name: "MongoDB service binding ={{ state }}"
   include_tasks: "bind_mongodb.yml"
   when: useExternalMongoDB  

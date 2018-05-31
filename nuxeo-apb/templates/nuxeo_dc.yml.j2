@@ -64,8 +64,6 @@ spec:
           - name: nginx-conf
             readOnly: true
             mountPath: "/etc/nginx/"
-          - name: nginx-log
-            mountPath: "/var/log/nginx"
           - name: nginx-cache
             mountPath: "/var/cache/nginx"
           - name: nginx-tmp
@@ -96,7 +94,7 @@ spec:
           failureThreshold: {{ readinessProbe_failureThreshold }}
           periodSeconds: {{ readinessProbe_periodSeconds }}
           successThreshold: {{ readinessProbe_successThreshold }}
-        name: {{ name }}
+        name: nuxeo
         env:
 {% if nuxeo_type == "worker" %}
         - name: IS_WORKER
@@ -149,8 +147,6 @@ spec:
 {% endif %}
         - name: data
           mountPath: /var/lib/nuxeo/data
-        - name: log
-          mountPath: /var/log/nuxeo
         - name: nuxeotmp
           mountPath: /opt/nuxeo/server/tmp
         - name: nuxeoconf
@@ -179,13 +175,6 @@ spec:
 {% else %}
         emptyDir: {}
 {% endif %}
-      - name: log
-{% if log_usePVC %}
-        persistentVolumeClaim:
-          claimName: {{ log_pvc_name }}
-{% else %}
-        emptyDir: {}
-{% endif %}
       - name: nuxeotmp
         emptyDir: {}
       - name: nuxeoconf
@@ -206,8 +195,6 @@ spec:
       - name: nginx-cert
         secret:
           secretName: {{ nginx_secret_name}}
-      - name: nginx-log
-        emptyDir: {}
       - name: nginx-cache
         emptyDir: {}
       - name: nginx-tmp
