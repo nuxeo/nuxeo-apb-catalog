@@ -1,0 +1,11 @@
+---
+
+- name: "Verify {{ name }} objects exist"
+  set_fact:
+    ca_secret: "{{ ca_secret_lookup }}"
+    
+  retries: 10
+  delay: 5
+  until:
+    - ca_secret_lookup
+    

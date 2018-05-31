@@ -1,0 +1,13 @@
+---
+
+# Variables to hold lookup functions
+ca_secret_lookup: "{{ lookup('k8s', kind='Secret', namespace=namespace, resource_name=ca_secret_name) }}"
+tls_cacert_lookup: "{{ lookup('file', tls_cacert_path) }}"
+
+# Whether we are in a cluster or not.
+pod_name: "{{ lookup('env', 'POD_NAME') }}"
+pod_namespace: "{{ lookup('env', 'POD_NAMESPACE') }}"
+in_cluster: "{{ True if (pod_name and pod_namespace) else False }}"
+
+# Variables to hold resource names
+ca_secret_name: "{{ name + '-ca' }}"
