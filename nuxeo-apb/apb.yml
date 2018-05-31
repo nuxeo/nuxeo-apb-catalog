@@ -142,27 +142,6 @@ plans:
         display_type: textarea
         display_group: Storage specs
 
-      - name: log_usePVC
-        default: false
-        type: boolean
-        title: Use PVC for logs (if not uses emptyDir{})
-        display_group: Storage specs
-      - name: log_storageClass
-        type: string
-        title: Log folder volume storage class
-        display_group: Storage specs
-      - name: log_size
-        default: '10Gi'
-        type: string
-        title: Log folder volume size in Gi
-        display_group: Storage specs
-      - name: log_annotations
-        default: '{}'
-        type: string
-        title: Log folder volume annotations
-        display_type: textarea
-        display_group: Storage specs
-
       - name: serviceAnnotations
         default: '{}'
         type: string

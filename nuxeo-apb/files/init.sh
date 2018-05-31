@@ -5,10 +5,11 @@ cp -f /docker-entrypoint-initnuxeo.d/log4j.xml $NUXEO_HOME/lib/log4j.xml
 
 
 # DL libs to be able to log in JSON
-# pushd $NUXEO_HOME/lib
-# wget http://repo1.maven.org/maven2/net/minidev/json-smart/1.1.1/json-smart-1.1.1.jar
-# wget http://repo1.maven.org/maven2/net/logstash/log4j/jsonevent-layout/1.7/jsonevent-layout-1.7.jar
-# popd
+# Temporary hack, it should be included in the image or in a Nuxeo Package
+pushd $NUXEO_HOME/lib
+wget http://repo1.maven.org/maven2/net/minidev/json-smart/1.1.1/json-smart-1.1.1.jar
+wget http://repo1.maven.org/maven2/net/logstash/log4j/jsonevent-layout/1.7/jsonevent-layout-1.7.jar
+popd
 
 cp $JAVA_HOME/jre/lib/security/cacerts $NUXEO_DATA/cacerts
 TRUSTSTORE_PATH=$NUXEO_DATA/cacerts
