@@ -91,7 +91,13 @@ dHJ1ZQo="
 # Needed for keytool
 RUN yum install -y java-1.8.0-openjdk
 
-COPY playbooks /opt/apb/actions
-COPY roles /opt/ansible/roles
+ADD playbooks /opt/apb/actions
+
+# Add our role into the ansible roles dir
+ADD . /opt/ansible/roles/nuxeo-mongodb-apb
+
 RUN chmod -R g=u /opt/{ansible,apb}
+
+### INSTALL THE REQUIRED PACKAGES
+
 USER apb
