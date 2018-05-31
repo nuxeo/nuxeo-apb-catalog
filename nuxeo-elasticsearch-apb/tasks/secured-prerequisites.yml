@@ -1,37 +1,5 @@
 ---
 
-- name: Set  SearchGuard images stream to {{ state }}
-  openshift_v1_image_stream:
-    name: elasticsearch-searchguard
-    namespace: "{{ namespace }}"
-    state: "{{ state }}"
-  when:
-    - cluster == "openshift"    
-  
-
-- name: Set ElasticSearch with SearchGuard image build to {{ state }}
-  openshift_v1_build_config:
-    namespace: "{{ namespace }}"
-    name: elasticsearch-searchguard-build
-    source_type: Dockerfile
-    source_dockerfile: |
-      FROM {{ IMAGE_REPOSITORY}}:{{ IMAGE_TAG }}
-
-      RUN echo "===> Installing search-guard..." \
-        && /usr/share/elasticsearch/bin/elasticsearch-plugin install -b "com.floragunn:search-guard-5:{{ IMAGE_TAG }}-18"
-    strategy_docker_strategy_force_pull: true
-    strategy_type: Docker
-    output_to_kind: ImageStreamTag
-    output_to_name: 'elasticsearch-searchguard:latest'
-    successful_builds_history_limit: 2
-    triggers:
-      - type: ConfigChange
-    state: "{{ state }}"
-
-  when:
-    - cluster == "openshift"    
-
-
 - block:
   - name: Create temporary build directory
     tempfile:
@@ -39,255 +7,36 @@
       suffix: key
     register: tmpdir
 
-  - name: Generate CA private key and selfsigned certificate
-    shell: |
-      openssl req -nodes -x509 \
-         -newkey rsa:4096 \
-         -keyout {{tmpdir.path}}/ca_key.pem \
-         -out {{tmpdir.path}}/ca_cert.pem \
-         -days {{certificate_validity}} \
-         -subj "/CN={{ NUXEO_BACKINGS_NAME }}-ca/OU={{organizational_unit_name}}/O={{organization_name}}/L={{locality_name}}/ST={{state_or_province_name}}/C={{ country_name}}"
+  - name: "Set CA certificate and key file path names"
+    set_fact:
+      tls_cacert_path: "{{tmpdir.path}}/tls.crt"
+      tls_cakey_path: "{{tmpdir.path}}/tls.key"
 
-  - name: Generate Java Truststore with CA key
-    java_cert:
-      cert_alias: CARoot
-      cert_path: "{{tmpdir.path}}/ca_cert.pem"
-      keystore_path: "{{tmpdir.path}}/truststore.p12"
-      keystore_pass: changeit
-      keystore_create: true
-      state: present
+  - name: "Create the CA certificate and key"
+    command: >
+      openssl req -newkey rsa:2048 -new -x509 -days 365 -nodes
+      -out {{ tls_cacert_path }} -keyout {{ tls_cakey_path }} -subj "{{ tls_casubjectDistinguishedName }}"
 
-  - name: Encode Truststore in b64
-    shell: "cat {{tmpdir.path}}/truststore.p12 | base64 > {{tmpdir.path}}/truststore.p12.b64"
+  # Work-around k8s_raw inability to create Secret directly
+  - name: "ca secret state={{ state }}"
+    block:
+      - name: "Create ca secret from template"
+        template:
+          src: ca_secret.yml.j2
+          dest: /tmp/ca_secret.yml
 
+      - name: "Create ca secret"
+        shell: kubectl create --filename=/tmp/ca_secret.yml
+    when: state == "present"
 
-  - name: Set CA secret to {{ state }}
-    k8s_v1_secret:
-      namespace: '{{ namespace }}'
-      name: "{{ NUXEO_BACKINGS_NAME }}-ca"
-      labels:
-        app: "{{ NUXEO_BACKINGS_NAME }}"
-      data:
-        ca.key: "{{lookup('file', tmpdir.path + '/ca_key.pem' ) | b64encode }}"
-        ca.crt: "{{lookup('file', tmpdir.path + '/ca_cert.pem' ) | b64encode }}"
-        truststore.p12: "{{lookup('file', tmpdir.path + '/truststore.p12.b64' ) }}"
-      state: "{{ state }}"
-
-  - name: Generate Key for all nodes
-    shell: |
-      keytool -genkey -noprompt \
-         -alias {{ item }} \
-         -ext san=dns:{{ item }}.searchguard.elasticsearch.svc,dns:localhost,ip:127.0.0.1,oid:1.2.3.4.5.5 \
-         -dname "CN={{item}}.elasticsearch,OU={{organizational_unit_name}},O={{organization_name}},L={{locality_name}},S={{state_or_province_name}},C={{country_name}}" \
-         -keystore {{tmpdir.path}}/searchguard.{{item}}.keystore.p12 \
-         -keyalg RSA \
-         -deststoretype pkcs12 \
-         -storepass changeit \
-#         -keypass changeit
-    with_items:
-      - client-0
-      - client-1
-      - data-0
-      - data-1
-      - data-2
-      - master-0
-      - master-1
-      - master-2
-
-  - name: Create CSR for all nodes
-    shell: |
-      keytool -keystore {{tmpdir.path}}/searchguard.{{ item }}.keystore.p12 \
-             -alias {{ item }} \
-             -certreq \
-             -file {{tmpdir.path}}/{{ item }}.csr \
-             -deststoretype pkcs12 \
-             -storepass changeit \
-             -ext san=dns:{{ item }}.searchguard.elasticsearch.svc,dns:localhost,ip:127.0.0.1,oid:1.2.3.4.5.5
-    with_items:
-      - client-0
-      - client-1
-      - data-0
-      - data-1
-      - data-2
-      - master-0
-      - master-1
-      - master-2
-
-  - name: Sign keys with CA
-    shell: |
-       openssl x509 -req \
-          -CA {{tmpdir.path}}/ca_cert.pem \
-          -CAkey {{tmpdir.path}}/ca_key.pem \
-          -in {{tmpdir.path}}/{{ item }}.csr \
-          -out {{tmpdir.path}}/{{ item }}-ca1-signed.crt \
-          -days {{ certificate_validity }} \
-          -CAcreateserial \
-          -passin pass:${KEY_CREDENTIAL} \
-          -extensions server_ext   
-    with_items:
-      - client-0
-      - client-1
-      - data-0
-      - data-1
-      - data-2
-      - master-0
-      - master-1
-      - master-2
-
-  - name: Import CA cert into keystore
-    java_cert:
-      cert_alias: CARoot
-      cert_path: "{{tmpdir.path}}/ca_cert.pem"
-      keystore_path: "{{tmpdir.path}}/searchguard.{{ item }}.keystore.p12"
-      keystore_pass: changeit
-      keystore_create: true
-      state: present
-    with_items:
-      - client-0
-      - client-1
-      - data-0
-      - data-1
-      - data-2
-      - master-0
-      - master-1
-      - master-2
-
-
-  - name: Import Signed key into keystore
-    java_cert:
-      cert_alias: CARoot
-      cert_path: "{{tmpdir.path}}/{{ item }}-ca1-signed.crt"
-      keystore_path: "{{tmpdir.path}}/searchguard.{{ item }}.keystore.p12"
-      keystore_pass: changeit
-      keystore_create: true
-      state: present
-    with_items:
-      - client-0
-      - client-1
-      - data-0
-      - data-1
-      - data-2
-      - master-0
-      - master-1
-      - master-2
-
-  - name: Encode certificates for all nodes
-    shell: "cat {{tmpdir.path}}/searchguard.{{item}}.keystore.p12 | base64 -w64 > {{tmpdir.path}}/searchguard.{{item}}.keystore.p12.b64"      
-    with_items:
-      - client-0
-      - client-1
-      - data-0
-      - data-1
-      - data-2
-      - master-0
-      - master-1
-      - master-2
-
-  
-
-  - name: Generate client certificates
-    shell: |
-      keytool -genkey -noprompt \
-         -alias {{item}} \
-         -ext san=dns:{{item}}.searchguard.elasticsearch.svc,dns:localhost,ip:127.0.0.1,oid:1.2.3.4.5.5 \
-         -dname "CN=${i},O=nuxeo,C=com" \
-         -keystore {{tmpdir.path}}/client.{{item}}.keystore.p12 \
-         -keyalg RSA \
-         -deststoretype pkcs12 \
-         -storepass changeit
-#         -keypass changeit
-    with_items:
-      - admin
-      - elastic
-
-  - name: Create CSR for all clients certificates
-    shell: |
-      keytool -keystore {{tmpdir.path}}/client.{{item}}.keystore.p12 \
-             -alias {{ item }} \
-             -certreq \
-             -file {{tmpdir.path}}/{{ item }}.csr \
-             -deststoretype pkcs12 \
-             -storepass changeit \
-             -ext san=dns:{{ item }}.searchguard.elasticsearch.svc,dns:localhost,ip:127.0.0.1,oid:1.2.3.4.5.5
-    with_items:
-      - admin
-      - elastic
-
-  - name: Sign keys with CA
-    shell: |
-      openssl x509 -req \
-         -CA {{tmpdir.path}}/ca_cert.pem \
-         -CAkey {{tmpdir.path}}/ca_key.pem \
-         -in {{tmpdir.path}}/{{ item }}.csr \
-         -out {{tmpdir.path}}/{{ item }}-ca1-signed.crt \
-         -days {{ certificate_validity }} \
-         -CAcreateserial \
-         -passin pass:${KEY_CREDENTIAL} \
-         -extensions server_ext  
-    with_items:
-      - admin
-      - elastic
-
-  - name: Import CA cert into keystore
-    java_cert:
-      cert_alias: CARoot
-      cert_path: "{{tmpdir.path}}/ca_cert.pem"
-      keystore_path: "{{tmpdir.path}}/client.{{item}}.keystore.p12"
-      keystore_pass: changeit    
-      state: present
-    with_items:
-      - admin
-      - elastic
-
-
-  - name: Import Signed key into keystore
-    java_cert:
-      cert_alias: CARoot
-      cert_path: "{{tmpdir.path}}/{{ item }}-ca1-signed.crt"
-      keystore_path: "{{tmpdir.path}}/client.{{item}}.keystore.p12"
-      keystore_pass: changeit
-      state: present
-    with_items:
-      - admin
-      - elastic
-
-  - name: Encode certificates for all nodes
-    shell: "cat {{tmpdir.path}}/client.{{item}}.keystore.p12 | base64 -w64 > {{tmpdir.path}}/client.{{item}}.keystore.p12.b64"      
-    with_items:
-      - admin
-      - elastic
-
-  - name: Set CA secret to {{ state }}
-    k8s_v1_secret:
-      namespace: '{{ namespace }}'
-      name: "{{ NUXEO_BACKINGS_NAME }}-elasticsearch-certs"
-      labels:
-        app: "{{ NUXEO_BACKINGS_NAME }}"
-      data:
-        searchguard.client-0.keystore.p12: "{{lookup('file', tmpdir.path + '/searchguard.client-0.keystore.p12.b64' ) }}"
-        searchguard.client-1.keystore.p12: "{{lookup('file', tmpdir.path + '/searchguard.client-1.keystore.p12.b64' ) }}"
-        searchguard.data-0.keystore.p12: "{{lookup('file', tmpdir.path + '/searchguard.data-0.keystore.p12.b64' ) }}"
-        searchguard.data-1.keystore.p12: "{{lookup('file', tmpdir.path + '/searchguard.data-1.keystore.p12.b64' ) }}"
-        searchguard.data-2.keystore.p12: "{{lookup('file', tmpdir.path + '/searchguard.data-2.keystore.p12.b64' ) }}"
-        searchguard.master-0.keystore.p12: "{{lookup('file', tmpdir.path + '/searchguard.master-0.keystore.p12.b64' ) }}"
-        searchguard.master-1.keystore.p12: "{{lookup('file', tmpdir.path + '/searchguard.master-1.keystore.p12.b64' ) }}"
-        searchguard.master-2.keystore.p12: "{{lookup('file', tmpdir.path + '/searchguard.master-2.keystore.p12.b64' ) }}"
-        client.admin.keystore.p12: "{{lookup('file', tmpdir.path + '/client.admin.keystore.p12.b64' ) }}"
-        client.elastic.keystore.p12: "{{lookup('file', tmpdir.path + '/client.elastic.keystore.p12.b64' ) }}"
-      state: "{{ state }}"
-      
-  
   - name: Delete build directory
     file:
       path: "{{tmpdir.path}}"
   when:
     - state == "present"
 
+- name: "ca secret state={{ state }}"
+  shell: kubectl delete --ignore-not-found=true secret {{ ca_secret_name }} -n {{ namespace }}
+  when: state == "absent" 
 
-- name: Set CA secret to {{ state }}
-  k8s_v1_secret:
-    namespace: '{{ namespace }}'
-    name: "{{ NUXEO_BACKINGS_NAME }}-elasticsearch-certs"
-    state: "{{ state }}"
-  when:
-    - state == "absent"
+

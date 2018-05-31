@@ -1,5 +1,36 @@
 ---
 
+- name: "Update last operation"
+  asb_last_operation:
+    description: "0%: Starting"
+  when: in_cluster
+
+
+
 - include_tasks: secured-prerequisites.yml
   when: 
     - _apb_plan_id == "secured"    
+
+- name: "Update last operation"
+  asb_last_operation:
+    description: "50%: Cluster objects state={{ state }}"
+  when: in_cluster
+
+
+- include_tasks: "verify_{{ apb_action }}.yml"
+
+
+
+# - name: encode bind credentials
+#   asb_encode_binding:
+#     fields:
+#       uri: "{{ service_uri }}"
+#       dbname: "{{ database }}"
+#       tls_cacert: "{{ tls_cacert_lookup | b64encode }}"
+#   when: state == "present"
+
+
+- name: "Update last operation"
+  asb_last_operation:
+    description: "100%: Done"
+  when: in_cluster

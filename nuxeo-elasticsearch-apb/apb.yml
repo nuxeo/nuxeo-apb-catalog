@@ -17,10 +17,9 @@ plans:
         default: "elastic"
         type: string
       - title: Elasticsearch user password
-        name: elastic_user_name
+        name: elastic_user_password 
         type: string
-        pattern: "^[a-zA-Z0-9_.-]*$"
-        title: Nuxeo admin password
+        pattern: "^[a-zA-Z0-9_.-]*$"        
         display_type: password        
       
       - name: image_repository
@@ -118,7 +117,7 @@ plans:
       - title: Data Pods resource requests and limits
         name: data_resources
         required: true
-        default: '{limits: {cpu: 500m, memory: 512Mi}, requests: {cpu: 100m, memory: 256Mi}}'                
+        default: '{limits: {cpu: 500m, memory: 512Mi}, requests: {cpu: 100m, memory: 256Mi}}'
         display_type: textarea
         display_group: Container Specs
         type: string

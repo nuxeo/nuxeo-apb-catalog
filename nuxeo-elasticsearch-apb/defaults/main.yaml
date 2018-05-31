@@ -1,6 +1,28 @@
 ---
-state: present
+apb_name: elasticsearch
+
 cluster: openshift
+
+default_debug: True
+bootstrap_debug_enabled: False
+
+# Defaults for values we could expect from a broker
+_apb_plan_id: nuxeo-cluster
+_apb_service_class_id: 0
+_apb_service_instance_id: 0
+
+state_map:
+  provision: present
+  deprovision: absent
+state: "{{ state_map[apb_action] }}"
+
+cluster: kubernetes
+
+name: "nuxeo-{{ _apb_service_instance_id }}"
+namespace: "{{ lookup('env','NAMESPACE') | default('nuxeo', true) }}"
+component: elasticsearch
+
+
 
 certificate_validity: 365
 country_name: us
@@ -10,6 +32,27 @@ organization_name: nuxeo
 organizational_unit_name: engineering
 
 
-NUXEO_BACKINGS_NAME: nuxeo-backings
-IMAGE_REPOSITORY: docker.elastic.co/elasticsearch/elasticsearch
-IMAGE_TAG: 5.6.5
+# Default values for the APB parameters
+image_repository: nuxeo/elasticsearch-sg
+image_tag: "5.6.9"
+elastic_user_name: elastic
+client_name: client
+client_replica_count: 2
+client_service_type: ClusterIp
+client_java_opts: -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=2
+client_resources: "{limits: {cpu: 1, memory: 1Gi}, requests: {cpu: 500m, memory: 2Gi}}"
+master_name: 
+master_replica_count: 
+master_java_opts: -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=2
+master_resources: "{limits: {cpu: 1, memory: 1Gi}, requests: {cpu: 500m, memory: 2Gi}}"
+master_persistence_size: 4Gi
+data_name: data
+data_replica_count: 
+data_java_opts: -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=2
+data_resources: "{limits: {cpu: 1, memory: 1Gi}, requests: {cpu: 500m, memory: 2Gi}}"
+data_persistence_size: 10Gi
+data_termination_grace_period: 3600
+image_pullPolicy: IfNotPresent
+tls_casubjectDistinguishedName: '/CN=nuxeo-backings.elasticsearch.svc/OU=engineering/O=nuxeo/L=irvine/ST=ca/C=us'
+certificate_validity: 3650
+
