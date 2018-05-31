@@ -11,159 +11,140 @@ plans:
     free: True
     metadata: {}
     parameters:
-      - title: The name of the backings stack.
-        name: NUXEO_BACKINGS_NAME
+      - title: Elasticsearch user name
+        name: elastic_user_name
         required: true
-        default: "nuxeo-backings"
+        default: "elastic"
         type: string
-      - title: Hashed password for elastic user (bcrypt)
-        name: SEARCHGUARD_HASHED_PASSWORD
-        required: true
-        default: "password"
+      - title: Elasticsearch user password
+        name: elastic_user_name
         type: string
-      - title: Elasticsearch cluster name
-        name: CLUSTER_NAME
-        default: nuxeo
+        pattern: "^[a-zA-Z0-9_.-]*$"
+        title: Nuxeo admin password
+        display_type: password        
+      
+      - name: image_repository
+        default: 'nuxeo/elasticsearch-sg:5.6.9'
         type: string
-        required: true
-      - title: The image repository
-        name: IMAGE_REPOSITORY
-        default: docker.elastic.co/elasticsearch/elasticsearch
+        title: Elasticsearch image name
+        display_group: Container Specs
+      - name: image_tag
+        default: '5.6.5'
         type: string
-        required: true
-      - title: The image tag
-        name: IMAGE_TAG
-        default: 5.6.5
-        type: string
-        required: true
-      - title: The image pull policy
-        name: IMAGE_PULL_POLICY
-        default: IfNotPresent
-        type: string
-        required: true
-      - title: The client name
-        name: CLIENT_NAME
+        title: Elasticsearch Image tag
+        display_group: Container Specs
+      - name: image_pullPolicy
+        default: 'IfNotPresent'
+        type: enum
+        enum: ['IfNotPresent', 'Always', 'Never']
+        title: Elasticsearch image pull policy
+        display_group: Container Specs
+      - title: The client deployment name
+        name: client_name
         default: client
         type: string
         required: true
       - title: The client replica count
-        name: CLIENT_REPLICA_COUNT
+        name: client_replica_count
         default: "2"
         type: string
         required: true
       - title: The client service type
-        name: CLIENT_SERVICE_TYPE
+        name: client_service_type
         default: ClusterIP
         type: string
         required: true
-      - title: The client heap size
-        name: CLIENT_HEAP_SIZE
-        default: 256m
+      - title: The client JAVA_OPTS (Heap defaults to half of the CGroup available memory)
+        name: client_java_opts
+        default: -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=2
         type: string
         required: true
-      - title: The amount of CPU to request for the client
-        name: CLIENT_REQUESTS_CPU
+      - title: Client Pods resource requests and limits
+        name: client_resources
         required: true
-        default: 25m
-        type: string
-      - title: The amount of memory to request for the client
-        name: CLIENT_REQUESTS_MEMORY
-        required: true
-        default: 256Mi
-        type: string
-      - title: The CPU limit for the client
-        name: CLIENT_LIMITS_CPU
-        required: true
-        default: "1"
-        type: string
+        default: '{limits: {cpu: 500m, memory: 512Mi}, requests: {cpu: 100m, memory: 256Mi}}'                
+        display_type: textarea
+        display_group: Container Specs
+        type: string        
+
       - title: The master name
-        name: MASTER_NAME
+        name: master_name
         default: master
         type: string
         required: true
       - title: The master replica count
-        name: MASTER_REPLICA_COUNT
+        name: master_replica_count
         default: "3"
         type: string
         required: true
-      - title: The master heap size
-        name: MASTER_HEAP_SIZE
-        default: 256m
+      - title: The master JAVA_OPTS (Heap defaults to half of the CGroup available memory)
+        name: master_java_opts
+        default: -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=2
         type: string
         required: true
-      - title: The amount of CPU to request for the master
-        name: MASTER_REQUESTS_CPU
+      - title: Master Pods resource requests and limits
+        name: master_resources
         required: true
-        default: 25m
-        type: string
-      - title: The amount of memory to request for the master
-        name: MASTER_REQUESTS_MEMORY
-        required: true
-        default: 256Mi
-        type: string
-      - title: The CPU limit for the master
-        name: MASTER_LIMITS_CPU
-        required: true
-        default: "1"
+        default: '{limits: {cpu: 500m, memory: 512Mi}, requests: {cpu: 100m, memory: 256Mi}}'        
+        display_type: textarea
+        display_group: Container Specs
         type: string
       - title: Size of persistent storage for the master node
-        name: MASTER_PERSISTENCE_SIZE
+        name: master_persistence_size
         default: 4Gi
         type: string
         required: true
       - title: Persistent storage class name for the master node
-        name: MASTER_PERSISTENCE_STORAGE_CLASS_NAME
-        default: "aws-fast"
+        name: master_persistence_storage_class_name        
         type: string
         required: false
+
       - title: The data node name
-        name: DATA_NAME
+        name: data_name
         default: data
         type: string
         required: true
       - title: The data node replica count
-        name: DATA_REPLICA_COUNT
+        name: data_replica_count
         default: "3"
         type: string
         required: true
-      - title: The data node heap size
-        name: DATA_HEAP_SIZE
-        default: 1024m
+
+      - title: The data JAVA_OPTS (Heap defaults to half of the CGroup available memory)
+        name: data_java_opts
+        default: -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=2
         type: string
         required: true
-      - title: The amount of CPU to request for the data node
-        name: DATA_REQUESTS_CPU
+      - title: Data Pods resource requests and limits
+        name: data_resources
         required: true
-        default: 25m
-        type: string
-      - title: The amount of memory to request for the data node
-        name: DATA_REQUESTS_MEMORY
-        required: true
-        default: 1024Mi
-        type: string
-      - title: The CPU limit for the data node
-        name: DATA_LIMITS_CPU
-        required: true
-        default: "1"
+        default: '{limits: {cpu: 500m, memory: 512Mi}, requests: {cpu: 100m, memory: 256Mi}}'                
+        display_type: textarea
+        display_group: Container Specs
         type: string
       - title: Size of persistent storage for the data node
-        name: DATA_PERSISTENCE_SIZE
+        name: data_persistence_size
         default: 10Gi
         type: string
         required: true
       - title: Persistent storage class name for the data node
-        name: DATA_PERSISTENCE_STORAGE_CLASS_NAME
-        default: "aws-fast"
+        name: data_persistence_storage_class_name
+        default: ""
         type: string
         required: false
       - title: Termination Grace Period in seconds for the data node
-        name: DATA_TERMINATION_GRACE_PERIOD
+        name: data_termination_grace_period
         default: "3600"
         type: string
-        required: true
+        required: true        
+      - name: tls_casubjectDistinguishedName
+        default: '/CN=nuxeo-backings.elasticsearch.svc/OU=engineering/O=nuxeo/L=irvine/ST=ca/C=us'
+        type: string
+        title: Certificate Authority Subject Distinguished Name for the MongoDB cluster in single string format
+        display_group: MongoDB Security Config
       - name: certificate_validity
         title: Certificate validity period in days
-        default: 365
+        default: 3650
         type: string
         required: true
 
