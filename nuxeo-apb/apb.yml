@@ -374,3 +374,18 @@ plans:
         default: "edge"
         enum: ['edge', 'passthrough', 're-encryption']
         display_group: Nuxeo Security Config
+      - name: secure_route_tls_key
+        title: TLS key used for secured route
+        type: string
+        display_type: textarea
+        display_group: Nuxeo Security Config
+      - name: secure_route_tls_certificate
+        title: TLS certificate for secured route
+        type: string
+        display_type: textarea
+        display_group: Nuxeo Security Config
+      - name: secure_route_tls_cacertificate
+        title: TLS CA Certificate for secured route
+        type: string
+        display_type: textarea
+        display_group: Nuxeo Security Config
