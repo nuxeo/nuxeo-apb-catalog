@@ -1,5 +1,7 @@
 ---
-
+- name: Activate SearchGuard
+  set_fact:
+    use_searchguard: true
 - block:
   - name: Create temporary build directory
     tempfile:
@@ -15,7 +17,7 @@
   - name: "Create the CA certificate and key"
     command: >
       openssl req -newkey rsa:2048 -new -x509 -days 365 -nodes
-      -out {{ tls_cacert_path }} -keyout {{ tls_cakey_path }} -subj "{{ tls_casubjectDistinguishedName }}"
+      -out {{ tls_cacert_path }} -keyout {{ tls_cakey_path }} -subj "/CN=nuxeo-backings.elasticsearch.svc{{ tls_casubjectDistinguishedName }}"
 
   # Work-around k8s_raw inability to create Secret directly
   - name: "ca secret state={{ state }}"
@@ -35,8 +37,45 @@
   when:
     - state == "present"
 
+
+# Work-around k8s_raw inability to create ConfigMap directly
+- name: "SearchGuard config map state={{ state }}"
+  block:
+    - name: Bcrypt encode elastic password
+      shell: htpasswd -bnBC 10 "" {{ elastic_password }} | tr -d ':\n'
+      register: htpasswd
+    - name: "Create Internal users conf from template"
+      template:
+        src: sg_internal_users.yml.j2
+        dest: /tmp/sg_internal_users.yml
+      vars:
+        hash_password: "{{ htpasswd.stdout }}"
+
+    - name: "Create SearchGuard config from template"
+      template:
+        src: sg-config.yml.j2
+        dest: /tmp/sg-config.yml
+      vars:
+        - sg_internal_users_path: /tmp/sg_internal_users.yml
+
+    - name: "Create SearchGuard config map"
+      shell: kubectl create --filename=/tmp/sg-config.yml
+  when: state == "present"
+
+- name: "SearchGuard config map state={{ state }}"
+  shell: kubectl delete --ignore-not-found=true configmap {{ sg_configmap_name }} -n {{ namespace }}
+  when: state == "absent"
+
+
+
+
+
+
 - name: "ca secret state={{ state }}"
   shell: kubectl delete --ignore-not-found=true secret {{ ca_secret_name }} -n {{ namespace }}
   when: state == "absent" 
+
+
+
 
 

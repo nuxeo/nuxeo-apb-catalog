@@ -8,13 +8,199 @@
 
 
 - include_tasks: secured-prerequisites.yml
-  when: 
-    - _apb_plan_id == "secured"    
+  when: use_searchguard
+
+
+# Work-around k8s_raw inability to create ConfigMap directly
+- name: "Elasticsearch config map state={{ state }}"
+  block:
+    - name: "Create ca secret from template"
+      template:
+        src: elasticsearch.yml.j2
+        dest: /tmp/elasticsearch.yml
+
+    - name: "Create Elasticsearch config from template"
+      template:
+        src: config.yml.j2
+        dest: /tmp/config.yml
+      vars:
+        - elsasticsearch_conf_path: /tmp/elasticsearch.yml
+
+    - name: "Create Elasticsearch config map"
+      shell: kubectl create --filename=/tmp/config.yml
+  when: state == "present"
+
+- name: "Elasticsearch config map state={{ state }}"
+  shell: kubectl delete --ignore-not-found=true configmap {{ configmap_name }} -n {{ namespace }}
+  when: state == "absent"
+
+
+
+# Work-around k8s_raw refusal to create service with clusterIP: None
+- name: "Elasticsearch Client service state={{ state }}"
+  block:
+    - name: "Create Elasticsearch Client service from template"
+      template:
+        src: service.yml.j2
+        dest: /tmp/service-client.yml
+      vars:
+        ports:
+        - name: http
+          port: 9200
+          targetPort: http
+        - name: transport
+          port: 9300
+          targetPort: transport
+        role: client
+        service_name: "{{service_client_name}}"
+
+    - name: "Create Client service"
+      shell: kubectl create --filename=/tmp/service-client.yml
+  when: state == "present"
+
+- name: "Elasticsearch Client service state={{ state }}"
+  shell: kubectl delete --ignore-not-found=true service {{ service_client_name }} -n {{ namespace }}
+  when: state == "absent"
+
+
+
+# Work-around k8s_raw refusal to create service with clusterIP: None
+- name: "Elasticsearch Master service state={{ state }}"
+  block:
+    - name: "Create Elasticsearch Master service from template"
+      template:
+        src: service.yml.j2
+        dest: /tmp/service-master.yml
+      vars:
+        ports:
+        - name: transport
+          port: 9300
+          targetPort: transport
+        role: master
+        service_name: "{{service_master_name}}"
+
+    - name: "Create Master service"
+      shell: kubectl create --filename=/tmp/service-master.yml
+  when: state == "present"
+
+- name: "Elasticsearch Master service state={{ state }}"
+  shell: kubectl delete --ignore-not-found=true service {{ service_master_name }} -n {{ namespace }}
+  when: state == "absent"
+
+
+
+# Work-around k8s_raw refusal to create service with clusterIP: None
+- name: "Elasticsearch Service Account state={{ state }}"
+  block:
+    - name: "Create Elasticsearch Service Account from template"
+      template:
+        src: serviceaccount.yml.j2
+        dest: /tmp/serviceaccount.yml
+
+    - name: "Create Service Account"
+      shell: kubectl create --filename=/tmp/serviceaccount.yml
+  when: state == "present"
+
+- name: "Elasticsearch Service Account state={{ state }}"
+  shell: kubectl delete --ignore-not-found=true serviceaccount {{ elasticsearch_serviceaccount_name }} -n {{ namespace }}
+  when: state == "absent"
+
+
+
+# Work-around k8s_raw inability to create StatefulSet directly
+- name: "Elasticsearch master nodes statefulset state={{ state }}"
+  block:
+    - name: "Create Elasticsearch master nodes statefulset from template"
+      template:
+        src: statefulset.yml.j2
+        dest: /tmp/statefulset-master.yml
+      vars:
+        statefulset_name: "{{ statefulset_master_name }}"
+        role: master
+        service_name: "{{ service_master_name }}"
+        replicas: "{{ master_replica_count }}"
+        node_data: "false"
+        node_ingest: "false"
+        node_master: "true"
+        java_opts: "{{ master_java_opts }}"
+        storage_size: "{{ master_persistence_size }}"
+        storage_class: "{{ master_persistence_storage_class_name }}"
+    - name: "Create Elasticsearch master nodes statefulset"
+      shell: kubectl create --filename=/tmp/statefulset-master.yml
+  when: state == "present"
+
+- name: "Elasticsearch master nodes statefulset state={{ state }}"
+  shell: kubectl delete --ignore-not-found=true statefulset {{ statefulset_master_name }} -n {{ namespace }}
+  when: state == "absent"
+
+
+# Work-around k8s_raw inability to create StatefulSet directly
+- name: "Elasticsearch data nodes statefulset state={{ state }}"
+  block:
+    - name: "Create Elasticsearch data nodes statefulset from template"
+      template:
+        src: statefulset.yml.j2
+        dest: /tmp/statefulset-data.yml
+      vars:
+        statefulset_name: "{{ statefulset_data_name }}"
+        role: data
+        service_name: "{{ service_master_name }}"
+        replicas: "{{ data_replica_count }}"
+        node_data: "true"
+        node_ingest: "true"
+        node_master: "false"
+        java_opts: "{{ data_java_opts }}"
+        storage_size: "{{ data_persistence_size }}"
+        storage_class: "{{ data_persistence_storage_class_name }}"
+    - name: "Create Elasticsearch data nodes statefulset"
+      shell: kubectl create --filename=/tmp/statefulset-data.yml
+  when: state == "present"
+
+- name: "Elasticsearch data nodes statefulset state={{ state }}"
+  shell: kubectl delete --ignore-not-found=true statefulset {{ statefulset_data_name }} -n {{ namespace }}
+  when: state == "absent"
+
+
+# Work-around k8s_raw inability to create StatefulSet directly
+- name: "Elasticsearch client nodes statefulset state={{ state }}"
+  block:
+    - name: "Create Elasticsearch client nodes statefulset from template"
+      template:
+        src: statefulset.yml.j2
+        dest: /tmp/statefulset-client.yml
+      vars:
+        statefulset_name: "{{ statefulset_client_name }}"
+        role: client
+        service_name: "{{ service_client_name }}"
+        replicas: "{{ client_replica_count }}"
+        node_data: "false"
+        node_ingest: "false"
+        node_master: "false"
+        java_opts: "{{ client_java_opts }}"
+    - name: "Create Elasticsearch client nodes statefulset"
+      shell: kubectl create --filename=/tmp/statefulset-client.yml
+  when: state == "present"
+
+- name: "Elasticsearch client nodes statefulset state={{ state }}"
+  shell: kubectl delete --ignore-not-found=true statefulset {{ statefulset_client_name }} -n {{ namespace }}
+  when: state == "absent"
+
+
+# - name: "statefulset persistentvolumeclaims state={{ state }}"
+#   shell: kubectl delete --ignore-not-found=true persistentvolumeclaim {{ item }} -n {{ namespace }}
+#   with_items: "{{ statefulset_pvcs }}"
+#   when: state == "absent"
+
+
+
 
 - name: "Update last operation"
   asb_last_operation:
     description: "50%: Cluster objects state={{ state }}"
   when: in_cluster
+
+
+
 
 
 - include_tasks: "verify_{{ apb_action }}.yml"

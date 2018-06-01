@@ -2,12 +2,36 @@
 
 # Variables to hold lookup functions
 ca_secret_lookup: "{{ lookup('k8s', kind='Secret', namespace=namespace, resource_name=ca_secret_name) }}"
+configmap_lookup: "{{ lookup('k8s', kind='ConfigMap', namespace=namespace, resource_name=configmap_name) }}"
+sg_configmap_lookup: "{{ lookup('k8s', kind='ConfigMap', namespace=namespace, resource_name=sg_configmap_name) }}"
+service_client_lookup: "{{ lookup('k8s', kind='Service', namespace=namespace, resource_name=service_client_name) }}"
+service_master_lookup: "{{ lookup('k8s', kind='Service', namespace=namespace, resource_name=service_master_name) }}"
+elasticsearch_serviceaccount_lookup: "{{ lookup('k8s', kind='ServiceAccount', namespace=namespace, resource_name=elasticsearch_serviceaccount_name) }}"
+statefulset_client_lookup: "{{ lookup('k8s', kind='StatefulSet', namespace=namespace, resource_name=statefulset_client_name) }}"
+statefulset_master_lookup: "{{ lookup('k8s', kind='StatefulSet', namespace=namespace, resource_name=statefulset_master_name) }}"
+statefulset_data_lookup: "{{ lookup('k8s', kind='StatefulSet', namespace=namespace, resource_name=statefulset_data_name) }}"
+
 tls_cacert_lookup: "{{ lookup('file', tls_cacert_path) }}"
+password_lookup: "{{ lookup('password', '/dev/null chars=ascii_letters,digits,hexdigits') }}"
 
 # Whether we are in a cluster or not.
 pod_name: "{{ lookup('env', 'POD_NAME') }}"
 pod_namespace: "{{ lookup('env', 'POD_NAMESPACE') }}"
 in_cluster: "{{ True if (pod_name and pod_namespace) else False }}"
 
+#use_searchguard: "{{ True if (_apb_plan_id == 'secured') else False }}"
+use_searchguard: False
+image_repository: "{{ 'nuxeo/elasticsearch-sg' if use_searchguard else 'docker.elastic.co/elasticsearch/elasticsearch' }}"
+
 # Variables to hold resource names
 ca_secret_name: "{{ name + '-ca' }}"
+configmap_name: "{{ name + '-config' }}"
+sg_configmap_name: "{{ name + '-searchguard' }}"
+service_client_name: "{{ name + '-client' }}"
+service_master_name: "{{ name + '-master' }}"
+elasticsearch_serviceaccount_name: elasticsearch
+statefulset_client_name: "{{ name + '-client' }}"
+statefulset_master_name: "{{ name + '-master' }}"
+statefulset_data_name: "{{ name + '-data' }}"
+
+elastic_password: "{{ password_lookup if elastic_user_password is undefined else elastic_user_password }}"

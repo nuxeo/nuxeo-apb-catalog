@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    app: {{ name }}
+    apb_name: '{{ apb_name }}'
+    apb_plan_id: '{{ _apb_plan_id }}'
+    apb_service_class_id: '{{ _apb_service_class_id }}'
+    apb_service_instance_id: '{{ _apb_service_instance_id }}'
+    component: {{ component }}
+  name: {{ sg_configmap_name }}
+  namespace: {{ namespace }}
+data:
+  sg_actions_groups.yml: |
+    {{ lookup('file', '../files/sg_actions_groups.yml') | indent(4) }}
+  sg_config.yml: |
+    {{ lookup('file', '../files/sg_config.yml') | indent(4) }}
+  sg_roles.yml: |
+    {{ lookup('file', '../files/sg_roles.yml') | indent(4) }}
+  sg_roles_mapping.yml: |
+    {{ lookup('file', '../files/sg_roles_mapping.yml') | indent(4) }}
+  sg_internal_users.yml: |
+    {{ lookup('file', sg_internal_users_path) | indent(4) }}

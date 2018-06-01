@@ -1,0 +1,19 @@
+elastic:
+  hash: {{ hash_password}}
+  roles:
+    - admin
+
+kibana:
+  hash: {{ hash_password}}
+  roles:
+    - kibana_user
+
+logstash:
+  hash: {{ hash_password}}
+  roles:
+    - logstash_user
+
+beats:
+  hash: {{ hash_password}}
+  roles:
+    - beats_user

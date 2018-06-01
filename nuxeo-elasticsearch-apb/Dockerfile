@@ -95,7 +95,7 @@ aXR5IHBlcmlvZCBpbiBkYXlzCiAgICAgICAgZGVmYXVsdDogMzY1MAogICAgICAgIHR5cGU6IHN0\
 cmluZwogICAgICAgIHJlcXVpcmVkOiB0cnVlCgo="
 
 # Needed for keytool
-RUN yum install -y java-1.8.0-openjdk
+RUN yum install -y java-1.8.0-openjdk httpd-tools
 
 ADD playbooks /opt/apb/actions
 
