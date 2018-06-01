@@ -1,6 +1,6 @@
 ---
 
-- name: "Verify {{ name }} objects removed"
+- name: "Verify {{ app_name }} objects removed"
   set_fact:
     ca_secret: "{{ ca_secret_lookup }}"
     admin_secret: "{{ admin_secret_lookup }}"

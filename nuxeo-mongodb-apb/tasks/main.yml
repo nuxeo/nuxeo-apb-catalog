@@ -4,6 +4,14 @@
     description: "0%: Starting"
   when: in_cluster
 
+- name: 'Determine cluster type'
+  command: oc version
+  register: oc_version
+  ignore_errors: yes
+
+- name: 'Set Fact cluster'
+  set_fact:
+    cluster: "{{ 'openshift' if 'openshift' in oc_version.stdout else 'kubernetes' }}"
 
 - name: "ca secret state={{ state }}"
   include_tasks: "create_ca_secret.yml"
@@ -131,12 +139,12 @@
   k8s_raw:
     state: '{{ state }}'
     definition: "{{ lookup('template', 'service.yml.j2') | from_yaml }}"
-  when: state == "absent"
+  when: state == 'absent'
 
 
 - name: "set fact statefulset pvcs state={{ state }}"
   include_tasks: "set_fact_statefulset_pvcs.yml"
-  when: state == "absent"
+  when: state == 'absent'
 
 
 # Work-around k8s_raw inability to create StatefulSet directly
@@ -165,7 +173,7 @@
 - name: "statefulset persistentvolumeclaims state={{ state }}"
   shell: kubectl delete --ignore-not-found=true persistentvolumeclaim {{ item }} -n {{ namespace }}
   with_items: "{{ statefulset_pvcs }}"
-  when: state == "absent"
+  when: state == 'absent'
 
 
 - name: "Update last operation"
@@ -186,7 +194,7 @@
     fields:
       uri: "{{ service_uri }}"
       tls_cacert: "{{ tls_cacert_lookup | b64encode }}"
-  when: state == "present"
+  when: in_cluster and state == 'present'
 
 
 - name: "Update last operation"
