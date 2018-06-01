@@ -17,11 +17,13 @@ plans:
         default: "elastic"
         type: string
       - title: Elasticsearch user password
-        name: elastic_user_password 
+        name: elastic_user_password
         type: string
-        pattern: "^[a-zA-Z0-9_.-]*$"        
-        display_type: password        
-      
+        pattern: "^[a-zA-Z0-9_.-]*$"
+        display_type: password
+      - title: Elasticsearch Cluster name
+        name: cluster_name
+        type: string
       - name: image_repository
         default: 'nuxeo/elasticsearch-sg:5.6.9'
         type: string
@@ -38,19 +40,9 @@ plans:
         enum: ['IfNotPresent', 'Always', 'Never']
         title: Elasticsearch image pull policy
         display_group: Container Specs
-      - title: The client deployment name
-        name: client_name
-        default: client
-        type: string
-        required: true
       - title: The client replica count
         name: client_replica_count
         default: "2"
-        type: string
-        required: true
-      - title: The client service type
-        name: client_service_type
-        default: ClusterIP
         type: string
         required: true
       - title: The client JAVA_OPTS (Heap defaults to half of the CGroup available memory)
@@ -61,16 +53,11 @@ plans:
       - title: Client Pods resource requests and limits
         name: client_resources
         required: true
-        default: '{limits: {cpu: 500m, memory: 512Mi}, requests: {cpu: 100m, memory: 256Mi}}'                
+        default: '{limits: {cpu: 500m, memory: 512Mi}, requests: {cpu: 100m, memory: 256Mi}}'
         display_type: textarea
         display_group: Container Specs
-        type: string        
-
-      - title: The master name
-        name: master_name
-        default: master
         type: string
-        required: true
+
       - title: The master replica count
         name: master_replica_count
         default: "3"
@@ -84,7 +71,7 @@ plans:
       - title: Master Pods resource requests and limits
         name: master_resources
         required: true
-        default: '{limits: {cpu: 500m, memory: 512Mi}, requests: {cpu: 100m, memory: 256Mi}}'        
+        default: '{limits: {cpu: 500m, memory: 512Mi}, requests: {cpu: 100m, memory: 256Mi}}'
         display_type: textarea
         display_group: Container Specs
         type: string
@@ -94,15 +81,10 @@ plans:
         type: string
         required: true
       - title: Persistent storage class name for the master node
-        name: master_persistence_storage_class_name        
+        name: master_persistence_storage_class_name
         type: string
         required: false
 
-      - title: The data node name
-        name: data_name
-        default: data
-        type: string
-        required: true
       - title: The data node replica count
         name: data_replica_count
         default: "3"
@@ -135,7 +117,7 @@ plans:
         name: data_termination_grace_period
         default: "3600"
         type: string
-        required: true        
+        required: true
       - name: tls_casubjectDistinguishedName
         default: '/CN=nuxeo-backings.elasticsearch.svc/OU=engineering/O=nuxeo/L=irvine/ST=ca/C=us'
         type: string

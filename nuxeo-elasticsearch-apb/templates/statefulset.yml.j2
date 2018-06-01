@@ -1,0 +1,168 @@
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  labels:
+    app: {{ name }}
+    apb_name: '{{ apb_name }}'
+    apb_plan_id: '{{ _apb_plan_id }}'
+    apb_service_class_id: '{{ _apb_service_class_id }}'
+    apb_service_instance_id: '{{ _apb_service_instance_id }}'
+    component: {{ component }}
+    role: {{ role }}
+  name: {{ statefulset_name }}
+spec:
+  serviceName: {{ service_name }}
+  replicas: {{ replicas }}
+  template:
+    metadata:
+      labels:
+        app: {{ name }}
+        apb_name: '{{ apb_name }}'
+        apb_plan_id: '{{ _apb_plan_id }}'
+        apb_service_class_id: '{{ _apb_service_class_id }}'
+        apb_service_instance_id: '{{ _apb_service_instance_id }}'
+        component: {{ component }}
+        role: {{ role }}
+    spec:
+      serviceAccountName: {{ elasticsearch_serviceaccount_name }}
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            podAffinityTerm:
+              topologyKey: kubernetes.io/hostname
+              labelSelector:
+                matchLabels:
+                  app: {{ name }}
+                  apb_name: '{{ apb_name }}'
+                  apb_plan_id: '{{ _apb_plan_id }}'
+                  apb_service_class_id: '{{ _apb_service_class_id }}'
+                  apb_service_instance_id: '{{ _apb_service_instance_id }}'
+                  component: {{ component }}
+                  role: {{ role }}
+      initContainers:
+      # see https://www.elastic.co/guide/en/elasticsearch/reference/current/vm-max-map-count.html
+      # and https://www.elastic.co/guide/en/elasticsearch/reference/current/setup-configuration-memory.html#mlockall
+      - name: "sysctl"
+        image: "busybox"
+        imagePullPolicy: "Always"
+        command: ["sysctl", "-w", "vm.max_map_count=262144"]
+        securityContext:
+          privileged: true
+      containers:
+      - name: elasticsearch
+        env:
+        - name: DISCOVERY_SERVICE
+          value: {{ service_master_name }}
+        - name: KUBERNETES_MASTER
+          value: kubernetes.default.svc.cluster.local
+        - name: KUBERNETES_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: CLUSTER_NAME
+          value: "{{ cluster_name }}"
+        - name: NODE_DATA
+          value: "{{ node_data }}"
+        - name: NODE_INGEST
+          value: "{{ node_ingest }}"
+        - name: NODE_MASTER
+          value: "{{ node_master }}"
+        - name: PROCESSORS
+          valueFrom:
+            resourceFieldRef:
+              resource: limits.cpu
+        - name: ES_JAVA_OPTS
+          value: {{ java_opts }}
+        - name: MINIMUM_MASTER_NODES
+          value: "2"
+
+        # This is required because the Downward API does not yet support identification of
+        # pod numbering in statefulsets. Thus, we are required to specify a command which
+        # allows us to extract the pod ID for usage as the Elasticsearch Broker ID.
+        # See: https://github.com/kubernetes/kubernetes/issues/31218
+        command:
+        - /bin/bash
+        - -exc
+        - |
+          export POD_ID=${HOSTNAME##*-} && \
+          export ELASTICSEARCH_CERT_NAME="client-${POD_ID}" && \
+          /usr/share/elasticsearch/bin/es-docker
+        resources:
+{% if resources is defined and (resources | from_yaml) %}
+{{ resources | from_yaml | to_nice_yaml(indent=2) | indent(12, true) }}
+{% endif %}
+        readinessProbe:
+          httpGet:
+            path: /_cluster/health?wait_for_status=yellow
+            port: 9200
+            scheme: {{ "HTTPS" if use_searchguard else "HTTP" }}
+{% if use_searchguard%}
+            httpHeaders:
+            - name: Authorization
+              value: Basic {{ elastic_user_name + ':' + elastic_password | b64encode }}
+{% endif %}
+          initialDelaySeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /_cluster/health?wait_for_status=yellow
+            port: 9200
+            scheme: {{ "HTTPS" if use_searchguard else "HTTP" }}
+{% if use_searchguard%}
+            httpHeaders:
+            - name: Authorization
+              value: Basic {{ elastic_user_name + ':' + elastic_password | b64encode }}
+{% endif %}
+          initialDelaySeconds: 90
+        image: {{ image_repository }}:{{ image_tag }}
+        imagePullPolicy: "{{ image_pullPolicy }}"
+        ports:
+{% if role == "client" %}
+        - containerPort: 9200
+          name: http
+{% endif %}
+        - containerPort: 9300
+          name: transport
+        volumeMounts:
+{% if role != "client" %}
+        - mountPath: /usr/share/elasticsearch/data
+          name: data
+{% endif %}
+        - mountPath: /usr/share/elasticsearch/config/elasticsearch.yml
+          name: config
+          subPath: elasticsearch.yml
+        - mountPath: /usr/share/elasticsearch/config/log4j2.properties
+          name: config
+          subPath: log4j2.properties
+{% if use_searchguard%}
+        - mountPath: /usr/share/elasticsearch/config/searchguard
+          name: config-sg
+        - mountPath: /opt/cacert
+          name: certs
+{% endif %}
+      volumes:
+      - name: config
+        configMap:
+          name: {{ configmap_name }}
+{% if use_searchguard%}
+      - name: config-sg
+        configMap:
+          name: {{ sg_configmap_name }}
+      - name: certs
+        secret:
+          secretName: {{ ca_secret_name }}
+{% endif %}
+{% if role != "client" %}
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes:
+        - "ReadWriteOnce"
+{% if storage_class is defined and storage_class != "" %}
+      storageClassName: "{{ storage_class }}"
+{% endif %}
+      resources:
+        requests:
+          storage: "{{ storage_size }}"
+{% endif %}

@@ -3,9 +3,23 @@
 - name: "Verify {{ name }} objects exist"
   set_fact:
     ca_secret: "{{ ca_secret_lookup }}"
-    
+    config: "{{ configmap_lookup }}"
+    sg_config: "{{ sg_configmap_lookup }}"
+    service_client: "{{ service_client_lookup }}"
+    service_master: "{{ service_master_lookup }}"
+    service_account: "{{ elasticsearch_serviceaccount_lookup }}"
+    statefulset_data: "{{ statefulset_data_lookup }}"
+    statefulset_client: "{{ statefulset_client_lookup }}"
+    statefulset_master: "{{ statefulset_master_lookup }}"
   retries: 10
   delay: 5
   until:
-    - ca_secret_lookup
-    
+    - ca_secret_lookup or not use_searchguard
+    - configmap_lookup
+    - sg_configmap_lookup or not use_searchguard
+    - service_client_lookup
+    - service_master_lookup
+    - elasticsearch_serviceaccount_lookup
+    - statefulset_data_lookup
+    - statefulset_client_lookup
+    - statefulset_master_lookup
