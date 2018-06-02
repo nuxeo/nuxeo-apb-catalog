@@ -186,6 +186,14 @@
   when: state == "absent"
 
 
+- name: Configure SearchGuard
+  shell: kubectl exec {{ name }}-master-0 -- sh /usr/share/elasticsearch/plugins/search-guard-5/tools/sgadmin.sh -cd /usr/share/elasticsearch/config/searchguard -icl -nhnv -ts /usr/share/elasticsearch/config/searchguard-ssl/truststore.p12 -tspass changeit -ks /usr/share/elasticsearch/config/searchguard-ssl/admin_keystore.p12 -kspass changeit -tst PKCS12
+  register: searchguard_config
+  retries: 10
+  delay: 10
+  until: searchguard_config.rc == 0
+  when: state == "present"
+
 # - name: "statefulset persistentvolumeclaims state={{ state }}"
 #   shell: kubectl delete --ignore-not-found=true persistentvolumeclaim {{ item }} -n {{ namespace }}
 #   with_items: "{{ statefulset_pvcs }}"

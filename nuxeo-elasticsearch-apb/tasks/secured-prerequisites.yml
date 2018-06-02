@@ -17,7 +17,7 @@
   - name: "Create the CA certificate and key"
     command: >
       openssl req -newkey rsa:2048 -new -x509 -days 365 -nodes
-      -out {{ tls_cacert_path }} -keyout {{ tls_cakey_path }} -subj "/CN=nuxeo-backings.elasticsearch.svc{{ tls_casubjectDistinguishedName }}"
+      -out {{ tls_cacert_path }} -keyout {{ tls_cakey_path }} -subj "/CN=nuxeo.elasticsearch.svc{{ tls_casubjectDistinguishedNameSuffix }}"
 
   # Work-around k8s_raw inability to create Secret directly
   - name: "ca secret state={{ state }}"
@@ -37,12 +37,18 @@
   when:
     - state == "present"
 
+- name: Set elatic password fact
+  set_fact:
+    elastic_password: "{{ password_lookup if elastic_user_password is undefined else elastic_user_password }}"
+  when:
+    - state == "present"
 
 # Work-around k8s_raw inability to create ConfigMap directly
 - name: "SearchGuard config map state={{ state }}"
   block:
     - name: Bcrypt encode elastic password
-      shell: htpasswd -bnBC 10 "" {{ elastic_password }} | tr -d ':\n'
+      shell: htpasswd -bnBC 10 "" {{ elastic_password }} | tr -d ':'| head -n 1 | sed s/^\$2y/\$2a/
+
       register: htpasswd
     - name: "Create Internal users conf from template"
       template:
@@ -73,7 +79,7 @@
 
 - name: "ca secret state={{ state }}"
   shell: kubectl delete --ignore-not-found=true secret {{ ca_secret_name }} -n {{ namespace }}
-  when: state == "absent" 
+  when: state == "absent"
 
 
 

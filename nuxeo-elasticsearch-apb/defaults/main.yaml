@@ -42,6 +42,6 @@ data_resources: "{limits: {cpu: 1, memory: 1Gi}, requests: {cpu: 500m, memory: 2
 data_persistence_size: 10Gi
 data_persistence_storage_class_name: ''
 data_termination_grace_period: 3600
-tls_casubjectDistinguishedName: '/OU=engineering/O=nuxeo/L=irvine/ST=ca/C=us'
+tls_casubjectDistinguishedNameSuffix: '/OU=engineering/O=nuxeo/L=irvine/ST=ca/C=us'
 certificate_validity: 3650
 

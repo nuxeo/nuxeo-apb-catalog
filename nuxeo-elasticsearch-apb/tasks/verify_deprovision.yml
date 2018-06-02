@@ -14,9 +14,9 @@
   retries: 10
   delay: 5
   until:
-    - not ca_secret_lookup and use_searchguard
+    - not ( use_searchguard and ca_secret_lookup )
     - not configmap_lookup
-    - not sg_configmap_lookup and use_searchguard
+    - not ( sg_configmap_lookup and use_searchguard )
     - not service_client_lookup
     - not service_master_lookup
     - not elasticsearch_serviceaccount_lookup

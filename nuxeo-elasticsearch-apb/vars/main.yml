@@ -19,9 +19,7 @@ pod_name: "{{ lookup('env', 'POD_NAME') }}"
 pod_namespace: "{{ lookup('env', 'POD_NAMESPACE') }}"
 in_cluster: "{{ True if (pod_name and pod_namespace) else False }}"
 
-#use_searchguard: "{{ True if (_apb_plan_id == 'secured') else False }}"
-use_searchguard: False
-image_repository: "{{ 'nuxeo/elasticsearch-sg' if use_searchguard else 'docker.elastic.co/elasticsearch/elasticsearch' }}"
+use_searchguard: "{{ True if (_apb_plan_id == 'secured') else False }}"
 
 # Variables to hold resource names
 ca_secret_name: "{{ name + '-ca' }}"
@@ -33,5 +31,3 @@ elasticsearch_serviceaccount_name: elasticsearch
 statefulset_client_name: "{{ name + '-client' }}"
 statefulset_master_name: "{{ name + '-master' }}"
 statefulset_data_name: "{{ name + '-data' }}"
-
-elastic_password: "{{ password_lookup if elastic_user_password is undefined else elastic_user_password }}"
