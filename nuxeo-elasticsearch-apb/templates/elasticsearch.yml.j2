@@ -35,31 +35,31 @@ gateway.recover_after_data_nodes: ${RECOVER_AFTER_DATA_NODES:1}
 {% if use_searchguard %}
 searchguard:
   nodes_dn:
-  - CN=*.searchguard.elasticsearch.svc,{{ tls_casubjectDistinguishedName |replace("/", ",") }}
+  - CN=*.searchguard.elasticsearch.svc{{ tls_casubjectDistinguishedNameSuffix |replace("/", ",") }}
   ssl.transport:
       enabled: true
       enable_openssl_if_available: true
       keystore_type: pkcs12
-      keystore_filepath: searchguard-ssl/searchguard.${ELASTICSEARCH_CERT_NAME}.keystore.p12
-      keystore_password: ${KS_PWD}
-      keystore_alias: ${ELASTICSEARCH_CERT_NAME}
+      keystore_filepath: searchguard-ssl/keystore.p12
+      keystore_password: changeit
+      keystore_alias: searchguardkey
       truststore_type: pkcs12
-      truststore_filepath: searchguard-ssl/searchguard-truststore.p12
-      truststore_password: ${TS_PWD}
+      truststore_filepath: searchguard-ssl/truststore.p12
+      truststore_password: changeit
       enforce_hostname_verification: false
-      pemkey_password: ${K_PWD}
+      pemkey_password: changeit
   ssl.http:
       enabled: true
       clientauth_mode: OPTIONAL
       enable_openssl_if_available: true
       keystore_type: pkcs12
-      keystore_alias: ${ELASTICSEARCH_CERT_NAME}
-      keystore_filepath: searchguard-ssl/searchguard.${ELASTICSEARCH_CERT_NAME}.keystore.p12
-      keystore_password: ${KS_PWD}
+      keystore_alias: searchguardkey
+      keystore_filepath: searchguard-ssl/keystore.p12
+      keystore_password: changeit
       truststore_type: pkcs12
-      truststore_filepath: searchguard-ssl/searchguard-truststore.p12
-      truststore_password: ${TS_PWD}
-      pemkey_password: ${K_PWD}
+      truststore_filepath: searchguard-ssl/truststore.p12
+      truststore_password: changeit
+      pemkey_password: changeit
   authcz.admin_dn:
     - "CN=admin,O=nuxeo,C=com"
 {% endif %}

@@ -13,6 +13,7 @@ metadata:
 spec:
   serviceName: {{ service_name }}
   replicas: {{ replicas }}
+  podManagementPolicy: Parallel
   template:
     metadata:
       labels:
@@ -49,6 +50,47 @@ spec:
         command: ["sysctl", "-w", "vm.max_map_count=262144"]
         securityContext:
           privileged: true
+{% if role != "client" %}
+      - name: "chown"
+        image: {{ image_repository }}:{{ image_tag }}
+        imagePullPolicy: "{{ image_pullPolicy }}"
+        command:
+        - /bin/bash
+        - -c
+        - chown -R elasticsearch:elasticsearch /usr/share/elasticsearch/data &&
+          chown -R elasticsearch:elasticsearch /usr/share/elasticsearch/logs &&
+          chmod +x /usr/share/elasticsearch/plugins/search-guard-5/tools/*.sh
+        securityContext:
+          runAsUser: 0
+        volumeMounts:
+        - mountPath: /usr/share/elasticsearch/data
+          name: data
+{% endif %}
+{% if use_searchguard %}
+      - name: "create-certs"
+        image: {{ image_repository }}:{{ image_tag }}
+        imagePullPolicy: "{{ image_pullPolicy }}"
+        env:
+        - name: DN_SUFFIX
+          value: "{{ tls_casubjectDistinguishedNameSuffix |replace("/", ",")}}"
+        command:
+            - "sh"
+        args:
+          - "-c"
+          - |
+            set -x
+            ls -la /usr/share/elasticsearch/config/searchguard/
+            bash /usr/share/elasticsearch/config/searchguard/init-certs.sh
+        securityContext:
+          runAsUser: 0
+        volumeMounts:
+        - mountPath: /usr/share/elasticsearch/config/searchguard
+          name: config-sg
+        - mountPath: /caroot
+          name: certs
+        - mountPath: /usr/share/elasticsearch/config/searchguard-ssl
+          name: ssl
+{% endif %}
       containers:
       - name: elasticsearch
         env:
@@ -76,18 +118,6 @@ spec:
           value: {{ java_opts }}
         - name: MINIMUM_MASTER_NODES
           value: "2"
-
-        # This is required because the Downward API does not yet support identification of
-        # pod numbering in statefulsets. Thus, we are required to specify a command which
-        # allows us to extract the pod ID for usage as the Elasticsearch Broker ID.
-        # See: https://github.com/kubernetes/kubernetes/issues/31218
-        command:
-        - /bin/bash
-        - -exc
-        - |
-          export POD_ID=${HOSTNAME##*-} && \
-          export ELASTICSEARCH_CERT_NAME="client-${POD_ID}" && \
-          /usr/share/elasticsearch/bin/es-docker
         resources:
 {% if resources is defined and (resources | from_yaml) %}
 {{ resources | from_yaml | to_nice_yaml(indent=2) | indent(12, true) }}
@@ -100,7 +130,7 @@ spec:
 {% if use_searchguard%}
             httpHeaders:
             - name: Authorization
-              value: Basic {{ elastic_user_name + ':' + elastic_password | b64encode }}
+              value: Basic {{ (elastic_user_name + ':' + elastic_password) | b64encode }}
 {% endif %}
           initialDelaySeconds: 5
         livenessProbe:
@@ -111,7 +141,7 @@ spec:
 {% if use_searchguard%}
             httpHeaders:
             - name: Authorization
-              value: Basic {{ elastic_user_name + ':' + elastic_password | b64encode }}
+              value: Basic {{ (elastic_user_name + ':' + elastic_password) | b64encode }}
 {% endif %}
           initialDelaySeconds: 90
         image: {{ image_repository }}:{{ image_tag }}
@@ -137,10 +167,12 @@ spec:
 {% if use_searchguard%}
         - mountPath: /usr/share/elasticsearch/config/searchguard
           name: config-sg
-        - mountPath: /opt/cacert
-          name: certs
+        - mountPath: /usr/share/elasticsearch/config/searchguard-ssl
+          name: ssl
 {% endif %}
       volumes:
+      - name: ssl
+        emptyDir: {}
       - name: config
         configMap:
           name: {{ configmap_name }}

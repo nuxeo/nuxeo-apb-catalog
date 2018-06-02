@@ -11,8 +11,8 @@ metadata:
   name: {{ sg_configmap_name }}
   namespace: {{ namespace }}
 data:
-  sg_actions_groups.yml: |
-    {{ lookup('file', '../files/sg_actions_groups.yml') | indent(4) }}
+  sg_action_groups.yml: |
+    {{ lookup('file', '../files/sg_action_groups.yml') | indent(4) }}
   sg_config.yml: |
     {{ lookup('file', '../files/sg_config.yml') | indent(4) }}
   sg_roles.yml: |
@@ -21,3 +21,5 @@ data:
     {{ lookup('file', '../files/sg_roles_mapping.yml') | indent(4) }}
   sg_internal_users.yml: |
     {{ lookup('file', sg_internal_users_path) | indent(4) }}
+  init-certs.sh: |
+    {{ lookup('file', '../files/init-certs.sh') | indent(4) }}
