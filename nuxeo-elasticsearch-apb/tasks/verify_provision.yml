@@ -3,7 +3,9 @@
 - name: "Verify {{ name }} objects exist"
   set_fact:
     ca_secret: "{{ ca_secret_lookup }}"
-    config: "{{ configmap_lookup }}"
+    client_config: "{{ client_configmap_lookup }}"
+    data_config: "{{ data_configmap_lookup }}"
+    master_config: "{{ master_configmap_lookup }}"
     sg_config: "{{ sg_configmap_lookup }}"
     service_client: "{{ service_client_lookup }}"
     service_master: "{{ service_master_lookup }}"
@@ -15,11 +17,49 @@
   delay: 5
   until:
     - ca_secret_lookup or not use_searchguard
-    - configmap_lookup
+    - client_configmap_lookup
+    - data_configmap_lookup
+    - master_configmap_lookup
     - sg_configmap_lookup or not use_searchguard
     - service_client_lookup
-    - service_master_lookup
+    - service_master_lookup or not cluster
     - elasticsearch_serviceaccount_lookup
-    - statefulset_data_lookup
+    - statefulset_data_lookup or not cluster
     - statefulset_client_lookup
-    - statefulset_master_lookup
+    - statefulset_master_lookup or not cluster
+
+
+- name: "Wait for master statefulset to become ready"
+  debug:
+    msg: "StatefulSet ready status: {{ statefulset_master_query }}"
+  retries: 20
+  delay: 10
+  until:
+    - statefulset_master_query
+  when: cluster
+
+- name: "Wait for data statefulset to become ready"
+  debug:
+    msg: "StatefulSet ready status: {{ statefulset_data_query }}"
+  retries: 20
+  delay: 10
+  until:
+    - statefulset_data_query
+  when: cluster
+
+- name: "Wait for client statefulset to become ready"
+  debug:
+    msg: "StatefulSet ready status: {{ statefulset_client_query }}"
+  retries: 20
+  delay: 10
+  until:
+    - statefulset_client_query
+
+
+- name: "set fact statefulset pvcs state={{ state }}"
+  include_tasks: "set_fact_statefulset_pvcs.yml"
+
+
+- name: "Verify statefulset persistentvolumeclaims exist"
+  shell: kubectl get persistentvolumeclaim {{ item }} -n {{ namespace }}
+  with_items: "{{ statefulset_pvcs }}"

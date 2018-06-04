@@ -1,0 +1,17 @@
+---
+- name: "set fact statefulset persistentvolumeclaims"
+  include_tasks: set_fact_statefulset_pvc.yml
+  with_items:
+    - "{{ statefulset_master_name }}"
+    - "{{ statefulset_data_name }}"
+  loop_control:
+    loop_var: statefulset_name
+  when: cluster
+
+- name: "set fact statefulset persistentvolumeclaims"
+  include_tasks: set_fact_statefulset_pvc.yml
+  vars:
+    statefulset_name: "{{ statefulset_client_name }}"
+  when: not cluster
+
+

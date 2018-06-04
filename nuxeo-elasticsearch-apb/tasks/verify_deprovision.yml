@@ -3,7 +3,9 @@
 - name: "Verify {{ name }} objects removed"
   set_fact:
     ca_secret: "{{ ca_secret_lookup }}"
-    config: "{{ configmap_lookup }}"
+    client_config: "{{ client_configmap_lookup }}"
+    data_config: "{{ data_configmap_lookup }}"
+    master_config: "{{ master_configmap_lookup }}"
     sg_config: "{{ sg_configmap_lookup }}"
     service_client: "{{ service_client_lookup }}"
     service_master: "{{ service_master_lookup }}"
@@ -15,11 +17,20 @@
   delay: 5
   until:
     - not ( use_searchguard and ca_secret_lookup )
-    - not configmap_lookup
+    - not data_configmap_lookup
+    - not client_configmap_lookup
+    - not master_configmap_lookup
     - not ( sg_configmap_lookup and use_searchguard )
     - not service_client_lookup
-    - not service_master_lookup
+    - not (cluster and service_master_lookup)
     - not elasticsearch_serviceaccount_lookup
-    - not statefulset_data_lookup
+    - not (cluster and statefulset_data_lookup)
     - not statefulset_client_lookup
-    - not statefulset_master_lookup
+    - not (cluster and statefulset_master_lookup)
+
+
+- name: "Verify statefulset persistentvolumeclaim objects removed"
+  shell: kubectl get persistentvolumeclaim {{ item }}
+  register: kubectl_cmd
+  failed_when: kubectl_cmd.rc == 0 or kubectl_cmd.rc >= 2
+  with_items: "{{ statefulset_pvcs }}"

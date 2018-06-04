@@ -39,7 +39,7 @@ plans:
         title: Elasticsearch image name
         display_group: Container Specs
       - name: image_tag
-        default: '5.6.5'
+        default: '5.6.9'
         type: string
         title: Elasticsearch Image tag
         display_group: Container Specs
@@ -56,13 +56,13 @@ plans:
         required: true
       - title: The client JAVA_OPTS (Heap defaults to half of the CGroup available memory)
         name: client_java_opts
-        default: -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=2
+        default: -Xms2g -Xmx2g -Djava.net.preferIPv4Stack=true
         type: string
         required: true
       - title: Client Pods resource requests and limits
         name: client_resources
         required: true
-        default: '{limits: {cpu: 500m, memory: 512Mi}, requests: {cpu: 100m, memory: 256Mi}}'
+        default: '{limits: {cpu: 500m, memory: 1Gi}, requests: {cpu: 1, memory: 2Gi}}'
         display_type: textarea
         display_group: Container Specs
         type: string
@@ -74,13 +74,13 @@ plans:
         required: true
       - title: The master JAVA_OPTS (Heap defaults to half of the CGroup available memory)
         name: master_java_opts
-        default: -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=2
+        default: -Xms2g -Xmx2g -Djava.net.preferIPv4Stack=true
         type: string
         required: true
       - title: Master Pods resource requests and limits
         name: master_resources
         required: true
-        default: '{limits: {cpu: 500m, memory: 512Mi}, requests: {cpu: 100m, memory: 256Mi}}'
+        default: '{limits: {cpu: 500m, memory: 1Gi}, requests: {cpu: 1, memory: 2Gi}}'
         display_type: textarea
         display_group: Container Specs
         type: string
@@ -102,13 +102,13 @@ plans:
 
       - title: The data JAVA_OPTS (Heap defaults to half of the CGroup available memory)
         name: data_java_opts
-        default: -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=2
+        default: -Xms2g -Xmx2g -Djava.net.preferIPv4Stack=true
         type: string
         required: true
       - title: Data Pods resource requests and limits
         name: data_resources
         required: true
-        default: '{limits: {cpu: 500m, memory: 512Mi}, requests: {cpu: 100m, memory: 256Mi}}'
+        default: '{limits: {cpu: 500m, memory: 1Gi}, requests: {cpu: 1, memory: 2Gi}}'
         display_type: textarea
         display_group: Container Specs
         type: string
@@ -154,7 +154,7 @@ plans:
         title: Elasticsearch image name
         display_group: Container Specs
       - name: image_tag
-        default: '5.6.5'
+        default: '5.6.9'
         type: string
         title: Elasticsearch Image tag
         display_group: Container Specs
@@ -171,13 +171,13 @@ plans:
         required: true
       - title: The client JAVA_OPTS (Heap defaults to half of the CGroup available memory)
         name: client_java_opts
-        default: -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=2
+        default: -Xms2g -Xmx2g -Djava.net.preferIPv4Stack=true
         type: string
         required: true
       - title: Client Pods resource requests and limits
         name: client_resources
         required: true
-        default: '{limits: {cpu: 500m, memory: 512Mi}, requests: {cpu: 100m, memory: 256Mi}}'
+        default: '{limits: {cpu: 500m, memory: 1Gi}, requests: {cpu: 1, memory: 2Gi}}'
         display_type: textarea
         display_group: Container Specs
         type: string
@@ -189,13 +189,13 @@ plans:
         required: true
       - title: The master JAVA_OPTS (Heap defaults to half of the CGroup available memory)
         name: master_java_opts
-        default: -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=2
+        default: -Xms2g -Xmx2g -Djava.net.preferIPv4Stack=true
         type: string
         required: true
       - title: Master Pods resource requests and limits
         name: master_resources
         required: true
-        default: '{limits: {cpu: 500m, memory: 512Mi}, requests: {cpu: 100m, memory: 256Mi}}'
+        default: '{limits: {cpu: 500m, memory: 1Gi}, requests: {cpu: 1, memory: 2Gi}}'
         display_type: textarea
         display_group: Container Specs
         type: string
@@ -217,13 +217,13 @@ plans:
 
       - title: The data JAVA_OPTS (Heap defaults to half of the CGroup available memory)
         name: data_java_opts
-        default: -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=2
+        default: -Xms2g -Xmx2g -Djava.net.preferIPv4Stack=true
         type: string
         required: true
       - title: Data Pods resource requests and limits
         name: data_resources
         required: true
-        default: '{limits: {cpu: 500m, memory: 512Mi}, requests: {cpu: 100m, memory: 256Mi}}'
+        default: '{limits: {cpu: 500m, memory: 1Gi}, requests: {cpu: 1, memory: 2Gi}}'
         display_type: textarea
         display_group: Container Specs
         type: string
@@ -250,5 +250,60 @@ plans:
       - name: certificate_validity
         title: Certificate validity period in days
         default: 3650
+        type: string
+        required: true
+
+  - name: singlenode
+    description: |
+        This plan deploys a single node Elasticsearch
+        for development purpose.
+    free: True
+    metadata: {}
+    parameters:
+      - title: Elasticsearch Cluster name
+        name: cluster_name
+        type: string
+      - name: image_repository
+        default: 'docker.elastic.co/elasticsearch/elasticsearch'
+        type: string
+        title: Elasticsearch image name
+        display_group: Container Specs
+      - name: image_tag
+        default: '5.6.9'
+        type: string
+        title: Elasticsearch Image tag
+        display_group: Container Specs
+      - name: image_pullPolicy
+        default: 'IfNotPresent'
+        type: enum
+        enum: ['IfNotPresent', 'Always', 'Never']
+        title: Elasticsearch image pull policy
+        display_group: Container Specs
+      - title: JAVA_OPTS (Heap defaults to half of the CGroup available memory)
+        name: client_java_opts
+        default: -Xms2g -Xmx2g -Djava.net.preferIPv4Stack=true
+        type: string
+        required: true
+      - title: Pod resource requests and limits
+        name: client_resources
+        required: true
+        default: '{limits: {cpu: 500m, memory: 1Gi}, requests: {cpu: 1, memory: 2Gi}}'
+        display_type: textarea
+        display_group: Container Specs
+        type: string
+
+      - title: Size of persistent storage for the data node
+        name: data_persistence_size
+        default: 10Gi
+        type: string
+        required: true
+      - title: Persistent storage class name for the data node
+        name: data_persistence_storage_class_name
+        default: ""
+        type: string
+        required: false
+      - title: Termination Grace Period in seconds for the data node
+        name: data_termination_grace_period
+        default: "3600"
         type: string
         required: true
