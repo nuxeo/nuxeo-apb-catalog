@@ -7,7 +7,7 @@ bootstrap_debug_enabled: False
 # Defaults for values we could expect from a broker
 _apb_plan_id: nuxeo-cluster
 _apb_service_class_id: 0
-_apb_service_instance_id: 0
+_apb_service_instance_id: testing
 
 state_map:
   provision: present
@@ -16,7 +16,7 @@ state: "{{ state_map[apb_action] }}"
 
 cluster: kubernetes
 
-name: "nuxeo-elasticsearch-{{ _apb_service_instance_id }}"
+name: "nuxeo-elasticsearch-{{ _apb_service_instance_id  |truncate(5, True, '') }}"
 namespace: "{{ lookup('env','NAMESPACE') | default('nuxeo', true) }}"
 component: elasticsearch
 

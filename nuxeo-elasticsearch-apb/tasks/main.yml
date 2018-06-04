@@ -5,6 +5,8 @@
     description: "0%: Starting"
   when: in_cluster
 
+- debug:
+    msg: "{{ name }}"
 
 
 - include_tasks: secured-prerequisites.yml
