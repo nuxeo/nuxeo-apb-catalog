@@ -223,7 +223,7 @@
         dest: /tmp/serviceaccount.yml
 
     - name: "Create Service Account"
-      shell: kubectl create --filename=/tmp/serviceaccount.yml
+      shell: kubectl create --filename=/tmp/serviceaccount.yml -n {{ namespace }}
   when: state == "present"
 
 - name: "Elasticsearch Service Account state={{ state }}"
