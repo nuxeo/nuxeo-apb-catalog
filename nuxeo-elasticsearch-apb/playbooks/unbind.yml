@@ -1,0 +1,10 @@
+---
+- name: nuxeo-elasticsearch-apb unbind
+  hosts: localhost
+  gather_facts: false
+  connection: local
+  roles:
+  - role: ansibleplaybookbundle.asb-modules
+  - role: nuxeo-elasticsearch-apb
+  vars:
+    apb_action: unbind
