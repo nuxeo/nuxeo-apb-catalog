@@ -10,6 +10,7 @@ metadata:
     component: {{ component }}
     role: {{ role }}
   name: {{ statefulset_name }}
+  namespace: {{ namespace }}
 spec:
   serviceName: {{ service_name }}
   replicas: {{ replicas }}
