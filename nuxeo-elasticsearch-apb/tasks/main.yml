@@ -356,7 +356,7 @@
 
 
 - name: Configure SearchGuard
-  shell: kubectl exec {{ name }}-master-0 -- sh /usr/share/elasticsearch/plugins/search-guard-5/tools/sgadmin.sh -cd /usr/share/elasticsearch/config/searchguard -icl -nhnv -ts /usr/share/elasticsearch/config/searchguard-ssl/truststore.p12 -tspass changeit -ks /usr/share/elasticsearch/config/searchguard-ssl/admin_keystore.p12 -kspass changeit -tst PKCS12
+  shell: kubectl exec {{ name }}-master-0  -n {{ namespace }} -- sh /usr/share/elasticsearch/plugins/search-guard-5/tools/sgadmin.sh -cd /usr/share/elasticsearch/config/searchguard -icl -nhnv -ts /usr/share/elasticsearch/config/searchguard-ssl/truststore.p12 -tspass changeit -ks /usr/share/elasticsearch/config/searchguard-ssl/admin_keystore.p12 -kspass changeit -tst PKCS12
   register: searchguard_config
   retries: 10
   delay: 10
