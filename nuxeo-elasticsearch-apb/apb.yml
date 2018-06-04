@@ -62,7 +62,7 @@ plans:
       - title: Client Pods resource requests and limits
         name: client_resources
         required: true
-        default: '{limits: {cpu: 500m, memory: 1Gi}, requests: {cpu: 1, memory: 2Gi}}'
+        default: "{limits: {cpu: 1, memory: 3Gi}, requests: {cpu: 500m, memory: 2Gi}}"
         display_type: textarea
         display_group: Container Specs
         type: string
@@ -80,7 +80,7 @@ plans:
       - title: Master Pods resource requests and limits
         name: master_resources
         required: true
-        default: '{limits: {cpu: 500m, memory: 1Gi}, requests: {cpu: 1, memory: 2Gi}}'
+        default: "{limits: {cpu: 1, memory: 3Gi}, requests: {cpu: 500m, memory: 2Gi}}"
         display_type: textarea
         display_group: Container Specs
         type: string
@@ -108,7 +108,7 @@ plans:
       - title: Data Pods resource requests and limits
         name: data_resources
         required: true
-        default: '{limits: {cpu: 500m, memory: 1Gi}, requests: {cpu: 1, memory: 2Gi}}'
+        default: "{limits: {cpu: 1, memory: 3Gi}, requests: {cpu: 500m, memory: 2Gi}}"
         display_type: textarea
         display_group: Container Specs
         type: string
@@ -149,7 +149,7 @@ plans:
         name: cluster_name
         type: string
       - name: image_repository
-        default: 'nuxeo/elasticsearch-sg:5.6.9'
+        default: 'nuxeo/elasticsearch-sg'
         type: string
         title: Elasticsearch image name
         display_group: Container Specs
@@ -177,7 +177,7 @@ plans:
       - title: Client Pods resource requests and limits
         name: client_resources
         required: true
-        default: '{limits: {cpu: 500m, memory: 1Gi}, requests: {cpu: 1, memory: 2Gi}}'
+        default: "{limits: {cpu: 1, memory: 3Gi}, requests: {cpu: 500m, memory: 2Gi}}"
         display_type: textarea
         display_group: Container Specs
         type: string
@@ -195,7 +195,7 @@ plans:
       - title: Master Pods resource requests and limits
         name: master_resources
         required: true
-        default: '{limits: {cpu: 500m, memory: 1Gi}, requests: {cpu: 1, memory: 2Gi}}'
+        default: "{limits: {cpu: 1, memory: 3Gi}, requests: {cpu: 500m, memory: 2Gi}}"
         display_type: textarea
         display_group: Container Specs
         type: string
@@ -223,7 +223,7 @@ plans:
       - title: Data Pods resource requests and limits
         name: data_resources
         required: true
-        default: '{limits: {cpu: 500m, memory: 1Gi}, requests: {cpu: 1, memory: 2Gi}}'
+        default: "{limits: {cpu: 1, memory: 3Gi}, requests: {cpu: 500m, memory: 2Gi}}"
         display_type: textarea
         display_group: Container Specs
         type: string
@@ -287,7 +287,7 @@ plans:
       - title: Pod resource requests and limits
         name: client_resources
         required: true
-        default: '{limits: {cpu: 500m, memory: 1Gi}, requests: {cpu: 1, memory: 2Gi}}'
+        default: "{limits: {cpu: 1, memory: 3Gi}, requests: {cpu: 500m, memory: 2Gi}}"
         display_type: textarea
         display_group: Container Specs
         type: string
