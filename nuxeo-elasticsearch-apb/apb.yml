@@ -28,7 +28,10 @@ plans:
   - name: default
     description: This plan deploys a guenine Elasticsearch cluster
     free: True
-    metadata: {}
+    metadata:
+      displayName: Elasticsearch cluster
+      longDescription: This plan deploys a guenine Elasticsearch cluster
+      cost: €0.00
     parameters:
       - title: Elasticsearch Cluster name
         name: cluster_name
@@ -133,7 +136,12 @@ plans:
         This plan deploys an Elasticsearch cluster with SearchGuard installed
         and configured.
     free: True
-    metadata: {}
+    metadata:
+      displayName: Elasticsearch secured cluster (SearchGuard)
+      longDescription: |
+        This plan deploys an Elasticsearch cluster with SearchGuard installed
+        and configured.
+      cost: €0.00
     parameters:
       - title: Elasticsearch user name
         name: elastic_user_name
@@ -258,7 +266,10 @@ plans:
         This plan deploys a single node Elasticsearch
         for development purpose.
     free: True
-    metadata: {}
+    metadata:
+      displayName: Elasticsearch single node
+      longDescription: This plan deploys a single Elasticsearch node for development purpose
+      cost: €0.00
     parameters:
       - title: Elasticsearch Cluster name
         name: cluster_name

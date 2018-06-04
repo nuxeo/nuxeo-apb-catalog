@@ -27,21 +27,15 @@ image_pullPolicy: IfNotPresent
 elastic_user_name: elastic
 cluster_name: nuxeo
 client_replica_count: 2
-client_java_opts: |
-  -Xmx2g
-  -Xms2g
+client_java_opts: -Xms2g -Xmx2g -Djava.net.preferIPv4Stack=true
 client_resources: "{limits: {cpu: 1, memory: 3Gi}, requests: {cpu: 500m, memory: 2Gi}}"
 master_replica_count: 3
-master_java_opts: |
-  -Xmx2g
-  -Xms2g
+master_java_opts: -Xms2g -Xmx2g -Djava.net.preferIPv4Stack=true
 master_resources: "{limits: {cpu: 1, memory: 3Gi}, requests: {cpu: 500m, memory: 2Gi}}"
 master_persistence_size: 4Gi
 master_persistence_storage_class_name: ''
 data_replica_count: 2
-data_java_opts: |
-  -Xmx2g
-  -Xms2g
+data_java_opts: -Xms2g -Xmx2g -Djava.net.preferIPv4Stack=true
 data_resources: "{limits: {cpu: 1, memory: 3Gi}, requests: {cpu: 500m, memory: 2Gi}}"
 data_persistence_size: 10Gi
 data_persistence_storage_class_name: ''
