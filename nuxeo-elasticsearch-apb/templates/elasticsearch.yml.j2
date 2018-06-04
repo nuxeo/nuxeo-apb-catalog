@@ -10,10 +10,12 @@ network.host: 0.0.0.0
 # see https://github.com/kubernetes/kubernetes/issues/3595
 bootstrap.memory_lock: ${BOOTSTRAP_MEMORY_LOCK:false}
 
+{% if cluster %}
 discovery:
   zen:
     ping.unicast.hosts: ${DISCOVERY_SERVICE}
     minimum_master_nodes: ${MINIMUM_MASTER_NODES:2}
+{% endif %}
 
 # see https://www.elastic.co/guide/en/x-pack/current/xpack-settings.html
 xpack.ml.enabled: ${XPACK_ML_ENABLED:false}

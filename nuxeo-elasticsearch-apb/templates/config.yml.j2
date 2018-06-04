@@ -12,8 +12,10 @@ metadata:
   namespace: {{ namespace }}
 data:
   elasticsearch.yml: |
-    {{ lookup('file', elsasticsearch_conf_path) | indent(4) }}
+    {{ lookup('file', elasticsearch_conf_path) | indent(4) }}
   log4j2.properties: |
     {{ lookup('file', '../files/log4j2.properties') | indent(4) }}
   pre-stop-hook.sh: |
     {{ lookup('file', '../files/pre-stop-hook.sh') | indent(4) }}
+  jvm.options: |
+    {{ lookup('file', jvm_options_path) | indent(4) }}

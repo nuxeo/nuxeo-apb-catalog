@@ -58,8 +58,7 @@ spec:
         - /bin/bash
         - -c
         - chown -R elasticsearch:elasticsearch /usr/share/elasticsearch/data &&
-          chown -R elasticsearch:elasticsearch /usr/share/elasticsearch/logs &&
-          chmod +x /usr/share/elasticsearch/plugins/search-guard-5/tools/*.sh
+          chown -R elasticsearch:elasticsearch /usr/share/elasticsearch/logs
         securityContext:
           runAsUser: 0
         volumeMounts:
@@ -94,6 +93,7 @@ spec:
       containers:
       - name: elasticsearch
         env:
+{% if cluster %}
         - name: DISCOVERY_SERVICE
           value: {{ service_master_name }}
         - name: KUBERNETES_MASTER
@@ -102,6 +102,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
+{% endif %}
         - name: CLUSTER_NAME
           value: "{{ cluster_name }}"
         - name: NODE_DATA
@@ -114,10 +115,10 @@ spec:
           valueFrom:
             resourceFieldRef:
               resource: limits.cpu
-        - name: ES_JAVA_OPTS
-          value: {{ java_opts }}
         - name: MINIMUM_MASTER_NODES
-          value: "2"
+          value: "{{ minimum_master_nodes | default("2") }}"
+        - name: EXPECTED_MASTER_NODES
+          value: "{{ expected_master_nodes | default("2") }}"
         resources:
 {% if resources is defined and (resources | from_yaml) %}
 {{ resources | from_yaml | to_nice_yaml(indent=2) | indent(12, true) }}
@@ -164,6 +165,9 @@ spec:
         - mountPath: /usr/share/elasticsearch/config/log4j2.properties
           name: config
           subPath: log4j2.properties
+        - mountPath: /usr/share/elasticsearch/config/jvm.options
+          name: config
+          subPath: jvm.options
 {% if use_searchguard%}
         - mountPath: /usr/share/elasticsearch/config/searchguard
           name: config-sg
