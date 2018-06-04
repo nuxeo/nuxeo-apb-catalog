@@ -72,14 +72,14 @@
       shell: kubectl create --filename=/tmp/master-config.yml
   when:
     - state == "present"
-    - cluster
+    - not singlenode
 
 
 - name: "Elasticsearch master config map state={{ state }}"
   shell: kubectl delete --ignore-not-found=true configmap {{ master_configmap_name }} -n {{ namespace }}
   when:
     - state == "absent"
-    - cluster
+    - not singlenode
 
 # Work-around k8s_raw inability to create ConfigMap directly
 - name: "Elasticsearch data config map state={{ state }}"
@@ -109,13 +109,13 @@
       shell: kubectl create --filename=/tmp/data-config.yml
   when:
     - state == "present"
-    - cluster
+    - not singlenode
 
 - name: "Elasticsearch data config map state={{ state }}"
   shell: kubectl delete --ignore-not-found=true configmap {{ data_configmap_name }} -n {{ namespace }}
   when:
     - state == "absent"
-    - cluster
+    - not singlenode
 
 
 
@@ -143,13 +143,13 @@
       shell: kubectl create --filename=/tmp/service-client.yml
   when:
     - state == "present"
-    - cluster
+    - not singlenode
 
 - name: "Elasticsearch Client service state={{ state }}"
   shell: kubectl delete --ignore-not-found=true service {{ service_client_name }} -n {{ namespace }}
   when:
     - state == "absent"
-    - cluster
+    - not singlenode
 
 # Work-around k8s_raw refusal to create service with clusterIP: None
 - name: "Elasticsearch Client service state={{ state }}"
@@ -173,13 +173,13 @@
       shell: kubectl create --filename=/tmp/service-client.yml
   when:
     - state == "present"
-    - not cluster
+    - singlenode
 
 - name: "Elasticsearch Client service state={{ state }}"
   shell: kubectl delete --ignore-not-found=true service {{ service_client_name }} -n {{ namespace }}
   when:
     - state == "absent"
-    - not cluster
+    - singlenode
 
 
 
@@ -202,13 +202,13 @@
       shell: kubectl create --filename=/tmp/service-master.yml
   when:
     - state == "present"
-    - cluster
+    - not singlenode
 
 - name: "Elasticsearch Master service state={{ state }}"
   shell: kubectl delete --ignore-not-found=true service {{ service_master_name }} -n {{ namespace }}
   when:
     - state == "absent"
-    - cluster
+    - not singlenode
 
 
 
@@ -255,13 +255,13 @@
       shell: kubectl create --filename=/tmp/statefulset-master.yml
   when:
     - state == "present"
-    - cluster
+    - not singlenode
 
 - name: "Elasticsearch master nodes statefulset state={{ state }}"
   shell: kubectl delete --ignore-not-found=true statefulset {{ statefulset_master_name }} -n {{ namespace }}
   when:
     - state == "absent"
-    - cluster
+    - not singlenode
 
 
 # Work-around k8s_raw inability to create StatefulSet directly
@@ -287,13 +287,13 @@
       shell: kubectl create --filename=/tmp/statefulset-data.yml
   when:
     - state == "present"
-    - cluster
+    - not singlenode
 
 - name: "Elasticsearch data nodes statefulset state={{ state }}"
   shell: kubectl delete --ignore-not-found=true statefulset {{ statefulset_data_name }} -n {{ namespace }}
   when:
     - state == "absent"
-    - cluster
+    - not singlenode
 
 
 # Work-around k8s_raw inability to create StatefulSet directly
@@ -317,7 +317,7 @@
       shell: kubectl create --filename=/tmp/statefulset-client.yml
   when:
     - state == "present"
-    - cluster
+    - not singlenode
 
 
 # Work-around k8s_raw inability to create StatefulSet directly
@@ -345,11 +345,12 @@
       shell: kubectl create --filename=/tmp/statefulset-client.yml
   when:
     - state == "present"
-    - not cluster
+    - singlenode
 
 - name: "Elasticsearch client nodes statefulset state={{ state }}"
   shell: kubectl delete --ignore-not-found=true statefulset {{ statefulset_client_name }} -n {{ namespace }}
-  when: state == "absent"
+  when:
+    - state == "absent"
 
 
 - name: Configure SearchGuard
@@ -389,6 +390,7 @@
       clustername: "{{ cluster_name }}"
       tls_cacert: "{{ tls_cacert_lookup | b64encode }}"
   when:
+    - in_cluster
     - state == "present"
     - use_searchguard
 
@@ -398,6 +400,7 @@
       uri: "http://{{ name }}.{{namespace}}.svc.cluster.local:9200"
       clustername: "{{ cluster_name }}"
   when:
+    - in_cluster
     - state == "present"
     - not use_searchguard
 

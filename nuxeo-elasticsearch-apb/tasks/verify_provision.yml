@@ -22,11 +22,11 @@
     - master_configmap_lookup
     - sg_configmap_lookup or not use_searchguard
     - service_client_lookup
-    - service_master_lookup or not cluster
+    - singlenode or service_master_lookup
     - elasticsearch_serviceaccount_lookup
-    - statefulset_data_lookup or not cluster
+    - singlenode or statefulset_data_lookup
     - statefulset_client_lookup
-    - statefulset_master_lookup or not cluster
+    - singlenode or statefulset_master_lookup
 
 
 - name: "Wait for master statefulset to become ready"
@@ -36,7 +36,7 @@
   delay: 10
   until:
     - statefulset_master_query
-  when: cluster
+  when: not singlenode
 
 - name: "Wait for data statefulset to become ready"
   debug:
@@ -45,7 +45,7 @@
   delay: 10
   until:
     - statefulset_data_query
-  when: cluster
+  when: not singlenode
 
 - name: "Wait for client statefulset to become ready"
   debug:
