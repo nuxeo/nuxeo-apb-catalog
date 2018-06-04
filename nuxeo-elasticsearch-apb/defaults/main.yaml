@@ -1,8 +1,6 @@
 ---
 apb_name: elasticsearch
 
-cluster: openshift
-
 default_debug: True
 bootstrap_debug_enabled: False
 

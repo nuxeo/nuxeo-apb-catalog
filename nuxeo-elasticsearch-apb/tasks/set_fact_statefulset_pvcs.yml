@@ -6,12 +6,12 @@
     - "{{ statefulset_data_name }}"
   loop_control:
     loop_var: statefulset_name
-  when: cluster
+  when: not singlenode
 
 - name: "set fact statefulset persistentvolumeclaims"
   include_tasks: set_fact_statefulset_pvc.yml
   vars:
     statefulset_name: "{{ statefulset_client_name }}"
-  when: not cluster
+  when: singlenode
 
 
