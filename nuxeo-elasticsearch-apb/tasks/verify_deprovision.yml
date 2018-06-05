@@ -9,7 +9,6 @@
     sg_config: "{{ sg_configmap_lookup }}"
     service_client: "{{ service_client_lookup }}"
     service_master: "{{ service_master_lookup }}"
-    service_account: "{{ elasticsearch_serviceaccount_lookup }}"
     statefulset_data: "{{ statefulset_data_lookup }}"
     statefulset_client: "{{ statefulset_client_lookup }}"
     statefulset_master: "{{ statefulset_master_lookup }}"
@@ -23,7 +22,6 @@
     - not ( sg_configmap_lookup and use_searchguard )
     - not service_client_lookup
     - not (cluster and service_master_lookup)
-    - not elasticsearch_serviceaccount_lookup
     - not (cluster and statefulset_data_lookup)
     - not statefulset_client_lookup
     - not (cluster and statefulset_master_lookup)
