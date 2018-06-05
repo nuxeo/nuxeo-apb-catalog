@@ -227,9 +227,6 @@ ZXJtaW5hdGlvbl9ncmFjZV9wZXJpb2QKICAgICAgICBkZWZhdWx0OiAiMzYwMCIKICAgICAgICB0\
 eXBlOiBzdHJpbmcKICAgICAgICByZXF1aXJlZDogdHJ1ZQo="
 
 
-# Needed for keytool
-RUN yum install -y java-1.8.0-openjdk httpd-tools
-
 ADD playbooks /opt/apb/actions
 
 # Add our role into the ansible roles dir
