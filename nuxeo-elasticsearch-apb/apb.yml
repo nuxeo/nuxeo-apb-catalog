@@ -25,8 +25,8 @@ metadata:
   imageUrl: "https://www.elastic.co/static/images/elastic-logo-200.png"
 
 plans:
-  - name: default
-    description: This plan deploys a guenine Elasticsearch cluster
+  - name: clustered
+    description: This plan deploys a clustered Elasticsearch
     bindable: True
     free: True
     metadata:
@@ -37,109 +37,122 @@ plans:
       - title: Elasticsearch Cluster name
         name: cluster_name
         type: string
+        default: nuxeo
+        display_group: Elasticsearch config
       - name: image_repository
         default: 'docker.elastic.co/elasticsearch/elasticsearch'
         type: string
         title: Elasticsearch image name
-        display_group: Container Specs
+        display_group: Elasticsearch config
       - name: image_tag
         default: '5.6.9'
         type: string
         title: Elasticsearch Image tag
-        display_group: Container Specs
+        display_group: Elasticsearch config
       - name: image_pullPolicy
         default: 'IfNotPresent'
         type: enum
         enum: ['IfNotPresent', 'Always', 'Never']
         title: Elasticsearch image pull policy
-        display_group: Container Specs
+        display_group: Elasticsearch config
+
       - title: The client replica count
         name: client_replica_count
         default: "2"
         type: string
+        display_group: Client pool Config
         required: true
       - title: The client JAVA_OPTS (Heap defaults to half of the CGroup available memory)
         name: client_java_opts
         default: -Xms2g -Xmx2g -Djava.net.preferIPv4Stack=true
         type: string
+        display_group: Client pool Config
         required: true
       - title: Client Pods resource requests and limits
         name: client_resources
         required: true
         default: "{limits: {cpu: 1, memory: 3Gi}, requests: {cpu: 500m, memory: 2Gi}}"
         display_type: textarea
-        display_group: Container Specs
+        display_group: Client pool Config
         type: string
 
       - title: The master replica count
         name: master_replica_count
         default: "3"
         type: string
+        display_group: Master pool Config
         required: true
       - title: The master JAVA_OPTS (Heap defaults to half of the CGroup available memory)
         name: master_java_opts
         default: -Xms2g -Xmx2g -Djava.net.preferIPv4Stack=true
         type: string
+        display_group: Master pool Config
         required: true
       - title: Master Pods resource requests and limits
         name: master_resources
         required: true
         default: "{limits: {cpu: 1, memory: 3Gi}, requests: {cpu: 500m, memory: 2Gi}}"
         display_type: textarea
-        display_group: Container Specs
+        display_group: Master pool Config
         type: string
       - title: Size of persistent storage for the master node
         name: master_persistence_size
         default: 4Gi
         type: string
+        display_group: Master pool Config
         required: true
       - title: Persistent storage class name for the master node
         name: master_persistence_storage_class_name
         type: string
+        display_group: Master pool Config
         required: false
 
       - title: The data node replica count
         name: data_replica_count
         default: "3"
         type: string
+        display_group: Data pool Config
         required: true
-
       - title: The data JAVA_OPTS (Heap defaults to half of the CGroup available memory)
         name: data_java_opts
         default: -Xms2g -Xmx2g -Djava.net.preferIPv4Stack=true
         type: string
         required: true
+        display_group: Data pool Config
       - title: Data Pods resource requests and limits
         name: data_resources
         required: true
         default: "{limits: {cpu: 1, memory: 3Gi}, requests: {cpu: 500m, memory: 2Gi}}"
         display_type: textarea
-        display_group: Container Specs
+        display_group: Data pool Config
         type: string
       - title: Size of persistent storage for the data node
         name: data_persistence_size
         default: 10Gi
         type: string
+        display_group: Data pool Config
         required: true
       - title: Persistent storage class name for the data node
         name: data_persistence_storage_class_name
         default: ""
         type: string
+        display_group: Data pool Config
         required: false
       - title: Termination Grace Period in seconds for the data node
         name: data_termination_grace_period
         default: "3600"
         type: string
+        display_group: Data pool Config
         required: true
 
-  - name: secured
+  - name: clustered-secured
     description: |
         This plan deploys an Elasticsearch cluster with SearchGuard installed
         and configured.
     free: True
     bindable: True
     metadata:
-      displayName: Elasticsearch secured cluster (SearchGuard)
+      displayName: Elasticsearch cluster secured with SearchGuard
       longDescription: |
         This plan deploys an Elasticsearch cluster with SearchGuard installed
         and configured.
@@ -147,114 +160,130 @@ plans:
     parameters:
       - title: Elasticsearch Cluster name
         name: cluster_name
+        default: nuxeo
         type: string
-      - title: Elasticsearch user name
-        name: elastic_user_name
-        required: true
-        default: "elastic"
-        type: string
-      - title: Elasticsearch user password
-        name: elastic_user_password
-        type: string
-        pattern: "^[a-zA-Z0-9_.-]*$"
-        display_type: password
-      - title: Elasticsearch Cluster name
-        name: cluster_name
-        type: string
+        display_group: Elasticsearch config
+
       - name: image_repository
         default: 'nuxeo/elasticsearch-sg'
         type: string
         title: Elasticsearch image name
-        display_group: Container Specs
+        display_group: Elasticsearch config
       - name: image_tag
         default: '5.6.9'
         type: string
         title: Elasticsearch Image tag
-        display_group: Container Specs
+        display_group: Elasticsearch config
       - name: image_pullPolicy
         default: 'IfNotPresent'
         type: enum
         enum: ['IfNotPresent', 'Always', 'Never']
         title: Elasticsearch image pull policy
-        display_group: Container Specs
+        display_group: Elasticsearch config
+
+
       - title: The client replica count
         name: client_replica_count
         default: "2"
         type: string
         required: true
+        display_group: Client pool config
       - title: The client JAVA_OPTS (Heap defaults to half of the CGroup available memory)
         name: client_java_opts
         default: -Xms2g -Xmx2g -Djava.net.preferIPv4Stack=true
         type: string
+        display_group: Client pool config
         required: true
       - title: Client Pods resource requests and limits
         name: client_resources
         required: true
         default: "{limits: {cpu: 1, memory: 3Gi}, requests: {cpu: 500m, memory: 2Gi}}"
         display_type: textarea
-        display_group: Container Specs
+        display_group: Client pool config
         type: string
 
       - title: The master replica count
         name: master_replica_count
         default: "3"
         type: string
+        display_group: Master pool config
         required: true
       - title: The master JAVA_OPTS (Heap defaults to half of the CGroup available memory)
         name: master_java_opts
         default: -Xms2g -Xmx2g -Djava.net.preferIPv4Stack=true
         type: string
+        display_group: Master pool config
         required: true
       - title: Master Pods resource requests and limits
         name: master_resources
         required: true
         default: "{limits: {cpu: 1, memory: 3Gi}, requests: {cpu: 500m, memory: 2Gi}}"
         display_type: textarea
-        display_group: Container Specs
+        display_group: Master pool config
         type: string
       - title: Size of persistent storage for the master node
         name: master_persistence_size
         default: 4Gi
         type: string
+        display_group: Master pool config
         required: true
       - title: Persistent storage class name for the master node
         name: master_persistence_storage_class_name
         type: string
+        display_group: Master pool config
         required: false
 
       - title: The data node replica count
         name: data_replica_count
         default: "3"
         type: string
+        display_group: Data pool config
         required: true
 
       - title: The data JAVA_OPTS (Heap defaults to half of the CGroup available memory)
         name: data_java_opts
         default: -Xms2g -Xmx2g -Djava.net.preferIPv4Stack=true
         type: string
+        display_group: Data pool config
         required: true
       - title: Data Pods resource requests and limits
         name: data_resources
         required: true
         default: "{limits: {cpu: 1, memory: 3Gi}, requests: {cpu: 500m, memory: 2Gi}}"
         display_type: textarea
-        display_group: Container Specs
+        display_group: Data pool config
         type: string
       - title: Size of persistent storage for the data node
         name: data_persistence_size
         default: 10Gi
         type: string
+        display_group: Data pool config
         required: true
       - title: Persistent storage class name for the data node
         name: data_persistence_storage_class_name
         default: ""
         type: string
+        display_group: Data pool config
         required: false
       - title: Termination Grace Period in seconds for the data node
         name: data_termination_grace_period
         default: "3600"
         type: string
+        display_group: Data pool config
         required: true
+
+      - title: Elasticsearch user name
+        name: elastic_user_name
+        required: true
+        default: "elastic"
+        display_group: ElasticSearch Security Config
+        type: string
+      - title: Elasticsearch user password (generated if empty)
+        name: elastic_user_password
+        type: string
+        pattern: "^[a-zA-Z0-9_.-]*$"
+        display_group: ElasticSearch Security Config
+        display_type: password
       - name: tls_casubjectDistinguishedNameSuffix
         default: '/OU=engineering/O=nuxeo/L=irvine/ST=ca/C=us'
         type: string
@@ -264,11 +293,12 @@ plans:
         title: Certificate validity period in days
         default: 3650
         type: string
+        display_group: ElasticSearch Security Config
         required: true
 
-  - name: singlenode
+  - name: nonclustered
     description: |
-        This plan deploys a single node Elasticsearch
+        This plan deploys a non clustered Elasticsearch
         for development purpose.
     free: True
     bindable: True
