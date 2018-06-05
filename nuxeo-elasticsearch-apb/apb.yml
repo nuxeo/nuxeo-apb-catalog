@@ -145,7 +145,7 @@ plans:
         display_group: Data pool Config
         required: true
 
-  - name: clustered-secured
+  - name: secure-clustered
     description: |
         This plan deploys an Elasticsearch cluster with SearchGuard installed
         and configured.

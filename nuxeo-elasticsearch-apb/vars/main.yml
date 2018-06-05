@@ -30,7 +30,7 @@ pod_name: "{{ lookup('env', 'POD_NAME') }}"
 pod_namespace: "{{ lookup('env', 'POD_NAMESPACE') }}"
 in_cluster: "{{ True if (pod_name and pod_namespace) else False }}"
 
-use_searchguard: "{{ True if (_apb_plan_id == 'secured') else False }}"
+use_searchguard: "{{ True if (_apb_plan_id == 'secure-clustered') else False }}"
 singlenode: "{{ True if (_apb_plan_id == 'nonclustered') else False }}"
 clustered: "{{ False if (_apb_plan_id == 'nonclustered') else True }}"
 
