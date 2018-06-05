@@ -225,11 +225,15 @@
     - name: "Create Service Account"
       shell: kubectl create --filename=/tmp/serviceaccount.yml -n {{ namespace }}
 
-  when: state == "present"
+  when:
+    - state == "present"
+    - not elasticsearch_serviceaccount_lookup
 
-- name: "Elasticsearch Service Account state={{ state }}"
-  shell: kubectl delete --ignore-not-found=true serviceaccount {{ elasticsearch_serviceaccount_name }} -n {{ namespace }}
-  when: state == "absent"
+# We do not delete the ES service account as a special SCC has to be positioned on
+# it and it must be done manually by an admin.
+# - name: "Elasticsearch Service Account state={{ state }}"
+#   shell: kubectl delete --ignore-not-found=true serviceaccount {{ elasticsearch_serviceaccount_name }} -n {{ namespace }}
+#   when: state == "absent"
 
 - name: "set fact statefulset pvcs state={{ state }}"
   include_tasks: "set_fact_statefulset_pvcs.yml"
