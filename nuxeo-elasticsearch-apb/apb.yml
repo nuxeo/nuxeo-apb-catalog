@@ -1,7 +1,7 @@
 ---
 version: 1.0
 name: nuxeo-elasticsearch-apb
-description: Elasticsearch is a distributed, RESTful search and analytics engine
+description: Elasticsearch is a distributed RESTful search and analytics engine
 bindable: "True"
 async: optional
 tags:
