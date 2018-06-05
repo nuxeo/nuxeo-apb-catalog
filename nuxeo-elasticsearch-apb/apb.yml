@@ -2,7 +2,7 @@
 version: 1.0
 name: nuxeo-elasticsearch-apb
 description: Elasticsearch is a distributed RESTful search and analytics engine
-bindable: "True"
+bindable: True
 async: optional
 tags:
   - database
@@ -27,6 +27,7 @@ metadata:
 plans:
   - name: default
     description: This plan deploys a guenine Elasticsearch cluster
+    bindable: True
     free: True
     metadata:
       displayName: Elasticsearch cluster
@@ -136,6 +137,7 @@ plans:
         This plan deploys an Elasticsearch cluster with SearchGuard installed
         and configured.
     free: True
+    bindable: True
     metadata:
       displayName: Elasticsearch secured cluster (SearchGuard)
       longDescription: |
@@ -143,6 +145,9 @@ plans:
         and configured.
       cost: €0.00
     parameters:
+      - title: Elasticsearch Cluster name
+        name: cluster_name
+        type: string
       - title: Elasticsearch user name
         name: elastic_user_name
         required: true
@@ -253,8 +258,8 @@ plans:
       - name: tls_casubjectDistinguishedNameSuffix
         default: '/OU=engineering/O=nuxeo/L=irvine/ST=ca/C=us'
         type: string
-        title: Certificate Authority Subject Distinguished Name for the MongoDB cluster in single string format
-        display_group: MongoDB Security Config
+        title: Certificate Authority Subject Distinguished Name for the ElasticSearch cluster in single string format
+        display_group: ElasticSearch Security Config
       - name: certificate_validity
         title: Certificate validity period in days
         default: 3650
@@ -266,6 +271,7 @@ plans:
         This plan deploys a single node Elasticsearch
         for development purpose.
     free: True
+    bindable: True
     metadata:
       displayName: Elasticsearch single node
       longDescription: This plan deploys a single Elasticsearch node for development purpose
