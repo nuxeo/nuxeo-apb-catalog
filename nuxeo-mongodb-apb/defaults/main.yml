@@ -6,8 +6,6 @@ _apb_plan_id: secure-replicaset
 _apb_service_class_id: 0
 _apb_service_instance_id: 0
 
-cluster: kubernetes
-
 app_name: "nuxeo-mongodb-{{ _apb_service_instance_id }}"
 namespace: "{{ lookup('env','NAMESPACE') | default('nuxeo', true) }}"
 

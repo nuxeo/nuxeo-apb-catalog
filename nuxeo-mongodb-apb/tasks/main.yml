@@ -9,6 +9,15 @@
     description: "0%: Starting"
   when: in_cluster
 
+- name: 'Determine cluster type'
+  command: oc version
+  register: oc_version
+  ignore_errors: yes
+
+- name: 'Set Facts'
+  set_fact:
+    cluster: "{{ 'openshift' if 'openshift' in oc_version.stdout else 'kubernetes' }}"
+
 - name: "Create the CA certificate and key"
   command: >
     openssl req -newkey rsa:2048 -new -x509 -days 365 -nodes
@@ -179,7 +188,7 @@
     fields:
       uri: "{{ service_uri }}"
       tls_cacert: "{{ tls_cacert_lookup | b64encode }}"
-  when: state == 'present'
+  when: in_cluster and state == 'present'
 
 - name: "Update last operation"
   asb_last_operation:
