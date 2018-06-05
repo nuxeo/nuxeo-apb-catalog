@@ -1,0 +1,20 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  labels:
+    app: {{ zookeeper_name }}
+    apb_name: '{{ apb_name }}'
+    apb_plan_id: '{{ _apb_plan_id }}'
+    apb_service_class_id: '{{ _apb_service_class_id }}'
+    apb_service_instance_id: '{{ _apb_service_instance_id }}'
+    component: {{ zookeeper_component }}
+  name: {{ zookeeper_name }}
+  namespace: {{ namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ zookeeper_name }}
+      component: {{ zookeeper_component }}
+{% if zookeeper_podDisruptionBudget is defined and (zookeeper_podDisruptionBudget | from_yaml) %}
+{{ zookeeper_podDisruptionBudget | from_yaml | to_nice_yaml(indent=2) | indent(2, true) }}
+{% endif %}

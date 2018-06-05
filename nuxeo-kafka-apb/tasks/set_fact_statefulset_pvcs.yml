@@ -1,0 +1,32 @@
+---
+
+- name: "set fact statefulset persistentvolumeclaims"
+  block:
+  - name: "Register statefulset json cmd"
+    shell: kubectl get statefulset {{ name }} -o json
+    register: sts_cmd
+    failed_when: sts_cmd.rc >= 2
+
+  - name: "Set Fact statefulset json"
+    set_fact:
+      sts_json: "{{ sts_cmd.stdout | from_json }}"
+    when: sts_cmd.rc != 1
+
+  - name: "Set Fact statefulset replicas sequence"
+    set_fact:
+      sts_status_replicas_list: "{{ sts_status_replicas_list }} + [ '{{ item }}' ]"
+    with_sequence: "{{ 'start=0 end=' + ([((sts_status_replicas | int) - 1), 0] | max | string) }}"
+    when: sts_json is defined
+
+  - name: "Set Fact statefulset persistentvolumeclaims"
+    set_fact:
+      statefulset_pvcs: "{{ statefulset_pvcs }} + [ '{{ item.0 + '-' + name + '-' + item.1 }}' ]"
+    with_nested:
+      - "{{ sts_spec_volume_claim_templates }}"
+      - "{{ sts_status_replicas_list }}"
+    when: sts_json is defined
+
+  vars:
+    sts_status_replicas_list: []
+    sts_status_replicas: "{{ ('0' | int) if sts_json is undefined else sts_json | json_query('status.replicas') | int }}"
+    sts_spec_volume_claim_templates: "{{ '' if sts_json is undefined else sts_json | json_query('spec.volumeClaimTemplates[*].metadata.name') }}"

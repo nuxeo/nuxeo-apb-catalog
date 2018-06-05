@@ -1,0 +1,20 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  labels:
+    app: {{ name }}
+    apb_name: '{{ apb_name }}'
+    apb_plan_id: '{{ _apb_plan_id }}'
+    apb_service_class_id: '{{ _apb_service_class_id }}'
+    apb_service_instance_id: '{{ _apb_service_instance_id }}'
+    component: {{ component }}
+  name: {{ name }}
+  namespace: {{ namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ name }}
+      component: {{ component }}
+{% if podDisruptionBudget is defined and (podDisruptionBudget | from_yaml) %}
+{{ podDisruptionBudget | from_yaml | to_nice_yaml(indent=2) | indent(2, true) }}
+{% endif %}

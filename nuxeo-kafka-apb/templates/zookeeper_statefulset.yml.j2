@@ -1,0 +1,152 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: {{ zookeeper_name }}
+    apb_name: '{{ apb_name }}'
+    apb_plan_id: '{{ _apb_plan_id }}'
+    apb_service_class_id: '{{ _apb_service_class_id }}'
+    apb_service_instance_id: '{{ _apb_service_instance_id }}'
+    component: {{ zookeeper_component }}
+  name: {{ zookeeper_name }}
+  namespace: {{ namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ zookeeper_name }}
+      component: {{ zookeeper_component }}
+  serviceName: {{ zookeeper_name }}-headless
+  replicas: {{ zookeeper_replicas }}
+
+  updateStrategy:
+    type: {{ zookeeper_updateStrategy_type }}
+  template:
+    metadata:
+      labels:
+        app: {{ zookeeper_name }}
+        component: {{ zookeeper_component }}
+{% if zookeeper_podLabels is defined and (zookeeper_podLabels | from_yaml) %}
+{{ zookeeper_podLabels | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
+{% endif %}
+{% if zookeeper_podAnnotations is defined and (zookeeper_podAnnotations | from_yaml) %}
+      annotations:
+{{ zookeeper_podAnnotations | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
+{% endif %}
+    spec:
+      terminationGracePeriodSeconds: {{ zookeeper_terminationGracePeriodSeconds }}
+{% if zookeeper_securityContext is defined and (zookeeper_securityContext | from_yaml) %}
+      securityContext:
+{{ zookeeper_securityContext | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
+{% endif %}
+      containers:
+        - name: {{ apb_name }}
+          image: "{{ zookeeper_image_repository }}:{{ zookeeper_image_tag }}"
+          imagePullPolicy: "{{ image_pullPolicy }}"
+          ports:
+            - name: client
+              containerPort: {{ zookeeper_ports_client_containerPort }}
+            - name: election
+              containerPort: {{ zookeeper_ports_election_containerPort }}
+            - name: server
+              containerPort: {{ zookeeper_ports_server_containerPort }}
+{% if resources is defined and (resources | from_yaml) %}
+{{ resources | from_yaml | to_nice_yaml(indent=2) | indent(12, true) }}
+{% endif %}
+          env:
+          - name : ZOOKEEPER_SERVER_COUNT
+            value: '{{ zookeeper_replicas }}'
+          - name : ZOOKEEPER_HEAP_SIZE
+            value: '{{ zookeeper_env_heap_size }}'
+          - name : ZOOKEEPER_TICK_TIME
+            value: '{{ zookeeper_env_tick_time }}'
+          - name : ZOOKEEPER_INIT_LIMIT
+            value: '{{ zookeeper_env_init_limit }}'
+          - name : ZOOKEEPER_SYNC_LIMIT
+            value: '{{ zookeeper_env_sync_limit}}'
+          - name : ZOOKEEPER_MAX_CLIENT_CNXNS
+            value: '{{ zookeeper_env_max_client_cnxns }}'
+          - name : ZOOKEEPER_SNAP_RETAIN_COUNT
+            value: '{{ zookeeper_env_snap_retain_count }}'
+          - name : ZOOKEEPER_PURGE_INTERVAL
+            value: '{{ zookeeper_env_purge_interval }}'
+          - name : ZOOKEEPER_LOG_LEVEL
+            value: '{{ zookeeper_env_log_level }}'
+          - name : ZOOKEEPER_CLIENT_PORT
+            value: '{{ zookeeper_ports_client_containerPort }}'
+          - name : ZOOKEEPER_SERVER_PORT
+            value: '{{ zookeeper_ports_server_containerPort }}'
+          - name : ZOOKEEPER_ELECTION_PORT
+            value: '{{ zookeeper_ports_election_containerPort}}'
+{% if zookeeper_extraVars is defined and (zookeeper_extraVars | from_yaml) %}
+{{ zookeeper_extraVars | from_yaml | to_nice_yaml(indent=2) | indent(12, true) }}
+{% endif %}
+          command:
+          - /bin/bash
+          - -exc
+          - |
+            export ZOOKEEPER_SERVER_ID=$((${HOSTNAME##*-}+1)) && \
+            export ZOOKEEPER_SERVERS=$(DOMAIN=`hostname -d`; \
+                for ((i=0; i<$ZOOKEEPER_SERVER_COUNT; i++)); do \
+                    echo -n "{{ zookeeper_name }}-$i.$DOMAIN:$ZOOKEEPER_SERVER_PORT:$ZOOKEEPER_ELECTION_PORT;"; \
+                done| sed 's/;$//') && \
+            /etc/confluent/docker/run
+          livenessProbe:
+            exec:
+              command:
+              - sh
+              - -c
+              - 'echo "ruok" | nc -w 2 -q 2 localhost {{ zookeeper_ports_client_containerPort }} | grep imok'
+            initialDelaySeconds: {{ zookeeper_livenessProbe_initialDelaySeconds }}
+            timeoutSeconds: {{ zookeeper_livenessProbe_timeoutSeconds }}
+            failureThreshold: {{ zookeeper_livenessProbe_failureThreshold }}
+            periodSeconds: {{ zookeeper_livenessProbe_periodSeconds }}
+            successThreshold: {{ zookeeper_livenessProbe_successThreshold }}
+          readinessProbe:
+            exec:
+              command:
+              - sh
+              - -c
+              - 'echo "ruok" | nc -w 2 -q 2 localhost {{ zookeeper_ports_client_containerPort }} | grep imok'
+            initialDelaySeconds: {{ zookeeper_readinessProbe_initialDelaySeconds }}
+            timeoutSeconds: {{ zookeeper_readinessProbe_timeoutSeconds }}
+            failureThreshold: {{ zookeeper_readinessProbe_failureThreshold }}
+            periodSeconds: {{ zookeeper_readinessProbe_periodSeconds }}
+            successThreshold: {{ zookeeper_readinessProbe_successThreshold }}
+
+
+          volumeMounts:
+            - name: datadir
+              mountPath: /var/lib/zookeeper
+{% if zookeeper_nodeSelector is defined and (zookeeper_nodeSelector | from_yaml) %}
+      nodeSelector:
+{{ zookeeper_nodeSelector | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
+{% endif %}
+{% if zookeeper_affinity is defined and (zookeeper_affinity | from_yaml) %}
+      affinity:
+{{ zookeeper_affinity | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
+{% endif %}
+{% if zookeeper_tolerations is defined and (zookeeper_tolerations | from_yaml) %}
+      tolerations:
+{{ zookeeper_tolerations | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
+{% endif %}
+      volumes:
+  volumeClaimTemplates:
+    - metadata:
+        name: datadir
+{% if zookeeper_persistentVolume_annotations is defined and (zookeeper_persistentVolume_annotations | from_yaml) %}
+        annotations:
+{{ zookeeper_persistentVolume_annotations | from_yaml | to_nice_yaml(indent=2) | indent(12, true) }}
+{% endif %}
+      spec:
+        accessModes:
+          - {{ zookeeper_persistentVolume_accessMode }}
+        resources:
+          requests:
+            storage: {{ zookeeper_persistentVolume_size | quote }}
+{% if zookeeper_persistentVolume_storageClass is defined and (zookeeper_persistentVolume_storageClass | trim | length) > 0 %}
+{% if '-' == zookeeper_persistentVolume_storageClass %}
+        storageClassName: ""
+{% else %}
+        storageClassName: "{{ zookeeper_persistentVolume_storageClass }}"
+{% endif %}
+{% endif %}

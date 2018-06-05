@@ -1,0 +1,724 @@
+---
+version: 1.0
+name: nuxeo-kafka-apb
+description:
+  Apache Kafka is publish-subscribe messaging rethought as a distributed commit log
+bindable: "True"
+async: optional
+tags:
+  - kafka
+  - kafka statefulset
+  - zookeeper
+  - nuxeo
+metadata:
+  displayName: Nuxeo Kafka (APB)
+  longDescription:
+    Apache Kafka is publish-subscribe messaging rethought as a distributed commit log.
+    This APB covers a cluster deployment without security and a cluster deployment secured with
+    TLS encryption, SSL broker authentication, and PLAIN client authentication
+  dependencies:
+    - "docker.io/confluentinc/cp-kafka:4.1.1"
+    - "docker.io/lwolf/kubectl_deployer:0.4"
+    - "docker.io/confluentinc/cp-zookeeper:4.1.1"
+  providerDisplayName: "Nuxeo"
+  documentationUrl: "https://github.com/nuxeo-sandbox/nuxeo-apb-catalog/nuxeo-kafka-apb/README.md"
+  imageUrl: "https://kafka.apache.org/images/apache-kafka.png"
+plans:
+  - name: cluster
+    description: Cluster Kafka deployment without security
+    free: True
+    metadata:
+      displayName: Cluster Deployment without security
+      longDescription: This plan deploys a Kafka cluster without security
+      cost: €0.00
+    parameters:
+
+      # Kafka parameters
+      - name: replicas
+        default: '3'
+        type: number
+        title: Number of replicas in the cluster
+        display_group: Container Specs
+      - name: podDisruptionBudget
+        default: '{}'
+        # default: '{minAvailable: 2}'
+        type: string
+        title: Pod disruption budget
+        display_type: textarea
+        display_group: Container Specs
+      - name: additionalPorts
+        default: '{}'
+        type: string
+        title: A collection of additional ports to expose on brokers (formatted as normal containerPort yaml)
+        display_type: textarea
+        display_group: Container Specs
+      - name: image_repository
+        default: 'confluentinc/cp-kafka'
+        type: string
+        title: Kafka image name
+        display_group: Container Specs
+      - name: image_tag
+        default: '4.1.1'
+        type: string
+        title: Kafka image tag
+        display_group: Container Specs
+      - name: image_pullPolicy
+        default: 'IfNotPresent'
+        type: string
+        title: Kafka image pull policy
+        display_group: Container Specs
+      - name: podAnnotations
+        default: '{}'
+        type: string
+        title: Annotations to be added to Kafka pods
+        display_type: textarea
+        display_group: Container Specs
+      - name: securityContext
+        default: '{}'
+        type: string
+        title: Security context for the pod
+        display_type: textarea
+        display_group: Container Specs
+      - name: resources
+        default: '{}'
+        # default: '{limits: {cpu: 200m, memory: 1536Mi}, requests: {cpu: 100m, memory: 1024Mi}}'
+        type: string
+        title: Pod resource requests and limits
+        display_type: textarea
+        display_group: Container Specs
+      - name: kafkaHeapOptions
+        default: '-Xmx1G -Xms1G'
+        type: string
+        title: Kafka heap options
+        display_group: Container Specs
+      - name: updateStrategy_type
+        default: 'OnDelete'
+        type: enum
+        enum: ['OnDelete', 'RollingUpdate']
+        title: The StatefulSet Update Strategy which Kafka will use when changes are applied
+        display_group: Container Specs
+      - name: podManagementPolicy
+        default: 'OrderedReady'
+        type: enum
+        enum: ['OrderedReady', 'Parallel']
+        title: Start and stop pods in Parallel or OrderedReady (one-by-one.)  Note - Can not change after first release
+        display_group: Container Specs
+      - name: logSubPath
+        type: string
+        title: "The subpath within the Kafka container's PV where logs will be stored. This is combined with `persistentVolume_mountPath`, to create, by default: /opt/kafka/data/logs"
+        display_group: Container Specs
+      - name: persistentVolume_mountPath
+        type: string
+        title: The location within the Kafka container where the PV will mount its storage and Kafka will store its logs
+        display_group: Container Specs
+      - name: persistentVolume_storageClass
+        type: string
+        title: Persistent volume storage class
+        display_group: Container Specs
+      - name: persistentVolume_accessMode
+        default: 'ReadWriteOnce'
+        type: enum
+        enum: ['ReadWriteOnce', 'ReadWriteMany']
+        title: Persistent volume access mode
+        display_type: select
+        display_group: Container Specs
+      - name: persistentVolume_size
+        default: '10Gi'
+        type: string
+        title: Persistent volume size in Gi
+        display_group: Container Specs
+      - name: persistentVolume_annotations
+        default: '{}'
+        type: string
+        title: Persistent volume annotations
+        display_type: textarea
+        display_group: Container Specs
+      - name: nodeSelector
+        default: '{}'
+        type: string
+        title: Node labels for pod assignment
+        display_group: Kafka Config
+      - name: affinity
+        default: '{}'
+        type: string
+        title: Node/pod affinities
+        display_group: Kafka Config
+      - name: tolerations
+        default: '{}'
+        type: string
+        title: List of node taints to tolerate
+        display_group: Kafka Config
+      - name: external_enabled
+        default: false
+        required: true
+        type: boolean
+        title: Enable external access
+        display_group: Kafka Config
+      - name: external_servicePort
+        default: '19092'
+        type: number
+        title: External access service port
+        display_group: Container Specs
+      - name: external_firstListenerPort
+        default: '31090'
+        type: number
+        title: External access first listener port
+        display_group: Container Specs
+      - name: external_domain
+        default: 'cluster.local'
+        type: string
+        title: External domain
+        display_group: Kafka Config
+      - name: external_init_image_repository
+        default: 'lwolf/kubectl_deployer'
+        type: string
+        title: External init image name
+        display_group: Container Specs
+      - name: external_init_image_tag
+        default: '0.4'
+        type: string
+        title: External init image tag
+        display_group: Container Specs
+      - name: external_init_image_pullPolicy
+        default: 'IfNotPresent'
+        type: string
+        title: External init image pull policy
+        display_group: Container Specs
+      - name: configurationOverrides_configmap
+        default: '{"offsets.topic.replication.factor": 3}'
+        type: string
+        title: Entries for the Kafka config file
+        display_group: Kafka Config
+      - name: livenessProbe_initialDelaySeconds
+        default: '30'
+        type: number
+        title: Liveness probe initial delay in seconds
+        display_group: Container Specs
+      - name: livenessProbe_timeoutSeconds
+        default: '1'
+        type: number
+        title: Liveness probe timeout in seconds
+        display_group: Container Specs
+      - name: livenessProbe_failureThreshold
+        default: '3'
+        type: number
+        title: Liveness probe failure threshold
+        display_group: Container Specs
+      - name: livenessProbe_periodSeconds
+        default: '10'
+        type: number
+        title: Liveness probe period in seconds
+        display_group: Container Specs
+      - name: livenessProbe_successThreshold
+        default: '1'
+        type: number
+        title: Liveness probe success threshold
+        display_group: Container Specs
+      - name: readinessProbe_initialDelaySeconds
+        default: '30'
+        type: number
+        title: Readiness probe initial delay in seconds
+        display_group: Container Specs
+      - name: readinessProbe_timeoutSeconds
+        default: '5'
+        type: number
+        title: Readiness probe timeout in seconds
+        display_group: Container Specs
+      - name: readinessProbe_failureThreshold
+        default: '3'
+        type: number
+        title: Readiness probe failure threshold
+        display_group: Container Specs
+      - name: readinessProbe_periodSeconds
+        default: '10'
+        type: number
+        title: Readiness probe period in seconds
+        display_group: Container Specs
+      - name: readinessProbe_successThreshold
+        default: '1'
+        type: number
+        title: Readiness probe success threshold
+        display_group: Container Specs
+      - name: terminationGracePeriodSeconds
+        default: '60'
+        type: number
+        title: Period to wait for broker graceful shutdown (sigterm) before pod is killed (sigkill)
+        display_group: Container Specs
+      - name: extraVars
+        default: '{}'
+        type: string
+        title: Set environment variables for the main container
+        display_group: Kafka Config
+
+      # Zookeeper parameters
+      - name: zookeeper_replicas
+        default: '3'
+        type: number
+        title: Number of replicas in the zookeeper cluster
+        display_group: Zookeeper Container Specs
+      - name: zookeeper_podDisruptionBudget
+        default: '{"maxUnavailable": 1}'
+        type: string
+        title: Zookeeper pod disruption budget
+        display_type: textarea
+        display_group: Zookeeper Container Specs
+      - name: zookeeper_terminationGracePeriodSeconds
+        default: '1800'
+        type: number
+        title: Period to wait for zookeeper graceful shutdown (sigterm) before pod is killed (sigkill)
+        display_group: Zookeeper Container Specs
+      - name: zookeeper_updateStrategy_type
+        default: 'OnDelete'
+        type: enum
+        enum: ['OnDelete', 'RollingUpdate']
+        title: The StatefulSet Update Strategy which Zookeeper will use when changes are applied
+        display_group: Zookeeper Container Specs
+      - name: zookeeper_image_repository
+        default: 'confluentinc/cp-zookeeper'
+        type: string
+        title: Zookeeper image name
+        display_group: Zookeeper Container Specs
+      - name: zookeeper_image_tag
+        default: '4.1.1'
+        type: string
+        title: Zookeeper image tag
+        display_group: Zookeeper Container Specs
+      - name: zookeeper_image_pullPolicy
+        default: 'IfNotPresent'
+        type: string
+        title: Zookeeper image pull policy
+        display_group: Zookeeper Container Specs
+      - name: zookeeper_service_type
+        default: 'ClusterIP'
+        type: string
+        title: Zookeeper service type
+        display_group: Zookeeper Container Specs
+      - name: zookeeper_service_annotations
+        default: '{}'
+        type: string
+        title: Zookeeper service annotations
+        display_group: Zookeeper Container Specs
+      - name: zookeeper_service_ports_client_port
+        default: '2181'
+        type: number
+        title: Zookeeper service port number for client port
+        display_group: Zookeeper Container Specs
+      - name: zookeeper_ports_client_containerPort
+        default: '2181'
+        type: number
+        title: Zookeeper port number for container client port
+        display_group: Zookeeper Container Specs
+      - name: zookeeper_ports_election_containerPort
+        default: '3888'
+        type: number
+        title: Zookeeper port number for container election port
+        display_group: Zookeeper Container Specs
+      - name: zookeeper_ports_server_containerPort
+        default: '2888'
+        type: number
+        title: Zookeeper port number for container server port
+        display_group: Zookeeper Container Specs
+      - name: zookeeper_resources
+        default: '{}'
+        # default: '{limits: {cpu: 100m, memory: 128Mi}, requests: {cpu: 100m, memory: 128Mi}}'
+        type: string
+        title: Zookeeper pod resource requests and limits
+        display_type: textarea
+        display_group: Zookeeper Container Specs
+      - name: zookeeper_podAnnotations
+        default: '{}'
+        type: string
+        title: Annotations to be added to Zookeeper pods
+        display_type: textarea
+        display_group: Zookeeper Container Specs
+      - name: zookeeper_podLabels
+        default: '{}'
+        type: string
+        title: Key/value pairs to be added to Zookeeper pods
+        display_type: textarea
+        display_group: Zookeeper Container Specs
+      - name: zookeeper_securityContext
+        default: '{}'
+        # default: '{"fsGroup": 1000, "runAsUser": 1000}'
+        type: string
+        title: Security context for the Zookeeper pod
+        display_type: textarea
+        display_group: Zookeeper Container Specs
+      - name: zookeeper_persistentVolume_storageClass
+        type: string
+        title: Zookeeper persistent volume storage class
+        display_group: Zookeeper Container Specs
+      - name: zookeeper_persistentVolume_accessMode
+        default: 'ReadWriteOnce'
+        type: enum
+        enum: ['ReadWriteOnce', 'ReadWriteMany']
+        title: Zookeeper persistent volume access mode
+        display_type: select
+        display_group: Zookeeper Container Specs
+      - name: zookeeper_persistentVolume_size
+        default: '5Gi'
+        type: string
+        title: Zookeeper persistent volume size in Gi
+        display_group: Zookeeper Container Specs
+      - name: zookeeper_persistentVolume_annotations
+        default: '{}'
+        type: string
+        title: Zookeeper persistent volume annotations
+        display_type: textarea
+        display_group: Zookeeper Container Specs
+      - name: zookeeper_nodeSelector
+        default: '{}'
+        type: string
+        title: Node labels for Zookeeper pod assignment
+        display_group: Zookeeper Config
+      - name: zookeeper_affinity
+        default: '{}'
+        type: string
+        title: Zookeeper node/pod affinities
+        display_group: Zookeeper Config
+      - name: zookeeper_tolerations
+        default: '{}'
+        type: string
+        title: List of Zookeeper node taints to tolerate
+        display_group: Zookeeper Config
+      - name: zookeeper_livenessProbe_initialDelaySeconds
+        default: '20'
+        type: number
+        title: Zookeeper liveness probe initial delay in seconds
+        display_group: Zookeeper Container Specs
+      - name: zookeeper_livenessProbe_timeoutSeconds
+        default: '1'
+        type: number
+        title: Zookeeper liveness probe timeout in seconds
+        display_group: Zookeeper Container Specs
+      - name: zookeeper_livenessProbe_failureThreshold
+        default: '3'
+        type: number
+        title: Zookeeper liveness probe failure threshold
+        display_group: Zookeeper Container Specs
+      - name: zookeeper_livenessProbe_periodSeconds
+        default: '10'
+        type: number
+        title: Zookeeper liveness probe period in seconds
+        display_group: Zookeeper Container Specs
+      - name: zookeeper_livenessProbe_successThreshold
+        default: '1'
+        type: number
+        title: Zookeeper liveness probe success threshold
+        display_group: Zookeeper Container Specs
+      - name: zookeeper_readinessProbe_initialDelaySeconds
+        default: '20'
+        type: number
+        title: Zookeeper readiness probe initial delay in seconds
+        display_group: Zookeeper Container Specs
+      - name: zookeeper_readinessProbe_timeoutSeconds
+        default: '5'
+        type: number
+        title: Zookeeper readiness probe timeout in seconds
+        display_group: Zookeeper Container Specs
+      - name: zookeeper_readinessProbe_failureThreshold
+        default: '3'
+        type: number
+        title: Zookeeper readiness probe failure threshold
+        display_group: Zookeeper Container Specs
+      - name: zookeeper_readinessProbe_periodSeconds
+        default: '10'
+        type: number
+        title: Zookeeper readiness probe period in seconds
+        display_group: Zookeeper Container Specs
+      - name: zookeeper_readinessProbe_successThreshold
+        default: '1'
+        type: number
+        title: Zookeeper readiness probe success threshold
+        display_group: Zookeeper Container Specs
+      - name: zookeeper_env_heap_size
+        default: '2G'
+        type: string
+        title: Zookeeper JVM heap size
+        display_group: Zookeeper Config
+      - name: zookeeper_env_init_limit
+        default: '5'
+        type: number
+        title: Zookeeper number of ticks that an ensemble member is allowed to perform leader election
+        display_group: Zookeeper Config
+      - name: zookeeper_env_log_level
+        default: 'INFO'
+        type: enum
+        enum: ['TRACE','DEBUG','INFO','WARN','ERROR','FATAL']
+        title: Zookeeper process logger log level
+        display_group: Zookeeper Config
+      - name: zookeeper_env_max_client_cnxns
+        default: '60'
+        type: number
+        title: Maximum number of concurrent client connections that a Zookeeper server in the ensemble will accept
+        display_group: Zookeeper Config
+      - name: zookeeper_env_max_session_timeout
+        default: '40000'
+        type: number
+        title: Maximum session timeout that the Zookeeper ensemble will allow a client to request. Upstream default is `20 * zookeeper_env_tick_time`
+        display_group: Zookeeper Config
+      - name: zookeeper_env_min_session_timeout
+        default: '4000'
+        type: number
+        title: Minimum session timeout that the Zookeeper ensemble will allow a client to request. Upstream default is `2 * zookeeper_env_tick_time`
+        display_group: Zookeeper Config
+      - name: zookeeper_env_purge_interval
+        default: '0'
+        type: number
+        title: Delay, in hours, between ZooKeeper log and snapshot cleanups
+        display_group: Zookeeper Config
+      - name: zookeeper_env_snap_retain_count
+        default: '3'
+        type: number
+        title: Number of snapshots that the ZooKeeper process will retain if `zookeeper_env_purge_interval` is greater than `0`
+        display_group: Zookeeper Config
+      - name: zookeeper_env_sync_limit
+        default: '10'
+        type: number
+        title: Number of Tick by which a follower may lag behind the ensembles leader
+        display_group: Zookeeper Config
+      - name: zookeeper_env_tick_time
+        default: '2000'
+        type: number
+        title: Number of wall clock ms that corresponds to a Tick for the Zookeeper ensembles internal time
+        display_group: Zookeeper Config
+      - name: zookeeper_extraVars
+        default: '{}'
+        type: string
+        title: Set environment variables for the main Zookeeper container
+        display_group: Zookeeper Config
+
+
+  - name: secure-cluster
+    description: Cluster Kafka deployment with security enabled
+    free: True
+    metadata:
+      displayName: Cluster Deployment with security enabled
+      longDescription:
+        This plan deploys a Kafka cluster that is secured with
+        TLS encryption, SSL broker authentication, and PLAIN client authentication
+      cost: €0.00
+    parameters:
+      - name: replicas
+        default: '3'
+        type: number
+        title: Number of replicas in the cluster
+        display_group: Container Specs
+      - name: replicaSetName
+        default: 'rs0'
+        type: string
+        title: The name of the replica set
+        display_group: Container Specs
+      - name: podDisruptionBudget
+        default: '{}'
+        # default: '{minAvailable: 2}'
+        type: string
+        title: Pod disruption budget
+        display_type: textarea
+        display_group: Container Specs
+      - name: port
+        default: '27017'
+        type: number
+        title: Kafka port
+        display_group: Container Specs
+      - name: installImage_repository
+        default: 'k8s.gcr.io/mongodb-install'
+        type: string
+        title: Image name for the install container
+        display_group: Container Specs
+      - name: installImage_tag
+        default: '0.6'
+        type: string
+        title: Image tag for the install container
+        display_group: Container Specs
+      - name: installImage_pullPolicy
+        default: 'IfNotPresent'
+        type: string
+        title: Image pull policy for the init container that establishes the replica set
+        display_group: Container Specs
+      - name: image_repository
+        default: 'docker.io/mongo'
+        type: string
+        title: Kafka image name
+        display_group: Container Specs
+      - name: image_tag
+        default: '3.4'
+        type: string
+        title: Kafka image tag
+        display_group: Container Specs
+      - name: image_pullPolicy
+        default: 'IfNotPresent'
+        type: string
+        title: Kafka image pull policy
+        display_group: Container Specs
+      - name: podAnnotations
+        default: '{}'
+        type: string
+        title: Annotations to be added to Kafka pods
+        display_type: textarea
+        display_group: Container Specs
+      - name: securityContext
+        default: '{}'
+        type: string
+        title: Security context for the pod
+        display_type: textarea
+        display_group: Container Specs
+      - name: resources
+        default: '{}'
+        # default: '{limits: {cpu: 500m, memory: 512Mi}, requests: {cpu: 100m, memory: 256Mi}}'
+        type: string
+        title: Pod resource requests and limits
+        display_type: textarea
+        display_group: Container Specs
+      - name: persistentVolume_storageClass
+        default: '-'
+        type: string
+        title: Persistent volume storage class
+        display_group: Container Specs
+      - name: persistentVolume_accessMode
+        default: 'ReadWriteOnce'
+        type: enum
+        enum: ['ReadWriteOnce', 'ReadWriteMany']
+        title: Persistent volume storage class
+        display_type: select
+        display_group: Container Specs
+      - name: persistentVolume_size
+        default: '10Gi'
+        type: string
+        title: Persistent volume size in Gi
+        display_group: Container Specs
+      - name: persistentVolume_annotations
+        default: '{}'
+        type: string
+        title: Persistent volume annotations
+        display_type: textarea
+        display_group: Container Specs
+      - name: serviceAnnotations
+        default: '{}'
+        type: string
+        title: Annotations to be added to the service
+        display_type: textarea
+        display_group: Kafka Config
+      - name: nodeSelector
+        default: '{}'
+        type: string
+        title: Node labels for pod assignment
+        display_group: Kafka Config
+      - name: affinity
+        default: '{}'
+        type: string
+        title: Node/pod affinities
+        display_group: Kafka Config
+      - name: tolerations
+        default: '{}'
+        type: string
+        title: List of node taints to tolerate
+        display_group: Kafka Config
+      - name: configmap
+        default: '{}'
+        type: string
+        title: Entries for the Kafka config file
+        display_group: Kafka Config
+      - name: livenessProbe_initialDelaySeconds
+        default: '5'
+        type: number
+        title: Liveness probe initial delay in seconds
+        display_group: Container Specs
+      - name: livenessProbe_initialDelaySeconds
+        default: '5'
+        type: number
+        title: Liveness probe initial delay in seconds
+        display_group: Container Specs
+      - name: livenessProbe_timeoutSeconds
+        default: '1'
+        type: number
+        title: Liveness probe timeout in seconds
+        display_group: Container Specs
+      - name: livenessProbe_failureThreshold
+        default: '3'
+        type: number
+        title: Liveness probe failure threshold
+        display_group: Container Specs
+      - name: livenessProbe_periodSeconds
+        default: '10'
+        type: number
+        title: Liveness probe period in seconds
+        display_group: Container Specs
+      - name: livenessProbe_successThreshold
+        default: '1'
+        type: number
+        title: Liveness probe success threshold
+        display_group: Container Specs
+      - name: readinessProbe_initialDelaySeconds
+        default: '5'
+        type: number
+        title: Readiness probe initial delay in seconds
+        display_group: Container Specs
+      - name: readinessProbe_timeoutSeconds
+        default: '1'
+        type: number
+        title: Readiness probe timeout in seconds
+        display_group: Container Specs
+      - name: readinessProbe_failureThreshold
+        default: '3'
+        type: number
+        title: Readiness probe failure threshold
+        display_group: Container Specs
+      - name: readinessProbe_periodSeconds
+        default: '10'
+        type: number
+        title: Readiness probe period in seconds
+        display_group: Container Specs
+      - name: readinessProbe_successThreshold
+        default: '1'
+        type: number
+        title: Readiness probe success threshold
+        display_group: Container Specs
+      - name: extraVars
+        default: '{}'
+        type: string
+        title: Set environment variables for the main container
+        display_group: Kafka Config
+
+      - name: tls_casubjectDistinguishedName
+        default: '/CN=nuxeo-backings.kafka.svc/OU=engineering/O=nuxeo/L=irvine/S=ca/C=us'
+        type: string
+        title: Certificate Authority Subject Distinguished Name for the Kafka cluster in single string format
+        display_group: Kafka Security Config
+      - name: auth_adminUser
+        default: 'admin'
+        type: string
+        pattern: "^[a-zA-Z0-9_.-]*$"
+        title: Kafka admin user
+        display_group: Kafka Security Config
+      - name: auth_adminPassword
+        type: string
+        pattern: "^[a-zA-Z0-9_.-]*$"
+        title: Kafka admin password
+        display_type: password
+        display_group: Kafka Security Config
+      - name: auth_existingAdminSecret
+        type: string
+        title: If set, an existing secret with this name is used for the admin user
+        display_group: Kafka Security Config
+      - name: auth_username
+        default: 'nuxeo'
+        type: string
+        pattern: "^[a-zA-Z0-9_.-]*$"
+        title: Kafka custom user
+        display_group: Kafka Security Config
+      - name: auth_password
+        type: string
+        pattern: "^[a-zA-Z0-9_.-]*$"
+        title: Kafka custom user password
+        display_type: password
+        display_group: Kafka Security Config
+      - name: auth_existingUserSecret
+        type: string
+        title: If set, an existing secret with this name is used for the custom user
+        display_group: Kafka Security Config
+      - name: database
+        default: 'nuxeo'
+        type: string
+        title: Name of the Kafka database accessed
+        display_group: Kafka Security Config
