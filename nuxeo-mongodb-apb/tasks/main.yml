@@ -177,7 +177,18 @@
     description: "50%: Cluster objects state={{ state }}"
   when: in_cluster
 
-- include_tasks: "verify_{{ apb_action }}.yml"
+- name: "Wait for statefulset to become ready"
+  debug:
+    msg: "StatefulSet ready status: {{ statefulset_query }}"
+  retries: 20
+  delay: 10
+  until:
+    - statefulset_query
+  when: state == 'present'
+
+- name: "set fact statefulset pvcs state={{ state }}"
+  include_tasks: "set_fact_statefulset_pvcs.yml"
+  when: state == "present"
 
 - name: "set fact service_uri state={{ state }}"
   include_tasks: "set_fact_service_uri.yml"
