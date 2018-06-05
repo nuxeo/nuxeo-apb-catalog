@@ -1,0 +1,15 @@
+- name: nuxeo-kafka-apb mytest
+  hosts: localhost
+  gather_facts: false
+  connection: local
+  roles:
+  - role: ansibleplaybookbundle.asb-modules
+  - role: nuxeo-kafka-apb
+  vars:
+    apb_action: mytest
+    state: unknown
+  tasks:
+      sts_status_replicas_list:
+        - "0"
+        - "1"
+        - "2"

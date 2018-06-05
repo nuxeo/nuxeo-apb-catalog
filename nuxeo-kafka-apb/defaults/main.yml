@@ -1,0 +1,108 @@
+---
+apb_name: nuxeo-kafka-apb
+
+default_debug: True
+bootstrap_debug_enabled: False
+
+# Defaults for values we could expect from a broker
+_apb_plan_id: secure-cluster
+_apb_service_class_id: 0
+_apb_service_instance_id: 0
+
+state_map:
+  provision: present
+  deprovision: absent
+state: "{{ state_map[apb_action] }}"
+
+cluster: kubernetes
+
+name: "{{ 'nuxeo-kafka-' + (_apb_service_instance_id | string |truncate(5, True, '') ) }}"
+namespace: "{{ lookup('env','NAMESPACE') | default('nuxeo', true) }}"
+component: kafka
+
+zookeeper_name: "{{ 'nuxeo-zookeeper-' + (_apb_service_instance_id | string) |truncate(5, True, '') }}"
+zookeeper_component: zookeeper
+
+
+
+replicas: 3
+podDisruptionBudget: "{minAvailable: 2}"
+additionalPorts: "{}"
+image_repository: confluentinc/cp-kafka
+image_tag: '4.1.1'
+image_pullPolicy: IfNotPresent
+podAnnotations: '{}'
+securityContext: '{}'
+resources: '{}'
+kafkaHeapOptions: "-Xmx1G -Xms1G"
+updateStrategy_type: "OnDelete"
+podManagementPolicy:
+logSubPath: ""
+persistentVolume_accessMode: ReadWriteOnce
+persistentVolume_size: 3Gi
+affinity:
+external_enabled: false
+external_servicePort: 19092
+external_firstListenerPort: 31090
+external_domain: cluster.local
+external_init_image_repository: lwolf/kubectl_deployer
+external_init_image_tag: '0.4'
+external_init_image_pullPolicy: IfNotPresent
+configurationOverrides_configmap: '{"offsets.topic.replication.factor": 3}'
+livenessProbe_initialDelaySeconds: '30'
+livenessProbe_timeoutSeconds: '1'
+livenessProbe_failureThreshold: '3'
+livenessProbe_periodSeconds: '10'
+livenessProbe_successThreshold: '1'
+readinessProbe_initialDelaySeconds: '30'
+readinessProbe_timeoutSeconds: '5'
+readinessProbe_failureThreshold: '3'
+readinessProbe_periodSeconds: '10'
+readinessProbe_successThreshold: '1'
+terminationGracePeriodSeconds: '60'
+extraVars: '{}'
+
+zookeeper_replicas: 3
+zookeeper_podDisruptionBudget: '{"maxUnavailable": 1}'
+zookeeper_terminationGracePeriodSeconds: 1800
+zookeeper_updateStrategy_type: OnDelete
+zookeeper_image_repository: confluentinc/cp-zookeeper
+zookeeper_image_tag: '4.1.1'
+zookeeper_image_pullPolicy: IfNotPresent
+zookeeper_service_type: ClusterIP
+zookeeper_service_annotations: '{}'
+zookeeper_service_ports_client_port: 2181
+zookeeper_ports_client_containerPort: 2181
+zookeeper_ports_election_containerPort: 3888
+zookeeper_ports_server_containerPort: 2888
+zookeeper_resources: '{}'
+zookeeper_podAnnotations: '{}'
+zookeeper_podLabels: '{}'
+zookeeper_securityContext: '{}'
+zookeeper_persistentVolume_accessMode: ReadWriteOnce
+zookeeper_persistentVolume_size: 2Gi
+zookeeper_persistentVolume_annotations: '{}'
+zookeeper_nodeSelector: '{}'
+zookeeper_affinity: '{}'
+zookeeper_tolerations: '{}'
+zookeeper_livenessProbe_initialDelaySeconds: '20'
+zookeeper_livenessProbe_timeoutSeconds: '1'
+zookeeper_livenessProbe_failureThreshold: '3'
+zookeeper_livenessProbe_periodSeconds: '10'
+zookeeper_livenessProbe_successThreshold: '1'
+zookeeper_readinessProbe_initialDelaySeconds: '20'
+zookeeper_readinessProbe_timeoutSeconds: '5'
+zookeeper_readinessProbe_failureThreshold: '3'
+zookeeper_readinessProbe_periodSeconds: '10'
+zookeeper_readinessProbe_successThreshold: '1'
+zookeeper_env_heap_size: 2G
+zookeeper_env_init_limit: 5
+zookeeper_env_log_level: INFO
+zookeeper_env_max_client_cnxns: 60
+zookeeper_env_max_session_timeout: 40000
+zookeeper_env_min_session_timeout: 4000
+zookeeper_env_purge_interval: 0
+zookeeper_env_snap_retain_count: 3
+zookeeper_env_sync_limit: 10
+zookeeper_env_tick_time: 2000
+zookeeper_extraVars: '{}'
