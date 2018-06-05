@@ -1,10 +1,10 @@
 ---
-- name: nuxeo-elasticseach-apb bind
+- name: nuxeo-elasticsearch-apb bind
   hosts: localhost
   gather_facts: false
   connection: local
   roles:
   - role: ansibleplaybookbundle.asb-modules
-  - role: nuxeo-elasticseach-apb
+  - role: nuxeo-elasticsearch-apb
   vars:
     apb_action: bind
