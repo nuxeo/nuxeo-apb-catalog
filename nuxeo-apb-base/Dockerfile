@@ -1,6 +1,6 @@
 FROM ansibleplaybookbundle/apb-base
 
-RUN yum install -y openssl && yum clean all
+RUN yum install -y openssl java-1.8.0-openjdk httpd-tools && yum clean all
 
 ADD requirements.yml /opt/apb/actions/requirements.yml
 ADD run_role_on_localhost.yml /opt/apb/actions/run_role_on_localhost.yml
