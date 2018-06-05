@@ -94,7 +94,7 @@ spec:
       containers:
       - name: elasticsearch
         env:
-{% if not singlenode %}
+{% if clustered %}
         - name: DISCOVERY_SERVICE
           value: {{ service_master_name }}
         - name: KUBERNETES_MASTER

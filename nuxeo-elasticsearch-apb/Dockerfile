@@ -1,4 +1,4 @@
-FROM ansibleplaybookbundle/apb-base
+FROM nuxeoapbcatalog/nuxeo-apb-base:latest
 
 LABEL "com.redhat.apb.spec"=\
 "LS0tCnZlcnNpb246IDEuMApuYW1lOiBudXhlby1lbGFzdGljc2VhcmNoLWFwYgpkZXNjcmlwdGlv\

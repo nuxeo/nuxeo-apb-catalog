@@ -36,7 +36,7 @@
   delay: 10
   until:
     - statefulset_master_query
-  when: not singlenode
+  when: clustered
 
 - name: "Wait for data statefulset to become ready"
   debug:
@@ -45,7 +45,7 @@
   delay: 10
   until:
     - statefulset_data_query
-  when: not singlenode
+  when: clustered
 
 - name: "Wait for client statefulset to become ready"
   debug:
