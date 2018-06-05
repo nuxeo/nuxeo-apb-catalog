@@ -28,144 +28,30 @@
   include_tasks: "set_fact_statefulset_pvcs.yml"
   when: state == 'absent'
 
-
-# Work-around k8s_raw inability to create Secret directly
-- name: "ca secret state={{ state }}"
-  block:
-    - name: "Create ca secret from template"
-      template:
-        src: ca_secret.yml.j2
-        dest: /tmp/ca_secret.yml
-
-    - name: "Create ca secret"
-      shell: kubectl create --filename=/tmp/ca_secret.yml
-  when: state == 'present' and tls_enabled
-
-- name: "ca secret state={{ state }}"
-  shell: kubectl delete --ignore-not-found=true secret {{ ca_secret_name }} -n {{ namespace }}
-  when: state == 'absent' and tls_enabled
-
-
-# Work-around k8s_raw inability to create Secret directly
-- name: "admin secret state={{ state }}"
-  block:
-    - name: "Create admin secret from template"
-      template:
-        src: admin_secret.yml.j2
-        dest: /tmp/admin_secret.yml
-
-    - name: "Create admin secret"
-      shell: kubectl create --filename=/tmp/admin_secret.yml
-  when: state == 'present' and auth_enabled and auth_existingAdminSecret is undefined
-
-- name: "admin secret state={{ state }}"
-  shell: kubectl delete --ignore-not-found=true secret {{ admin_secret_name }} -n {{ namespace }}
-  when: state == 'absent' and auth_enabled and auth_existingAdminSecret is undefined
-
-
-# Work-around k8s_raw inability to create Secret directly
-- name: "user secret state={{ state }}"
-  block:
-    - name: "Create user secret from template"
-      template:
-        src: user_secret.yml.j2
-        dest: /tmp/user_secret.yml
-
-    - name: "Create user secret"
-      shell: kubectl create --filename=/tmp/user_secret.yml
-  when: state == 'present' and auth_enabled and auth_existingUserSecret is undefined
-
-- name: "user secret state={{ state }}"
-  shell: kubectl delete --ignore-not-found=true secret {{ user_secret_name }} -n {{ namespace }}
-  when: state == 'absent' and auth_enabled and auth_existingUserSecret is undefined
-
-
-# Work-around k8s_raw inability to create ConfigMap directly
-- name: "init container config map state={{ state }}"
-  block:
-    - name: "Create init container config from template"
-      template:
-        src: init_configmap.yml.j2
-        dest: /tmp/init_configmap.yml
-
-    - name: "Create init container config map"
-      shell: kubectl create --filename=/tmp/init_configmap.yml
-  when: state == 'present'
-
-- name: "init container config map state={{ state }}"
-  shell: kubectl delete --ignore-not-found=true configmap {{ init_configmap_name }} -n {{ namespace }}
-  when: state == 'absent'
-
-
-# Work-around k8s_raw inability to create ConfigMap directly
-- name: "mongodb container config map state={{ state }}"
-  block:
-    - name: "Create mongodb container config from template"
-      template:
-        src: mongodb_configmap.yml.j2
-        dest: /tmp/mongodb_configmap.yml
-
-    - name: "Create mongodb container config map"
-      shell: kubectl create --filename=/tmp/mongodb_configmap.yml
-  when: state == 'present'
-
-- name: "mongodb container config map state={{ state }}"
-  shell: kubectl delete --ignore-not-found=true configmap {{ mongodb_configmap_name }} -n {{ namespace }}
-  when: state == 'absent'
-
-
-# Work-around k8s_raw inability to create PodDisruptionBudget directly
-- name: "poddisruptionbudget state={{ state }}"
-  block:
-    - name: "Create poddisruptionbudget from template"
-      template:
-        src: poddisruptionbudget.yml.j2
-        dest: /tmp/poddisruptionbudget.yml
-
-    - name: "Create poddisruptionbudget"
-      shell: kubectl create --filename=/tmp/poddisruptionbudget.yml
-  when: state == 'present' and podDisruptionBudget is defined and (podDisruptionBudget | from_yaml)
-
-- name: "poddisruptionbudget state={{ state }}"
-  shell: kubectl delete --ignore-not-found=true poddisruptionbudget {{ app_name }} -n {{ namespace }}
-  when: state == 'absent' and podDisruptionBudget is defined and (podDisruptionBudget | from_yaml)
-
-
-# Work-around k8s_raw refusal to create service with clusterIP: None
-- name: "service state={{ state }}"
-  block:
-    - name: "Create service from template"
-      template:
-        src: service.yml.j2
-        dest: /tmp/service.yml
-
-    - name: "Create service"
-      shell: kubectl create --filename=/tmp/service.yml
-  when: state == 'present'
-
-- name: "service state={{ state }}"
-  k8s_raw:
-    state: '{{ state }}'
-    definition: "{{ lookup('template', 'service.yml.j2') | from_yaml }}"
-  when: state == 'absent'
-
-
-# Work-around k8s_raw inability to create StatefulSet directly
-- name: "statefulset state={{ state }}"
-  block:
-    - name: "Create statefulset from template"
-      template:
-        src: statefulset.yml.j2
-        dest: /tmp/statefulset.yml
-
-    - name: "Create statefulset"
-      shell: kubectl create --filename=/tmp/statefulset.yml
-  when: state == 'present'
-
-- name: "statefulset state={{ state }}"
-  shell: kubectl delete --ignore-not-found=true statefulset {{ app_name }} -n {{ namespace }}
-  when: state == 'absent'
-
+- name: "set broker objects state={{ state }}"
+  include_tasks: "set_broker_object_state.yml name={{item.name}} desc={{item.desc}}"
+  when: item.apply | default(True)
+  loop:
+    - name: 'ca_secret'
+      desc: 'ca secret'
+      apply: "{{ tls_enabled }}"
+    - name: 'admin_secret'
+      desc: 'admin secret'
+      apply: "{{ auth_enabled and auth_existingAdminSecret is undefined }}"
+    - name: 'user_secret'
+      desc: 'user secret'
+      apply: "{{ auth_enabled and auth_existingUserSecret is undefined }}"
+    - name: 'init_configmap'
+      desc: 'init container config map'
+    - name: 'mongodb_configmap'
+      desc: 'mongodb container config map'
+    - name: 'poddisruptionbudget'
+      desc: 'poddisruptionbudget'
+      apply: "{{ podDisruptionBudget is defined and (podDisruptionBudget | from_yaml) }}"
+    - name: 'service'
+      desc: 'service'
+    - name: 'statefulset'
+      desc: 'statefulset'
 
 - name: "statefulset persistentvolumeclaims state={{ state }}"
   shell: kubectl delete --ignore-not-found=true persistentvolumeclaim {{ item }} -n {{ namespace }}
