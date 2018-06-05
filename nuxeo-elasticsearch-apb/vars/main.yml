@@ -32,6 +32,7 @@ in_cluster: "{{ True if (pod_name and pod_namespace) else False }}"
 
 use_searchguard: "{{ True if (_apb_plan_id == 'secured') else False }}"
 singlenode: "{{ True if (_apb_plan_id == 'nonclustered') else False }}"
+clustered: "{{ False if (_apb_plan_id == 'nonclustered') else True }}"
 
 # Variables to hold resource names
 ca_secret_name: "{{ name + '-ca' }}"

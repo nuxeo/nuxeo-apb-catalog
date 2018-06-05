@@ -10,7 +10,7 @@ network.host: 0.0.0.0
 # see https://github.com/kubernetes/kubernetes/issues/3595
 bootstrap.memory_lock: ${BOOTSTRAP_MEMORY_LOCK:false}
 
-{% if not singlenode %}
+{% if clustered %}
 discovery:
   zen:
     ping.unicast.hosts: ${DISCOVERY_SERVICE}
