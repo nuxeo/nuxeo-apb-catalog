@@ -3,7 +3,7 @@
 - name: "set fact statefulset persistentvolumeclaims"
   block:
   - name: "Register statefulset json cmd"
-    shell: kubectl get statefulset {{ name }} -o json -n {{ namespace }}
+    shell: kubectl get statefulset {{ app_name }} -o json -n {{ namespace }}
     register: sts_cmd
     failed_when: sts_cmd.rc >= 2
 
@@ -20,7 +20,7 @@
 
   - name: "Set Fact statefulset persistentvolumeclaims"
     set_fact:
-      statefulset_pvcs: "{{ statefulset_pvcs }} + [ '{{ item.0 + '-' + name + '-' + item.1 }}' ]"
+      statefulset_pvcs: "{{ statefulset_pvcs }} + [ '{{ item.0 + '-' + app_name + '-' + item.1 }}' ]"
     with_nested:
       - "{{ sts_spec_volume_claim_templates }}"
       - "{{ sts_status_replicas_list }}"

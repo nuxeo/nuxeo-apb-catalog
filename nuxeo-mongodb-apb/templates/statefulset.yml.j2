@@ -1,26 +1,26 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
+  name: {{ app_name }}
+  namespace: {{ namespace }}
   labels:
-    app: {{ name }}
+    app: {{ app_name }}
     apb_name: '{{ apb_name }}'
     apb_plan_id: '{{ _apb_plan_id }}'
     apb_service_class_id: '{{ _apb_service_class_id }}'
     apb_service_instance_id: '{{ _apb_service_instance_id }}'
     component: {{ component }}
-  name: {{ name }}
-  namespace: {{ namespace }}
 spec:
   selector:
     matchLabels:
-      app: {{ name }}
+      app: {{ app_name }}
       component: {{ component }}
-  serviceName: {{ name }}
+  serviceName: {{ app_name }}
   replicas: {{ replicas }}
   template:
     metadata:
       labels:
-        app: {{ name }}
+        app: {{ app_name }}
         component: {{ component }}
 {% if podAnnotations is defined and (podAnnotations | from_yaml) %}
       annotations:
@@ -128,7 +128,7 @@ spec:
             - /work-dir/peer-finder
           args:
             - -on-start=/init/on-start.sh
-            - "-service={{ name }}"
+            - "-service={{ app_name }}"
           imagePullPolicy: "{{ image_pullPolicy }}"
           env:
             - name: POD_NAMESPACE

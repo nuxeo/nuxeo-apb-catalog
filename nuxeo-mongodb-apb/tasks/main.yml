@@ -1,17 +1,40 @@
+---
+
+#############################################################################
+# Provision nuxeo-mongodb
+#############################################################################
 
 - name: "Update last operation"
   asb_last_operation:
     description: "0%: Starting"
   when: in_cluster
 
+- name: "Create the CA certificate and key"
+  command: >
+    openssl req -newkey rsa:2048 -new -x509 -days 365 -nodes
+    -out {{ tls_cacert_path }} -keyout {{ tls_cakey_path }} -subj "{{ tls_casubjectDistinguishedName }}"
+  when: state == 'present' and tls_enabled
 
+- name: "set fact statefulset pvcs state={{ state }}"
+  include_tasks: "set_fact_statefulset_pvcs.yml"
+  when: state == 'absent'
+
+
+# Work-around k8s_raw inability to create Secret directly
 - name: "ca secret state={{ state }}"
-  include_tasks: "create_ca_secret.yml"
-  when: state == "present" and tls_enabled
+  block:
+    - name: "Create ca secret from template"
+      template:
+        src: ca_secret.yml.j2
+        dest: /tmp/ca_secret.yml
+
+    - name: "Create ca secret"
+      shell: kubectl create --filename=/tmp/ca_secret.yml
+  when: state == 'present' and tls_enabled
 
 - name: "ca secret state={{ state }}"
   shell: kubectl delete --ignore-not-found=true secret {{ ca_secret_name }} -n {{ namespace }}
-  when: state == "absent" and tls_enabled
+  when: state == 'absent' and tls_enabled
 
 
 # Work-around k8s_raw inability to create Secret directly
@@ -24,11 +47,11 @@
 
     - name: "Create admin secret"
       shell: kubectl create --filename=/tmp/admin_secret.yml
-  when: state == "present" and auth_enabled and auth_existingAdminSecret is undefined
+  when: state == 'present' and auth_enabled and auth_existingAdminSecret is undefined
 
 - name: "admin secret state={{ state }}"
   shell: kubectl delete --ignore-not-found=true secret {{ admin_secret_name }} -n {{ namespace }}
-  when: state == "absent" and auth_enabled and auth_existingAdminSecret is undefined
+  when: state == 'absent' and auth_enabled and auth_existingAdminSecret is undefined
 
 
 # Work-around k8s_raw inability to create Secret directly
@@ -41,11 +64,11 @@
 
     - name: "Create user secret"
       shell: kubectl create --filename=/tmp/user_secret.yml
-  when: state == "present" and auth_enabled and auth_existingUserSecret is undefined
+  when: state == 'present' and auth_enabled and auth_existingUserSecret is undefined
 
 - name: "user secret state={{ state }}"
   shell: kubectl delete --ignore-not-found=true secret {{ user_secret_name }} -n {{ namespace }}
-  when: state == "absent" and auth_enabled and auth_existingUserSecret is undefined
+  when: state == 'absent' and auth_enabled and auth_existingUserSecret is undefined
 
 
 # Work-around k8s_raw inability to create ConfigMap directly
@@ -58,19 +81,11 @@
 
     - name: "Create init container config map"
       shell: kubectl create --filename=/tmp/init_configmap.yml
-  when: state == "present"
+  when: state == 'present'
 
 - name: "init container config map state={{ state }}"
   shell: kubectl delete --ignore-not-found=true configmap {{ init_configmap_name }} -n {{ namespace }}
-  when: state == "absent"
-
-#
-#- name: "init container config map state={{ state }}"
-#  k8s_raw:
-#    state: '{{ state }}'
-#    definition: "{{ lookup('template', 'init_configmap.yml.j2') | from_yaml }}"
-#
-# End Work-around
+  when: state == 'absent'
 
 
 # Work-around k8s_raw inability to create ConfigMap directly
@@ -83,11 +98,11 @@
 
     - name: "Create mongodb container config map"
       shell: kubectl create --filename=/tmp/mongodb_configmap.yml
-  when: state == "present"
+  when: state == 'present'
 
 - name: "mongodb container config map state={{ state }}"
   shell: kubectl delete --ignore-not-found=true configmap {{ mongodb_configmap_name }} -n {{ namespace }}
-  when: state == "absent"
+  when: state == 'absent'
 
 
 # Work-around k8s_raw inability to create PodDisruptionBudget directly
@@ -100,19 +115,11 @@
 
     - name: "Create poddisruptionbudget"
       shell: kubectl create --filename=/tmp/poddisruptionbudget.yml
-  when: state == "present" and podDisruptionBudget is defined and (podDisruptionBudget | from_yaml)
+  when: state == 'present' and podDisruptionBudget is defined and (podDisruptionBudget | from_yaml)
 
 - name: "poddisruptionbudget state={{ state }}"
-  shell: kubectl delete --ignore-not-found=true poddisruptionbudget {{ name }} -n {{ namespace }}
-  when: state == "absent" and podDisruptionBudget is defined and (podDisruptionBudget | from_yaml)
-
-
-#- name: "poddisruptionbudget state={{ state }}"
-#  k8s_raw:
-#    state: '{{ state }}'
-#    definition: "{{ lookup('template', 'poddisruptionbudget.yml.j2') | from_yaml }}"
-#  when podDisruptionBudget is defined and (podDisruptionBudget | from_yaml)
-# End of work-around
+  shell: kubectl delete --ignore-not-found=true poddisruptionbudget {{ app_name }} -n {{ namespace }}
+  when: state == 'absent' and podDisruptionBudget is defined and (podDisruptionBudget | from_yaml)
 
 
 # Work-around k8s_raw refusal to create service with clusterIP: None
@@ -125,18 +132,13 @@
 
     - name: "Create service"
       shell: kubectl create --filename=/tmp/service.yml
-  when: state == "present"
+  when: state == 'present'
 
 - name: "service state={{ state }}"
   k8s_raw:
     state: '{{ state }}'
     definition: "{{ lookup('template', 'service.yml.j2') | from_yaml }}"
-  when: state == "absent"
-
-
-- name: "set fact statefulset pvcs state={{ state }}"
-  include_tasks: "set_fact_statefulset_pvcs.yml"
-  when: state == "absent"
+  when: state == 'absent'
 
 
 # Work-around k8s_raw inability to create StatefulSet directly
@@ -149,24 +151,17 @@
 
     - name: "Create statefulset"
       shell: kubectl create --filename=/tmp/statefulset.yml
-  when: state == "present"
+  when: state == 'present'
 
 - name: "statefulset state={{ state }}"
-  shell: kubectl delete --ignore-not-found=true statefulset {{ name }} -n {{ namespace }}
-  when: state == "absent"
-
-#- name: "statefulset state={{ state }}"
-#  k8s_raw:
-#    state: '{{ state }}'
-#    definition: "{{ lookup('template', 'statefulset.yml.j2') | from_yaml }}"
-# End of work-around
+  shell: kubectl delete --ignore-not-found=true statefulset {{ app_name }} -n {{ namespace }}
+  when: state == 'absent'
 
 
 - name: "statefulset persistentvolumeclaims state={{ state }}"
   shell: kubectl delete --ignore-not-found=true persistentvolumeclaim {{ item }} -n {{ namespace }}
   with_items: "{{ statefulset_pvcs }}"
-  when: state == "absent"
-
+  when: state == 'absent'
 
 - name: "Update last operation"
   asb_last_operation:
@@ -175,19 +170,16 @@
 
 - include_tasks: "verify_{{ apb_action }}.yml"
 
-
 - name: "set fact service_uri state={{ state }}"
   include_tasks: "set_fact_service_uri.yml"
   when: state == "present"
-
 
 - name: encode bind credentials
   asb_encode_binding:
     fields:
       uri: "{{ service_uri }}"
       tls_cacert: "{{ tls_cacert_lookup | b64encode }}"
-  when: state == "present"
-
+  when: state == 'present'
 
 - name: "Update last operation"
   asb_last_operation:

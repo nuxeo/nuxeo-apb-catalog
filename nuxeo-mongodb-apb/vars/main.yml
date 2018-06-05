@@ -1,15 +1,25 @@
 ---
 
+state_map:
+  provision: present
+  deprovision: absent
+state: "{{ state_map[apb_action] }}"
+
+# Whether we are in a cluster or not.
+pod_name: "{{ lookup('env', 'POD_NAME') }}"
+pod_namespace: "{{ lookup('env', 'POD_NAMESPACE') }}"
+in_cluster: "{{ True if (pod_name and pod_namespace) else False }}"
+
 # Variables to hold lookup functions
+ca_secret_lookup: "{{ lookup('k8s', kind='Secret', namespace=namespace, resource_name=ca_secret_name) }}"
 admin_secret_lookup: "{{ lookup('k8s', kind='Secret', namespace=namespace, resource_name=admin_secret_name) }}"
 user_secret_lookup: "{{ lookup('k8s', kind='Secret', namespace=namespace, resource_name=user_secret_name) }}"
-ca_secret_lookup: "{{ lookup('k8s', kind='Secret', namespace=namespace, resource_name=ca_secret_name) }}"
 init_configmap_lookup: "{{ lookup('k8s', kind='ConfigMap', namespace=namespace, resource_name=init_configmap_name) }}"
 mongodb_configmap_lookup: "{{ lookup('k8s', kind='ConfigMap', namespace=namespace, resource_name=mongodb_configmap_name) }}"
-#poddisruptionbudget_lookup: "{{ lookup('k8s', api_version='policy/v1beta1', kind='PodDisruptionBudget', namespace=namespace, resource_name=name) }}"
-poddisruptionbudget_lookup: "{{ lookup('k8s', api_version='v1beta1', kind='PodDisruptionBudget', namespace=namespace, resource_name=name) }}"
-statefulset_lookup: "{{ lookup('k8s', kind='StatefulSet', namespace=namespace, resource_name=name) }}"
-service_lookup: "{{ lookup('openshift', kind='Service', namespace=namespace, resource_name=name) }}"
+#poddisruptionbudget_lookup: "{{ lookup('k8s', api_version='policy/v1beta1', kind='PodDisruptionBudget', namespace=namespace, resource_name=app_name) }}"
+poddisruptionbudget_lookup: "{{ lookup('k8s', api_version='v1beta1', kind='PodDisruptionBudget', namespace=namespace, resource_name=app_name) }}"
+service_lookup: "{{ lookup('k8s', kind='Service', namespace=namespace, resource_name=app_name) }}"
+statefulset_lookup: "{{ lookup('k8s', kind='StatefulSet', namespace=namespace, resource_name=app_name) }}"
 password_lookup: "{{ lookup('password', '/dev/null chars=ascii_letters,digits,hexdigits') }}"
 tls_cacert_lookup: "{{ lookup('file', tls_cacert_path) }}"
 
@@ -17,22 +27,21 @@ tls_cacert_lookup: "{{ lookup('file', tls_cacert_path) }}"
 ready_replicas_query: "[spec.replicas, status.ready_replicas]"
 statefulset_query: "{{ statefulset_lookup | json_query(ready_replicas_query) | unique | count == 1 }}"
 
-# Whether we are in a cluster or not.
-pod_name: "{{ lookup('env', 'POD_NAME') }}"
-pod_namespace: "{{ lookup('env', 'POD_NAMESPACE') }}"
-in_cluster: "{{ True if (pod_name and pod_namespace) else False }}"
-
 # Variables to hold resource names
-admin_secret_name: "{{ name + '-admin' if auth_existingAdminSecret is undefined else auth_existingAdminSecret }}"
-user_secret_name: "{{ name + '-user' if auth_existingUserSecret is undefined else auth_existingUserSecret }}"
-ca_secret_name: "{{ name + '-ca' }}"
-init_configmap_name: "{{ name + '-init'}}"
-mongodb_configmap_name: "{{ name + '-mongodb' }}"
+admin_secret_name: "{{ app_name + '-admin' if auth_existingAdminSecret is undefined else auth_existingAdminSecret }}"
+user_secret_name: "{{ app_name + '-user' if auth_existingUserSecret is undefined else auth_existingUserSecret }}"
+ca_secret_name: "{{ app_name + '-ca' }}"
+init_configmap_name: "{{ app_name + '-init'}}"
+mongodb_configmap_name: "{{ app_name + '-mongodb' }}"
 admin_password: "{{ password_lookup if auth_adminPassword is undefined else auth_adminPassword }}"
 user_password: "{{ password_lookup if auth_password is undefined else auth_password }}"
 tls_enabled: "{{ True if _apb_plan_id == 'secure-replicaset' else False }}"
 auth_enabled: "{{ True if _apb_plan_id == 'secure-replicaset' else False }}"
 persistentVolume_enabled: "{{ True }}"
+
+# Variables for CA cert/key paths
+tls_cacert_path: "/tmp/tls.crt"
+tls_cakey_path: "/tmp/tls.key"
 
 # Variable to hold MongoDB Connection Service uri
 service_uri: ""
