@@ -58,7 +58,7 @@ plans:
         title: Kafka image name
         display_group: Container Specs
       - name: image_tag
-        default: '4.1.1'
+        default: '4.0.1-1'
         type: string
         title: Kafka image tag
         display_group: Container Specs
@@ -279,7 +279,7 @@ plans:
         title: Zookeeper image name
         display_group: Zookeeper Container Specs
       - name: zookeeper_image_tag
-        default: '4.1.1'
+        default: '4.0.1-1'
         type: string
         title: Zookeeper image tag
         display_group: Zookeeper Container Specs
@@ -700,25 +700,4 @@ plans:
       - name: auth_existingAdminSecret
         type: string
         title: If set, an existing secret with this name is used for the admin user
-        display_group: Kafka Security Config
-      - name: auth_username
-        default: 'nuxeo'
-        type: string
-        pattern: "^[a-zA-Z0-9_.-]*$"
-        title: Kafka custom user
-        display_group: Kafka Security Config
-      - name: auth_password
-        type: string
-        pattern: "^[a-zA-Z0-9_.-]*$"
-        title: Kafka custom user password
-        display_type: password
-        display_group: Kafka Security Config
-      - name: auth_existingUserSecret
-        type: string
-        title: If set, an existing secret with this name is used for the custom user
-        display_group: Kafka Security Config
-      - name: database
-        default: 'nuxeo'
-        type: string
-        title: Name of the Kafka database accessed
         display_group: Kafka Security Config

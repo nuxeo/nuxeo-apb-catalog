@@ -1,0 +1,67 @@
+---
+
+- name: "Zookeeper poddisruptionbudget state={{ state }}"
+  block:
+    - name: "Create Zookeeper poddisruptionbudget from template"
+      template:
+        src: zookeeper_poddisruptionbudget.yml.j2
+        dest: /tmp/zookeeper_poddisruptionbudget.yml
+
+    - name: "Create Zookeeper poddisruptionbudget"
+      shell: kubectl create --filename=/tmp/zookeeper_poddisruptionbudget.yml
+  when: state == "present" and podDisruptionBudget is defined and (podDisruptionBudget | from_yaml)
+
+- name: "poddisruptionbudget state={{ state }}"
+  shell: kubectl delete --ignore-not-found=true poddisruptionbudget {{ zookeeper_name }} -n {{ namespace }}
+  when: state == "absent" and podDisruptionBudget is defined and (podDisruptionBudget | from_yaml)
+
+
+
+# Work-around k8s_raw refusal to create service with clusterIP: None
+- name: "Zookeeper service state={{ state }}"
+  block:
+    - name: "Create Zookeeper service from template"
+      template:
+        src: zookeeper_service.yml.j2
+        dest: /tmp/zookeeper_service.yml
+
+    - name: "Create Zookeeper service"
+      shell: kubectl create --filename=/tmp/zookeeper_service.yml
+  when: state == "present"
+
+- name: "Zookeeper service state={{ state }}"
+  shell: kubectl delete --ignore-not-found=true service {{ zookeeper_name }} -n {{ namespace }}
+  when: state == "absent"
+
+# Work-around k8s_raw refusal to create service with clusterIP: None
+- name: "Zookeeper headless service state={{ state }}"
+  block:
+    - name: "Create Zookeeper headless service from template"
+      template:
+        src: zookeeper_service-headless.yml.j2
+        dest: /tmp/zookeeper_service-headless.yml
+
+    - name: "Create Zookeeper headless service"
+      shell: kubectl create --filename=/tmp/zookeeper_service-headless.yml
+  when: state == "present"
+
+- name: "Zookeeper headless service state={{ state }}"
+  shell: kubectl delete --ignore-not-found=true service {{ zookeeper_name }}-headless -n {{ namespace }}
+  when: state == "absent"
+
+
+# Work-around k8s_raw inability to create StatefulSet directly
+- name: "Zookeeper statefulset state={{ state }}"
+  block:
+    - name: "Create Zookeeper statefulset from template"
+      template:
+        src: zookeeper_statefulset.yml.j2
+        dest: /tmp/zookeeper_statefulset.yml
+    - name: "Create Zookeeper statefulset"
+      shell: kubectl create --filename=/tmp/zookeeper_statefulset.yml
+  when: state == "present"
+
+
+- name: "Zookeeper statefulset state={{ state }}"
+  shell: kubectl delete --ignore-not-found=true statefulset {{ zookeeper_name }} -n {{ namespace }}
+  when: state == "absent"

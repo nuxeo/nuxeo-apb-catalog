@@ -17,236 +17,27 @@ spec:
       component: {{ component }}
   serviceName: {{ name }}
   replicas: {{ replicas }}
+
+  updateStrategy:
+    type: {{ updateStrategy_type }}
   template:
     metadata:
       labels:
         app: {{ name }}
         component: {{ component }}
+{% if podLabels is defined and (podLabels | from_yaml) %}
+{{ podLabels | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
+{% endif %}
 {% if podAnnotations is defined and (podAnnotations | from_yaml) %}
       annotations:
 {{ podAnnotations | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
 {% endif %}
     spec:
+      terminationGracePeriodSeconds: {{ terminationGracePeriodSeconds }}
 {% if securityContext is defined and (securityContext | from_yaml) %}
       securityContext:
 {{ securityContext | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
 {% endif %}
-      initContainers:
-        - name: copy-config
-          image: busybox
-          command:
-            - "sh"
-          args:
-            - "-c"
-            - |
-              set -e
-              set -x
-
-              cp /configdb-readonly/mongod.conf /data/configdb/mongod.conf
-
-{% if tls_enabled %}
-              cp /ca-readonly/tls.key /data/configdb/tls.key
-              cp /ca-readonly/tls.crt /data/configdb/tls.crt
-{% endif %}
-
-          volumeMounts:
-            - name: workdir
-              mountPath: /work-dir
-            - name: config
-              mountPath: /configdb-readonly
-            - name: configdir
-              mountPath: /data/configdb
-{% if tls_enabled %}
-            - name: ca
-              mountPath: /ca-readonly
-{% endif %}
-        - name: install
-          image: "{{ installImage_repository }}:{{ installImage_tag }}"
-          args:
-            - --work-dir=/work-dir
-          imagePullPolicy: "{{ installImage_pullPolicy }}"
-          volumeMounts:
-            - name: workdir
-              mountPath: /work-dir
-
-{% if bootstrap_debug_enabled is defined and bootstrap_debug_enabled %}
-        - name: bootstrap-debug
-          image: "{{ image_repository }}:{{ image_tag }}"
-          command:
-            - "bash"
-          args:
-            - "-c"
-            - top -b -n 1000000
-          env:
-            - name: POD_NAMESPACE
-              valueFrom:
-                fieldRef:
-                  apiVersion: v1
-                  fieldPath: metadata.namespace
-            - name: REPLICA_SET
-              value: {{ replicaSetName }}
-{% if auth_enabled %}
-            - name: AUTH
-              value: "true"
-            - name: ADMIN_USER
-              valueFrom:
-                secretKeyRef:
-                  name: "{{ admin_secret_name }}"
-                  key: user
-            - name: ADMIN_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: "{{ admin_secret_name }}"
-                  key: password
-            - name: MONGO_INITDB_DATABASE
-              value: "{{ database }}"
-            - name: MONGO_INITDB_USER
-              valueFrom:
-                secretKeyRef:
-                  name: "{{ user_secret_name }}"
-                  key: user
-            - name: MONGO_INITDB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: "{{ user_secret_name }}"
-                  key: password
-{% endif %}
-          volumeMounts:
-            - name: workdir
-              mountPath: /work-dir
-            - name: init
-              mountPath: /init
-            - name: configdir
-              mountPath: /data/configdb
-            - name: datadir
-              mountPath: /data/db
-{% endif %}
-
-        - name: bootstrap
-          image: "{{ image_repository }}:{{ image_tag }}"
-          command:
-            - /work-dir/peer-finder
-          args:
-            - -on-start=/init/on-start.sh
-            - "-service={{ name }}"
-          imagePullPolicy: "{{ image_pullPolicy }}"
-          env:
-            - name: POD_NAMESPACE
-              valueFrom:
-                fieldRef:
-                  apiVersion: v1
-                  fieldPath: metadata.namespace
-            - name: REPLICA_SET
-              value: {{ replicaSetName }}
-{% if auth_enabled %}
-            - name: AUTH
-              value: "true"
-            - name: ADMIN_USER
-              valueFrom:
-                secretKeyRef:
-                  name: "{{ admin_secret_name }}"
-                  key: user
-            - name: ADMIN_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: "{{ admin_secret_name }}"
-                  key: password
-            - name: MONGO_INITDB_DATABASE
-              value: "{{ database }}"
-            - name: MONGO_INITDB_USER
-              valueFrom:
-                secretKeyRef:
-                  name: "{{ user_secret_name }}"
-                  key: user
-            - name: MONGO_INITDB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: "{{ user_secret_name }}"
-                  key: password
-{% endif %}
-          volumeMounts:
-            - name: workdir
-              mountPath: /work-dir
-            - name: init
-              mountPath: /init
-            - name: configdir
-              mountPath: /data/configdb
-            - name: datadir
-              mountPath: /data/db
-      containers:
-        - name: {{ apb_name }}
-          image: "{{ image_repository }}:{{ image_tag }}"
-          imagePullPolicy: "{{ image_pullPolicy }}"
-{% if extraVars is defined and (extraVars | from_yaml) %}
-          env:
-{{ extraVars | from_yaml | to_nice_yaml(indent=2) | indent(12, true) }}
-{% endif %}
-          ports:
-            - name: peer
-              containerPort: 27017
-          resources:
-{% if resources is defined and (resources | from_yaml) %}
-{{ resources | from_yaml | to_nice_yaml(indent=2) | indent(12, true) }}
-{% endif %}
-          command:
-            - mongod
-          args:
-            - --config=/data/configdb/mongod.conf
-            - --dbpath=/data/db
-            - --replSet={{ replicaSetName }}
-            - --port={{ port }}
-            - --bind_ip
-            - "0.0.0.0"
-{% if auth_enabled %}
-            - --auth
-{% endif %}
-{% if tls_enabled %}
-            - --clusterAuthMode
-            - x509
-            - --sslMode
-            - requireSSL
-            - --sslCAFile=/data/configdb/tls.crt
-            - --sslPEMKeyFile=/work-dir/mongo.pem
-{% endif %}
-          livenessProbe:
-            exec:
-              command:
-                - mongo
-{% if tls_enabled %}
-                - --ssl
-                - --sslCAFile=/data/configdb/tls.crt
-                - --sslPEMKeyFile=/work-dir/mongo.pem
-{% endif %}
-                - --eval
-                - "db.adminCommand('ping')"
-            initialDelaySeconds: {{ livenessProbe_initialDelaySeconds }}
-            timeoutSeconds: {{ livenessProbe_timeoutSeconds }}
-            failureThreshold: {{ livenessProbe_failureThreshold }}
-            periodSeconds: {{ livenessProbe_periodSeconds }}
-            successThreshold: {{ livenessProbe_successThreshold }}
-          readinessProbe:
-            exec:
-              command:
-                - mongo
-{% if tls_enabled %}
-                - --ssl
-                - --sslCAFile=/data/configdb/tls.crt
-                - --sslPEMKeyFile=/work-dir/mongo.pem
-{% endif %}
-                - --eval
-                - "db.adminCommand('ping')"
-            initialDelaySeconds: {{ readinessProbe_initialDelaySeconds }}
-            timeoutSeconds: {{ readinessProbe_timeoutSeconds }}
-            failureThreshold: {{ readinessProbe_failureThreshold }}
-            periodSeconds: {{ readinessProbe_periodSeconds }}
-            successThreshold: {{ readinessProbe_successThreshold }}
-          volumeMounts:
-            - name: datadir
-              mountPath: /data/db
-            - name: configdir
-              mountPath: /data/configdb
-            - name: workdir
-              mountPath: /work-dir
 {% if nodeSelector is defined and (nodeSelector | from_yaml) %}
       nodeSelector:
 {{ nodeSelector | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
@@ -259,25 +50,135 @@ spec:
       tolerations:
 {{ tolerations | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
 {% endif %}
-      volumes:
-        - name: config
-          configMap:
-            name: {{ kafka_configmap_name }}
-        - name: init
-          configMap:
-            defaultMode: 0755
-            name: {{ init_configmap_name }}
+
+      initContainers:
 {% if tls_enabled %}
-        - name: ca
-          secret:
-            defaultMode: 0400
-            secretName: {{ ca_secret_name }}
+      - name: "create-certs"
+        image: {{ image_repository }}:{{ image_tag }}
+        imagePullPolicy: "{{ image_pullPolicy }}"
+        env:
+        - name: DN_SUFFIX
+          value: "{{ tls_casubjectDistinguishedNameSuffix |replace("/", ",")}}"
+        command:
+            - "sh"
+        args:
+          - "-c"
+          - |
+            set -x
+            bash /opt/kakfa/init/init-certs.sh
+        securityContext:
+          runAsUser: 0
+        volumeMounts:
+        - mountPath: /opt/kafka/init
+          name: config-init
+        - mountPath: /caroot
+          name: certs
+        - mountPath: /etc/kafa/secrets
+          name: sslcerts
 {% endif %}
-        - name: workdir
-          emptyDir: {}
-        - name: configdir
-          emptyDir: {}
-{% if persistentVolume_enabled %}
+
+      containers:
+        - name: kafka-broker
+          image: "{{ image_repository }}:{{ image_tag }}"
+          imagePullPolicy: "{{ image_pullPolicy }}"
+          ports:
+            - containerPort: 9092
+              name: kafka
+          resources:
+{% if resources is defined and (resources | from_yaml) %}
+{{ resources | from_yaml | to_nice_yaml(indent=2) | indent(12, true) }}
+{% endif %}
+          env:
+{% if extraVars is defined and (extraVars | from_yaml) %}
+{{ extraVars | from_yaml | to_nice_yaml(indent=2) | indent(12, true) }}
+{% endif %}
+          - name: POD_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP
+          - name: ZOOKEEPER_SERVER_COUNT
+            value: '{{ zookeeper_replicas }}'
+          - name: ZOOKEEPER_CLIENT_PORT
+            value: '{{ zookeeper_ports_client_containerPort }}'
+          - name: KAFKA_HEAP_OPTS
+            value: '{{ kafkaHeapOptions }}'
+          - name: KAFKA_DATA_DIRS
+            value: /opt/kafka/data
+{% if tls_enabled %}
+          - name: KAFKA_SSL_KEYSTORE_CREDENTIALS
+            value: "keystore_credential"
+          - name: KAFKA_SSL_KEY_CREDENTIALS
+            value: "key_credential"
+          - name: KAFKA_SSL_TRUSTSTORE_FILENAME
+            value: "kafka.truststore.jks"
+          - name: KAFKA_SSL_TRUSTSTORE_CREDENTIALS
+            value: "truststore_credential"
+          - name: KAFKA_OPTS
+            value: -Djava.security.auth.login.config=/etc/kafka/secrets/jaas.conf
+          - name: ZOOKEEPER_SASL_ENABLED
+            value: "false"
+          - name: KAFKA_SASL_ENABLED_MECHANISMS
+            value: PLAIN
+          - name: KAFKA_SASL_MECHANISM_INTER_BROKER_PROTOCOL
+            value: PLAIN
+
+{% endif %}
+          command:
+          - /bin/bash
+          - -exc
+          - |
+            export KAFKA_ZOOKEEPER_CONNECT=$(DOMAIN=`hostname -d`; \
+                for ((i=0; i<$ZOOKEEPER_SERVER_COUNT; i++)); do \
+                    echo -n "{{ zookeeper_name }}-headless-$i.$DOMAIN:$ZOOKEEPER_CLIENT_PORT,"; \
+                done| sed 's/,$//'| sed 's/kafka/zookeeper/g') && \
+            export KAFKA_BROKER_ID=${HOSTNAME##*-} && \
+            export KAFKA_SSL_KEYSTORE_FILENAME=kafka.broker${KAFKA_BROKER_ID}.keystore.jks
+            export NODEPORT=$(expr 31092 + $KAFKA_BROKER_ID) && \
+            export KAFKA_LISTENERS=PLAINTEXT://${POD_IP}:9092 && \
+            export KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://${POD_IP}:9092 && \
+            /etc/confluent/docker/run
+          livenessProbe:
+            tcpSocket:
+              port: 9092
+            initialDelaySeconds: {{ livenessProbe_initialDelaySeconds }}
+            timeoutSeconds: {{ livenessProbe_timeoutSeconds }}
+            failureThreshold: {{ livenessProbe_failureThreshold }}
+            periodSeconds: {{ livenessProbe_periodSeconds }}
+            successThreshold: {{ livenessProbe_successThreshold }}
+          readinessProbe:
+            exec:
+              command:
+              - /bin/bash
+              - -exc
+              - |
+                export KAFKA_ZOOKEEPER_CONNECT=$(DOMAIN=`hostname -d`; \
+                    for ((i=0; i<$ZOOKEEPER_SERVER_COUNT; i++)); do \
+                        echo -n "{{ name }}-$i.$DOMAIN:$ZOOKEEPER_CLIENT_PORT,"; \
+                    done| sed 's/,$//'| sed 's/kafka/zookeeper/g') && \
+                (kafka-topics --zookeeper ${KAFKA_ZOOKEEPER_CONNECT} --list)
+            initialDelaySeconds: {{ readinessProbe_initialDelaySeconds }}
+            timeoutSeconds: {{ readinessProbe_timeoutSeconds }}
+            failureThreshold: {{ readinessProbe_failureThreshold }}
+            periodSeconds: {{ readinessProbe_periodSeconds }}
+            successThreshold: {{ readinessProbe_successThreshold }}
+          volumeMounts:
+          - name: datadir
+            mountPath: /opt/kafka/data
+{% if tls_enabled %}
+          - name: sslcerts
+            mountPath: /etc/kafa/secrets
+{% endif %}
+      volumes:
+{% if tls_enabled %}
+      - name: certs
+        secret:
+          secretName: {{ ca_secret_name }}
+      - name: config-init
+        configMap:
+          name: {{ init_configmap_name }}
+      - name: sslcerts
+        emptyDir: {}
+{% endif %}
   volumeClaimTemplates:
     - metadata:
         name: datadir
@@ -297,8 +198,4 @@ spec:
 {% else %}
         storageClassName: "{{ persistentVolume_storageClass }}"
 {% endif %}
-{% endif %}
-{% else %}
-        - name: datadir
-          emptyDir: {}
 {% endif %}
