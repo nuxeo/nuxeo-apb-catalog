@@ -29,9 +29,10 @@ replicas: 3
 podDisruptionBudget: "{minAvailable: 2}"
 additionalPorts: "{}"
 image_repository: confluentinc/cp-kafka
-image_tag: '4.1.1'
+image_tag: '4.0.1-1'
 image_pullPolicy: IfNotPresent
 podAnnotations: '{}'
+podLabels: '{}'
 securityContext: '{}'
 resources: '{}'
 kafkaHeapOptions: "-Xmx1G -Xms1G"
@@ -67,7 +68,7 @@ zookeeper_podDisruptionBudget: '{"maxUnavailable": 1}'
 zookeeper_terminationGracePeriodSeconds: 1800
 zookeeper_updateStrategy_type: OnDelete
 zookeeper_image_repository: confluentinc/cp-zookeeper
-zookeeper_image_tag: '4.1.1'
+zookeeper_image_tag: '4.0.1-1'
 zookeeper_image_pullPolicy: IfNotPresent
 zookeeper_service_type: ClusterIP
 zookeeper_service_annotations: '{}'

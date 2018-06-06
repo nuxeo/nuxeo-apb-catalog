@@ -1,0 +1,114 @@
+---
+
+
+# Work-around k8s_raw inability to create Secret directly
+- name: "Users secret state={{ state }}"
+  block:
+    - name: "Create jaas.conf from template"
+      template:
+        src: jaas.conf.j2
+        dest: /tmp/jaas.conf
+    - name: "Create users secret from template"
+      template:
+        src: user_secret.yml.j2
+        dest: /tmp/users_secret.yml
+      vars:
+        jaas_conf_path: '/tmp/jaas.conf'
+
+    - name: "Create user secret"
+      shell: kubectl create --filename=/tmp/user_secret.yml
+  when: state == "present" and auth_enabled and auth_existingUserSecret is undefined
+
+- name: "user secret state={{ state }}"
+  shell: kubectl delete --ignore-not-found=true secret {{ user_secret_name }} -n {{ namespace }}
+  when: state == "absent" and auth_enabled and auth_existingUserSecret is undefined
+
+
+
+#Work-around k8s_raw inability to create ConfigMap directly
+- name: "init container config map state={{ state }}"
+  block:
+    - name: "Create init container config from template"
+      template:
+        src: init_configmap.yml.j2
+        dest: /tmp/init_configmap.yml
+
+    - name: "Create init container config map"
+      shell: kubectl create --filename=/tmp/init_configmap.yml
+  when: state == "present"
+
+- name: "init container config map state={{ state }}"
+  shell: kubectl delete --ignore-not-found=true configmap {{ init_configmap_name }} -n {{ namespace }}
+  when: state == "absent"
+
+
+- name: "Kafka poddisruptionbudget state={{ state }}"
+  block:
+    - name: "Create Kafka poddisruptionbudget from template"
+      template:
+        src: poddisruptionbudget.yml.j2
+        dest: /tmp/poddisruptionbudget.yml
+
+    - name: "Create Kafka poddisruptionbudget"
+      shell: kubectl create --filename=/tmp/poddisruptionbudget.yml
+  when: state == "present" and podDisruptionBudget is defined and (podDisruptionBudget | from_yaml)
+
+- name: "Kafka poddisruptionbudget state={{ state }}"
+  shell: kubectl delete --ignore-not-found=true poddisruptionbudget {{ name }} -n {{ namespace }}
+  when: state == "absent" and podDisruptionBudget is defined and (podDisruptionBudget | from_yaml)
+
+
+
+# Work-around k8s_raw refusal to create service with clusterIP: None
+- name: "Kafka service state={{ state }}"
+  block:
+    - name: "Create Kafka service from template"
+      template:
+        src: service.yml.j2
+        dest: /tmp/service.yml
+
+    - name: "Create Kafka service"
+      shell: kubectl create --filename=/tmp/service.yml
+  when: state == "present"
+
+- name: "Kafka service state={{ state }}"
+  shell: kubectl delete --ignore-not-found=true service {{ name }} -n {{ namespace }}
+  when: state == "absent"
+
+# Work-around k8s_raw refusal to create service with clusterIP: None
+- name: "Kafka headless service state={{ state }}"
+  block:
+    - name: "Create Kafka headless service from template"
+      template:
+        src: service-headless.yml.j2
+        dest: /tmp/service-headless.yml
+
+    - name: "Create Kafka headless service"
+      shell: kubectl create --filename=/tmp/service-headless.yml
+  when: state == "present"
+
+- name: "Kafka headless service state={{ state }}"
+  shell: kubectl delete --ignore-not-found=true service {{ name }}-headless -n {{ namespace }}
+  when: state == "absent"
+
+
+
+
+# Work-around k8s_raw inability to create StatefulSet directly
+- name: "Kafka statefulset state={{ state }}"
+  block:
+    - name: "Create Kafka statefulset from template"
+      template:
+        src: statefulset.yml.j2
+        dest: /tmp/statefulset.yml
+    - name: "Create Kafka statefulset"
+      shell: kubectl create --filename=/tmp/statefulset.yml
+  when: state == "present"
+
+
+- name: "Kafka statefulset state={{ state }}"
+  shell: kubectl delete --ignore-not-found=true statefulset {{ name }} -n {{ namespace }}
+  when: state == "absent"
+
+
+

@@ -13,9 +13,11 @@ metadata:
     apb_service_class_id: '{{ _apb_service_class_id }}'
     apb_service_instance_id: '{{ _apb_service_instance_id }}'
     component: {{ component }}
-  name: {{ name }}
+  name: {{ name }}-headless
   namespace: {{ namespace }}
 spec:
+  type: ClusterIP
+  clusterIP: None
   ports:
     - name: peer
       port: 9092
