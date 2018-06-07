@@ -63,6 +63,7 @@ if [ -f "$ca_crt"  ]; then
     pem=/work-dir/mongo.pem
     ssl_args=(--ssl --sslCAFile "$ca_crt" --sslPEMKeyFile "$pem")
     ssl_server_args=(--sslMode requireSSL --sslCAFile "$ca_crt" --sslPEMKeyFile "$pem")
+    certificate_validity="$CERTIFICATE_VALIDITY"
     pushd /work-dir
 
 cat >openssl.cnf <<EOL
@@ -87,7 +88,7 @@ EOL
     openssl req -new -key mongo.key -out mongo.csr -subj "/CN=$my_hostname/O=nuxeo" -config openssl.cnf
     openssl x509 -req -in mongo.csr \
         -CA "$ca_crt" -CAkey "$ca_key" -CAcreateserial \
-        -out mongo.crt -days 3650 -extensions v3_req -extfile openssl.cnf
+        -out mongo.crt -days "$certificate_validity" -extensions v3_req -extfile openssl.cnf
 
     rm mongo.csr
     cat mongo.crt mongo.key > $pem

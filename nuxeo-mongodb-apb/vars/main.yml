@@ -21,9 +21,9 @@ poddisruptionbudget_lookup: "{{ lookup('k8s', api_version='v1beta1', kind='PodDi
 service_lookup: "{{ lookup('k8s', kind='Service', namespace=namespace, resource_name=app_name) }}"
 statefulset_lookup: "{{ lookup('k8s', kind='StatefulSet', namespace=namespace, resource_name=app_name) }}"
 password_lookup: "{{ lookup('password', '/dev/null chars=ascii_letters,digits,hexdigits') }}"
-tls_cacert_lookup: "{{ lookup('file', tls_cacert_path) }}"
 
 # Variables to hold queries
+ca_secret_tls_cacert_query: "{{ ca_secret_lookup | json_query('data.\"tls.crt\"') }}"
 ready_replicas_query: "[spec.replicas, status.ready_replicas]"
 statefulset_query: "{{ statefulset_lookup | json_query(ready_replicas_query) | unique | count == 1 }}"
 

@@ -404,10 +404,15 @@ plans:
         title: Set environment variables for the main container
         display_group: MongoDB Config
 
-      - name: tls_casubjectDistinguishedName
-        default: '/CN=nuxeo-backings.mongodb.svc/OU=engineering/O=nuxeo/L=irvine/S=ca/C=us'
+      - name: tls_casubjectDistinguishedNameSuffix
+        default: '/OU=engineering/O=nuxeo/L=irvine/ST=ca/C=us'
         type: string
-        title: Certificate Authority Subject Distinguished Name for the MongoDB cluster in single string format
+        title: Certificate Authority Subject Distinguished Name Suffix for the MongoDB cluster in single string format
+        display_group: MongoDB Security Config
+      - name: certificate_validity
+        default: 3650
+        type: number
+        title: Certificate validity period in days
         display_group: MongoDB Security Config
       - name: auth_adminUser
         default: 'admin'

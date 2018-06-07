@@ -90,6 +90,8 @@ spec:
                   fieldPath: metadata.namespace
             - name: REPLICA_SET
               value: {{ replicaSetName }}
+            - name: CERTIFICATE_VALIDITY
+              value: "{{ certificate_validity }}"
 {% if auth_enabled %}
             - name: AUTH
               value: "true"
@@ -143,6 +145,8 @@ spec:
                   fieldPath: metadata.namespace
             - name: REPLICA_SET
               value: {{ replicaSetName }}
+            - name: CERTIFICATE_VALIDITY
+              value: "{{ certificate_validity }}"
 {% if auth_enabled %}
             - name: AUTH
               value: "true"

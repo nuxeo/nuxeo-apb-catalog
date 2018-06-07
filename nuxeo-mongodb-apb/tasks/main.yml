@@ -18,11 +18,9 @@
   set_fact:
     cluster: "{{ 'openshift' if 'openshift' in oc_version.stdout else 'kubernetes' }}"
 
-- name: "Create the CA certificate and key"
-  command: >
-    openssl req -newkey rsa:2048 -new -x509 -days 365 -nodes
-    -out {{ tls_cacert_path }} -keyout {{ tls_cakey_path }} -subj "{{ tls_casubjectDistinguishedName }}"
-  when: state == 'present' and tls_enabled
+- name: "set ca secret state={{ state }}"
+  include_tasks: "set_ca_secret_state.yml"
+  when: tls_enabled
 
 - name: "set fact statefulset pvcs state={{ state }}"
   include_tasks: "set_fact_statefulset_pvcs.yml"
@@ -32,9 +30,6 @@
   include_tasks: "set_broker_object_state.yml name={{item.name}} desc={{item.desc}}"
   when: item.apply | default(True)
   loop:
-    - name: 'ca_secret'
-      desc: 'ca secret'
-      apply: "{{ tls_enabled }}"
     - name: 'admin_secret'
       desc: 'admin secret'
       apply: "{{ auth_enabled and auth_existingAdminSecret is undefined }}"
@@ -84,7 +79,7 @@
   asb_encode_binding:
     fields:
       uri: "{{ service_uri }}"
-      tls_cacert: "{{ tls_cacert_lookup | b64encode }}"
+      tls_cacert: "{{ ca_secret_tls_cacert_query }}"
   when: in_cluster and state == 'present'
 
 - name: "Update last operation"
