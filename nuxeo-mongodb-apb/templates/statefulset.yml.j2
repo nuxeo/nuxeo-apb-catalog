@@ -183,7 +183,7 @@ spec:
             - name: datadir
               mountPath: /data/db
       containers:
-        - name: {{ apb_name }}
+        - name: {{ app_name }}
           image: "{{ image_repository }}:{{ image_tag }}"
           imagePullPolicy: "{{ image_pullPolicy }}"
 {% if extraVars is defined and (extraVars | from_yaml) %}

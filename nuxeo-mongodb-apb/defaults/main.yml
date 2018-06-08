@@ -1,12 +1,11 @@
 ---
-apb_name: nuxeo-mongodb-apb
 
 # Defaults for values we could expect from a broker
 _apb_plan_id: secure-replicaset
 _apb_service_class_id: 0
 _apb_service_instance_id: 0
 
-app_name: "nuxeo-mongodb-{{ _apb_service_instance_id }}"
+app_name: "nuxeo-mongodb-{{ _apb_service_instance_id | string | truncate(5, True, '') }}"
 namespace: "{{ lookup('env','NAMESPACE') | default('nuxeo', true) }}"
 
 component: mongodb
