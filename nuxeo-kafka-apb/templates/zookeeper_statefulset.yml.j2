@@ -17,7 +17,7 @@ spec:
       component: {{ zookeeper_component }}
   serviceName: {{ zookeeper_name }}-headless
   replicas: {{ zookeeper_replicas }}
-
+  podManagementPolicy: Parallel
   updateStrategy:
     type: {{ zookeeper_updateStrategy_type }}
   template:
@@ -39,7 +39,7 @@ spec:
 {{ zookeeper_securityContext | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
 {% endif %}
       containers:
-        - name: {{ apb_name }}
+        - name: zookeeper
           image: "{{ zookeeper_image_repository }}:{{ zookeeper_image_tag }}"
           imagePullPolicy: "{{ image_pullPolicy }}"
           ports:

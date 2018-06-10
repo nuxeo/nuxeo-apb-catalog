@@ -13,17 +13,35 @@
   shell: kubectl delete --ignore-not-found=true secret {{ ca_secret_name }} -n {{ namespace }}
   when: state == "absent" and tls_enabled
 
-
 - include_tasks: zookeeper.yml
-- include_tasks: kafka.yml
 
+- name: "Update last operation"
+  asb_last_operation:
+    description: "25%: Cluster objects state={{ state }}"
+  when: in_cluster
+
+- include_tasks: "verify_zookeeper_{{ apb_action }}.yml"
 
 - name: "Update last operation"
   asb_last_operation:
     description: "50%: Cluster objects state={{ state }}"
   when: in_cluster
 
+- include_tasks: kafka.yml
+
+- name: "Update last operation"
+  asb_last_operation:
+    description: "75%: Cluster objects state={{ state }}"
+  when: in_cluster
+
 - include_tasks: "verify_{{ apb_action }}.yml"
+
+
+- name: "set fact service_uri state={{ state }}"
+  include_tasks: "set_fact_service_uri.yml"
+  when: state == "present"
+
+
 
 - name: encode bind credentials
   asb_encode_binding:

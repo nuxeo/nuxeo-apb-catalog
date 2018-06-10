@@ -13,7 +13,7 @@
   until:
     - not ca_secret_lookup
     - not users_secret_lookup or (auth_enabled and auth_existingUserSecret is undefined)
-    - not kafka_configmap_lookup
+    - not init_configmap_lookup
     - not poddisruptionbudget_lookup or not (podDisruptionBudget is defined and (podDisruptionBudget | from_yaml))
     - not statefulset_lookup
     - not service_lookup

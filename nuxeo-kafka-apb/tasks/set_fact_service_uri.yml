@@ -2,23 +2,15 @@
 
 - name: "set fact service uri"
   block:
-  - name: "Register host domain name cmd"
-    shell: hostname -d
-    register: host_domain_name_cmd
 
   - name: "Set Fact hosts"
     set_fact:
-      hosts: "{{ hosts  + name + '-' + item.0 + '.' + host_domain_name_cmd.stdout + ':' + port + (',' if (item.0 | int) != ((sts_status_replicas_list | length) - 1) else '') }}"
+      hosts: "{{ hosts  + name + '-' + item.0 + '.' + name + '.' + namespace + '.svc:9092' + (',' if (item.0 | int) != ((sts_status_replicas_list | length) - 1) else '') }}"
     with_nested:
       - "{{ sts_status_replicas_list }}"
 
-  - name: "Set Fact service uri"
-    set_fact:
-      service_uri: "{{ 'kafka://' + auth_creds + hosts + db_name + '?replicaSet=' + replicaSetName + ssl_parm + auth_parm }}"
+  - debug:
+      msg: "Kafka connexion: {{ hosts }}"
 
   vars:
     hosts: ""
-    auth_creds: "{{ '' if not auth_enabled else auth_username + ':' + user_password + '@' }}"
-    db_name: "{{ '' if database is undefined or not database else '/' + database }}"
-    ssl_parm: "{{ '' if not tls_enabled else '&ssl=true' }}"
-    auth_parm: "{{ '' if not auth_enabled else '&authMechanism=SCRAM-SHA-1' }}"

@@ -11,5 +11,5 @@ metadata:
   name: {{ init_configmap_name }}
   namespace: {{ namespace }}
 data:
-  on-start.sh: |
+  init-certs.sh: |
     {{ lookup('file', '../files/init-certs.sh') | indent(4) }}

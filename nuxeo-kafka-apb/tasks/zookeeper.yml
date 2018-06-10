@@ -50,6 +50,11 @@
   when: state == "absent"
 
 
+- name: "set fact statefulset pvcs state={{ state }}"
+  include_tasks: "set_fact_zookeeper_statefulset_pvcs.yml"
+  when: state == "absent"
+
+
 # Work-around k8s_raw inability to create StatefulSet directly
 - name: "Zookeeper statefulset state={{ state }}"
   block:
@@ -65,3 +70,10 @@
 - name: "Zookeeper statefulset state={{ state }}"
   shell: kubectl delete --ignore-not-found=true statefulset {{ zookeeper_name }} -n {{ namespace }}
   when: state == "absent"
+
+
+- name: "Zookeeper statefulset persistentvolumeclaims state={{ state }}"
+  shell: kubectl delete --ignore-not-found=true persistentvolumeclaim {{ item }} -n {{ namespace }}
+  with_items: "{{ zookeeper_statefulset_pvcs }}"
+  when: state == "absent"
+

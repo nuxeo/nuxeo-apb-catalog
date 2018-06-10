@@ -10,17 +10,17 @@
         dest: /tmp/jaas.conf
     - name: "Create users secret from template"
       template:
-        src: user_secret.yml.j2
+        src: users_secret.yml.j2
         dest: /tmp/users_secret.yml
       vars:
         jaas_conf_path: '/tmp/jaas.conf'
 
     - name: "Create user secret"
-      shell: kubectl create --filename=/tmp/user_secret.yml
+      shell: kubectl create --filename=/tmp/users_secret.yml
   when: state == "present" and auth_enabled and auth_existingUserSecret is undefined
 
 - name: "user secret state={{ state }}"
-  shell: kubectl delete --ignore-not-found=true secret {{ user_secret_name }} -n {{ namespace }}
+  shell: kubectl delete --ignore-not-found=true secret {{ users_secret_name }} -n {{ namespace }}
   when: state == "absent" and auth_enabled and auth_existingUserSecret is undefined
 
 
@@ -92,7 +92,9 @@
   when: state == "absent"
 
 
-
+- name: "set fact statefulset pvcs state={{ state }}"
+  include_tasks: "set_fact_statefulset_pvcs.yml"
+  when: state == "absent"
 
 # Work-around k8s_raw inability to create StatefulSet directly
 - name: "Kafka statefulset state={{ state }}"
@@ -108,6 +110,11 @@
 
 - name: "Kafka statefulset state={{ state }}"
   shell: kubectl delete --ignore-not-found=true statefulset {{ name }} -n {{ namespace }}
+  when: state == "absent"
+
+- name: "statefulset persistentvolumeclaims state={{ state }}"
+  shell: kubectl delete --ignore-not-found=true persistentvolumeclaim {{ item }} -n {{ namespace }}
+  with_items: "{{ statefulset_pvcs }}"
   when: state == "absent"
 
 
