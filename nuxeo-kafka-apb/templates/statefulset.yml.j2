@@ -17,7 +17,7 @@ spec:
       component: {{ component }}
   serviceName: {{ name }}
   replicas: {{ replicas }}
-
+  podManagementPolicy: Parallel
   updateStrategy:
     type: {{ updateStrategy_type }}
   template:
@@ -65,16 +65,18 @@ spec:
           - "-c"
           - |
             set -x
-            bash /opt/kakfa/init/init-certs.sh
-        securityContext:
-          runAsUser: 0
+            ls -la /opt/kafka/init && \
+            cat /opt/kafka/init/init-certs.sh | bash && \
+            ls -la /etc/kafka/secrets
         volumeMounts:
         - mountPath: /opt/kafka/init
           name: config-init
         - mountPath: /caroot
           name: certs
-        - mountPath: /etc/kafa/secrets
+        - mountPath: /work-dir
           name: sslcerts
+        - mountPath: /tmp/jaas
+          name: config-jaas
 {% endif %}
 
       containers:
@@ -106,13 +108,11 @@ spec:
             value: /opt/kafka/data
 {% if tls_enabled %}
           - name: KAFKA_SSL_KEYSTORE_CREDENTIALS
-            value: "keystore_credential"
-          - name: KAFKA_SSL_KEY_CREDENTIALS
-            value: "key_credential"
+            value: "credentials"
           - name: KAFKA_SSL_TRUSTSTORE_FILENAME
-            value: "kafka.truststore.jks"
+            value: "truststore.jks"
           - name: KAFKA_SSL_TRUSTSTORE_CREDENTIALS
-            value: "truststore_credential"
+            value: "credentials"
           - name: KAFKA_OPTS
             value: -Djava.security.auth.login.config=/etc/kafka/secrets/jaas.conf
           - name: ZOOKEEPER_SASL_ENABLED
@@ -127,12 +127,13 @@ spec:
           - /bin/bash
           - -exc
           - |
+            cp -v /work-dir/* /etc/kafka/secrets && \
             export KAFKA_ZOOKEEPER_CONNECT=$(DOMAIN=`hostname -d`; \
                 for ((i=0; i<$ZOOKEEPER_SERVER_COUNT; i++)); do \
                     echo -n "{{ zookeeper_name }}-headless-$i.$DOMAIN:$ZOOKEEPER_CLIENT_PORT,"; \
                 done| sed 's/,$//'| sed 's/kafka/zookeeper/g') && \
             export KAFKA_BROKER_ID=${HOSTNAME##*-} && \
-            export KAFKA_SSL_KEYSTORE_FILENAME=kafka.broker${KAFKA_BROKER_ID}.keystore.jks
+            export KAFKA_SSL_KEYSTORE_FILENAME=keystore.jks
             export NODEPORT=$(expr 31092 + $KAFKA_BROKER_ID) && \
             export KAFKA_LISTENERS=PLAINTEXT://${POD_IP}:9092 && \
             export KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://${POD_IP}:9092 && \
@@ -166,7 +167,7 @@ spec:
             mountPath: /opt/kafka/data
 {% if tls_enabled %}
           - name: sslcerts
-            mountPath: /etc/kafa/secrets
+            mountPath: /work-dir
 {% endif %}
       volumes:
 {% if tls_enabled %}
@@ -176,6 +177,9 @@ spec:
       - name: config-init
         configMap:
           name: {{ init_configmap_name }}
+      - name: config-jaas
+        secret:
+          secretName: {{ users_secret_name }}
       - name: sslcerts
         emptyDir: {}
 {% endif %}

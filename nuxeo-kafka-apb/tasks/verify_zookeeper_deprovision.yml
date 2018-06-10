@@ -1,0 +1,20 @@
+---
+
+- name: "Verify {{ zookeeper_name }} objects removed"
+  set_fact:
+    zookeeper_statefulset: "{{ zookeeper_statefulset_lookup }}"
+    zookeeper_service: "{{ zookeeper_service_lookup }}"
+    zookeeper_service_headless: "{{ zookeeper_service_headless_lookup }}"
+  retries: 10
+  delay: 5
+  until:
+    - not zookeeper_statefulset_lookup
+    - not zookeeper_service_lookup
+    - not zookeeper_service_headless_lookup
+
+
+- name: "Verify statefulset persistentvolumeclaim objects removed"
+  shell: kubectl get persistentvolumeclaim {{ item }}
+  register: kubectl_cmd
+  failed_when: kubectl_cmd.rc == 0 or kubectl_cmd.rc >= 2
+  with_items: "{{ zookeeper_statefulset_pvcs }}"

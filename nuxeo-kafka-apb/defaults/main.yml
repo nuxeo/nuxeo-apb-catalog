@@ -107,3 +107,8 @@ zookeeper_env_snap_retain_count: 3
 zookeeper_env_sync_limit: 10
 zookeeper_env_tick_time: 2000
 zookeeper_extraVars: '{}'
+
+
+tls_casubjectDistinguishedNameSuffix: '/OU=engineering/O=nuxeo/L=irvine/S=ca/C=us'
+auth_adminUser: admin
+

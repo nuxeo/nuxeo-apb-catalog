@@ -1,0 +1,34 @@
+---
+
+- name: "Verify {{ name }} objects exist"
+  set_fact:
+    zookeeper_statefulset: "{{ zookeeper_statefulset_lookup }}"
+    zookeeper_service: "{{ zookeeper_service_lookup }}"
+    zookeeper_service_headless: "{{ zookeeper_service_headless_lookup }}"
+  retries: 10
+  delay: 5
+  until:
+    - zookeeper_statefulset_lookup
+    - zookeeper_service_lookup
+    - zookeeper_service_headless_lookup
+
+# Work-around for https://github.com/kubernetes-client/python/issues/466
+- name: "Verify podisruptionbudget exists"
+  shell: kubectl get poddisruptionbudget {{ zookeeper_name }}
+  when: podDisruptionBudget is defined and (podDisruptionBudget | from_yaml)
+
+- name: "Wait for statefulset to become ready"
+  debug:
+    msg: "StatefulSet ready status: {{ zookeeper_statefulset_query }}"
+  retries: 20
+  delay: 30
+  until:
+    - zookeeper_statefulset_query
+
+- name: "set fact statefulset pvcs state={{ state }}"
+  include_tasks: "set_fact_zookeeper_statefulset_pvcs.yml"
+
+
+- name: "Verify statefulset persistentvolumeclaims exist"
+  shell: kubectl get persistentvolumeclaim {{ item }}
+  with_items: "{{ zookeeper_statefulset_pvcs }}"
