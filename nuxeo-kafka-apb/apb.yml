@@ -35,7 +35,7 @@ plans:
 
       # Kafka parameters
       - name: replicas
-        default: '3'
+        default: 3
         type: number
         title: Number of replicas in the cluster
         display_group: Container Specs
@@ -98,18 +98,10 @@ plans:
         title: The StatefulSet Update Strategy which Kafka will use when changes are applied
         display_group: Container Specs
       - name: podManagementPolicy
-        default: 'OrderedReady'
+        default: 'Parallel'
         type: enum
         enum: ['OrderedReady', 'Parallel']
         title: Start and stop pods in Parallel or OrderedReady (one-by-one.)  Note - Can not change after first release
-        display_group: Container Specs
-      - name: logSubPath
-        type: string
-        title: "The subpath within the Kafka container's PV where logs will be stored. This is combined with `persistentVolume_mountPath`, to create, by default: /opt/kafka/data/logs"
-        display_group: Container Specs
-      - name: persistentVolume_mountPath
-        type: string
-        title: The location within the Kafka container where the PV will mount its storage and Kafka will store its logs
         display_group: Container Specs
       - name: persistentVolume_storageClass
         type: string
@@ -158,12 +150,12 @@ plans:
         default: '19092'
         type: number
         title: External access service port
-        display_group: Container Specs
+        display_group: Kafka Config
       - name: external_firstListenerPort
         default: '31090'
         type: number
         title: External access first listener port
-        display_group: Container Specs
+        display_group: Kafka Config
       - name: external_domain
         default: 'cluster.local'
         type: string
@@ -173,74 +165,74 @@ plans:
         default: 'lwolf/kubectl_deployer'
         type: string
         title: External init image name
-        display_group: Container Specs
+        display_group: Kafka Config
       - name: external_init_image_tag
         default: '0.4'
         type: string
         title: External init image tag
-        display_group: Container Specs
+        display_group: Kafka Config
       - name: external_init_image_pullPolicy
         default: 'IfNotPresent'
         type: string
         title: External init image pull policy
-        display_group: Container Specs
+        display_group: Kafka Config
       - name: configurationOverrides_configmap
         default: '{"offsets.topic.replication.factor": 3}'
         type: string
         title: Entries for the Kafka config file
         display_group: Kafka Config
       - name: livenessProbe_initialDelaySeconds
-        default: '30'
+        default: 30
         type: number
         title: Liveness probe initial delay in seconds
         display_group: Container Specs
       - name: livenessProbe_timeoutSeconds
-        default: '1'
+        default: 1
         type: number
         title: Liveness probe timeout in seconds
         display_group: Container Specs
       - name: livenessProbe_failureThreshold
-        default: '3'
+        default: 3
         type: number
         title: Liveness probe failure threshold
         display_group: Container Specs
       - name: livenessProbe_periodSeconds
-        default: '10'
+        default: 10
         type: number
         title: Liveness probe period in seconds
         display_group: Container Specs
       - name: livenessProbe_successThreshold
-        default: '1'
+        default: 1
         type: number
         title: Liveness probe success threshold
         display_group: Container Specs
       - name: readinessProbe_initialDelaySeconds
-        default: '30'
+        default: 30
         type: number
         title: Readiness probe initial delay in seconds
         display_group: Container Specs
       - name: readinessProbe_timeoutSeconds
-        default: '5'
+        default: 5
         type: number
         title: Readiness probe timeout in seconds
         display_group: Container Specs
       - name: readinessProbe_failureThreshold
-        default: '3'
+        default: 3
         type: number
         title: Readiness probe failure threshold
         display_group: Container Specs
       - name: readinessProbe_periodSeconds
-        default: '10'
+        default: 10
         type: number
         title: Readiness probe period in seconds
         display_group: Container Specs
       - name: readinessProbe_successThreshold
-        default: '1'
+        default: 1
         type: number
         title: Readiness probe success threshold
         display_group: Container Specs
       - name: terminationGracePeriodSeconds
-        default: '60'
+        default: 60
         type: number
         title: Period to wait for broker graceful shutdown (sigterm) before pod is killed (sigkill)
         display_group: Container Specs
@@ -252,7 +244,7 @@ plans:
 
       # Zookeeper parameters
       - name: zookeeper_replicas
-        default: '3'
+        default: 3
         type: number
         title: Number of replicas in the zookeeper cluster
         display_group: Zookeeper Container Specs
@@ -263,7 +255,7 @@ plans:
         display_type: textarea
         display_group: Zookeeper Container Specs
       - name: zookeeper_terminationGracePeriodSeconds
-        default: '1800'
+        default: 1800
         type: number
         title: Period to wait for zookeeper graceful shutdown (sigterm) before pod is killed (sigkill)
         display_group: Zookeeper Container Specs
@@ -382,52 +374,52 @@ plans:
         title: List of Zookeeper node taints to tolerate
         display_group: Zookeeper Config
       - name: zookeeper_livenessProbe_initialDelaySeconds
-        default: '20'
+        default: 20
         type: number
         title: Zookeeper liveness probe initial delay in seconds
         display_group: Zookeeper Container Specs
       - name: zookeeper_livenessProbe_timeoutSeconds
-        default: '1'
+        default: 1
         type: number
         title: Zookeeper liveness probe timeout in seconds
         display_group: Zookeeper Container Specs
       - name: zookeeper_livenessProbe_failureThreshold
-        default: '3'
+        default: 3
         type: number
         title: Zookeeper liveness probe failure threshold
         display_group: Zookeeper Container Specs
       - name: zookeeper_livenessProbe_periodSeconds
-        default: '10'
+        default: 10
         type: number
         title: Zookeeper liveness probe period in seconds
         display_group: Zookeeper Container Specs
       - name: zookeeper_livenessProbe_successThreshold
-        default: '1'
+        default: 1
         type: number
         title: Zookeeper liveness probe success threshold
         display_group: Zookeeper Container Specs
       - name: zookeeper_readinessProbe_initialDelaySeconds
-        default: '20'
+        default: 20
         type: number
         title: Zookeeper readiness probe initial delay in seconds
         display_group: Zookeeper Container Specs
       - name: zookeeper_readinessProbe_timeoutSeconds
-        default: '5'
+        default: 5
         type: number
         title: Zookeeper readiness probe timeout in seconds
         display_group: Zookeeper Container Specs
       - name: zookeeper_readinessProbe_failureThreshold
-        default: '3'
+        default: 3
         type: number
         title: Zookeeper readiness probe failure threshold
         display_group: Zookeeper Container Specs
       - name: zookeeper_readinessProbe_periodSeconds
-        default: '10'
+        default: 10
         type: number
         title: Zookeeper readiness probe period in seconds
         display_group: Zookeeper Container Specs
       - name: zookeeper_readinessProbe_successThreshold
-        default: '1'
+        default: 1
         type: number
         title: Zookeeper readiness probe success threshold
         display_group: Zookeeper Container Specs
@@ -437,7 +429,7 @@ plans:
         title: Zookeeper JVM heap size
         display_group: Zookeeper Config
       - name: zookeeper_env_init_limit
-        default: '5'
+        default: 5
         type: number
         title: Zookeeper number of ticks that an ensemble member is allowed to perform leader election
         display_group: Zookeeper Config
@@ -448,37 +440,37 @@ plans:
         title: Zookeeper process logger log level
         display_group: Zookeeper Config
       - name: zookeeper_env_max_client_cnxns
-        default: '60'
+        default: 60
         type: number
         title: Maximum number of concurrent client connections that a Zookeeper server in the ensemble will accept
         display_group: Zookeeper Config
       - name: zookeeper_env_max_session_timeout
-        default: '40000'
+        default: 40000
         type: number
         title: Maximum session timeout that the Zookeeper ensemble will allow a client to request. Upstream default is `20 * zookeeper_env_tick_time`
         display_group: Zookeeper Config
       - name: zookeeper_env_min_session_timeout
-        default: '4000'
+        default: 4000
         type: number
         title: Minimum session timeout that the Zookeeper ensemble will allow a client to request. Upstream default is `2 * zookeeper_env_tick_time`
         display_group: Zookeeper Config
       - name: zookeeper_env_purge_interval
-        default: '0'
+        default: 0
         type: number
         title: Delay, in hours, between ZooKeeper log and snapshot cleanups
         display_group: Zookeeper Config
       - name: zookeeper_env_snap_retain_count
-        default: '3'
+        default: 3
         type: number
         title: Number of snapshots that the ZooKeeper process will retain if `zookeeper_env_purge_interval` is greater than `0`
         display_group: Zookeeper Config
       - name: zookeeper_env_sync_limit
-        default: '10'
+        default: 10
         type: number
         title: Number of Tick by which a follower may lag behind the ensembles leader
         display_group: Zookeeper Config
       - name: zookeeper_env_tick_time
-        default: '2000'
+        default: 2000
         type: number
         title: Number of wall clock ms that corresponds to a Tick for the Zookeeper ensembles internal time
         display_group: Zookeeper Config
@@ -501,7 +493,7 @@ plans:
     parameters:
       # Kafka parameters
       - name: replicas
-        default: '3'
+        default: 3
         type: number
         title: Number of replicas in the cluster
         display_group: Container Specs
@@ -656,57 +648,57 @@ plans:
         title: Entries for the Kafka config file
         display_group: Kafka Config
       - name: livenessProbe_initialDelaySeconds
-        default: '30'
+        default: 30
         type: number
         title: Liveness probe initial delay in seconds
         display_group: Container Specs
       - name: livenessProbe_timeoutSeconds
-        default: '1'
+        default: 1
         type: number
         title: Liveness probe timeout in seconds
         display_group: Container Specs
       - name: livenessProbe_failureThreshold
-        default: '3'
+        default: 3
         type: number
         title: Liveness probe failure threshold
         display_group: Container Specs
       - name: livenessProbe_periodSeconds
-        default: '10'
+        default: 10
         type: number
         title: Liveness probe period in seconds
         display_group: Container Specs
       - name: livenessProbe_successThreshold
-        default: '1'
+        default: 1
         type: number
         title: Liveness probe success threshold
         display_group: Container Specs
       - name: readinessProbe_initialDelaySeconds
-        default: '30'
+        default: 30
         type: number
         title: Readiness probe initial delay in seconds
         display_group: Container Specs
       - name: readinessProbe_timeoutSeconds
-        default: '5'
+        default: 5
         type: number
         title: Readiness probe timeout in seconds
         display_group: Container Specs
       - name: readinessProbe_failureThreshold
-        default: '3'
+        default: 3
         type: number
         title: Readiness probe failure threshold
         display_group: Container Specs
       - name: readinessProbe_periodSeconds
-        default: '10'
+        default: 10
         type: number
         title: Readiness probe period in seconds
         display_group: Container Specs
       - name: readinessProbe_successThreshold
-        default: '1'
+        default: 1
         type: number
         title: Readiness probe success threshold
         display_group: Container Specs
       - name: terminationGracePeriodSeconds
-        default: '60'
+        default: 60
         type: number
         title: Period to wait for broker graceful shutdown (sigterm) before pod is killed (sigkill)
         display_group: Container Specs
@@ -718,7 +710,7 @@ plans:
 
       # Zookeeper parameters
       - name: zookeeper_replicas
-        default: '3'
+        default: 3
         type: number
         title: Number of replicas in the zookeeper cluster
         display_group: Zookeeper Container Specs
@@ -729,7 +721,7 @@ plans:
         display_type: textarea
         display_group: Zookeeper Container Specs
       - name: zookeeper_terminationGracePeriodSeconds
-        default: '1800'
+        default: 1800
         type: number
         title: Period to wait for zookeeper graceful shutdown (sigterm) before pod is killed (sigkill)
         display_group: Zookeeper Container Specs
@@ -765,22 +757,22 @@ plans:
         title: Zookeeper service annotations
         display_group: Zookeeper Container Specs
       - name: zookeeper_service_ports_client_port
-        default: '2181'
+        default: 2181
         type: number
         title: Zookeeper service port number for client port
         display_group: Zookeeper Container Specs
       - name: zookeeper_ports_client_containerPort
-        default: '2181'
+        default: 2181
         type: number
         title: Zookeeper port number for container client port
         display_group: Zookeeper Container Specs
       - name: zookeeper_ports_election_containerPort
-        default: '3888'
+        default: 3888
         type: number
         title: Zookeeper port number for container election port
         display_group: Zookeeper Container Specs
       - name: zookeeper_ports_server_containerPort
-        default: '2888'
+        default: 2888
         type: number
         title: Zookeeper port number for container server port
         display_group: Zookeeper Container Specs
@@ -848,52 +840,52 @@ plans:
         title: List of Zookeeper node taints to tolerate
         display_group: Zookeeper Config
       - name: zookeeper_livenessProbe_initialDelaySeconds
-        default: '20'
+        default: 20
         type: number
         title: Zookeeper liveness probe initial delay in seconds
         display_group: Zookeeper Container Specs
       - name: zookeeper_livenessProbe_timeoutSeconds
-        default: '1'
+        default: 1
         type: number
         title: Zookeeper liveness probe timeout in seconds
         display_group: Zookeeper Container Specs
       - name: zookeeper_livenessProbe_failureThreshold
-        default: '3'
+        default: 3
         type: number
         title: Zookeeper liveness probe failure threshold
         display_group: Zookeeper Container Specs
       - name: zookeeper_livenessProbe_periodSeconds
-        default: '10'
+        default: 10
         type: number
         title: Zookeeper liveness probe period in seconds
         display_group: Zookeeper Container Specs
       - name: zookeeper_livenessProbe_successThreshold
-        default: '1'
+        default: 1
         type: number
         title: Zookeeper liveness probe success threshold
         display_group: Zookeeper Container Specs
       - name: zookeeper_readinessProbe_initialDelaySeconds
-        default: '20'
+        default: 20
         type: number
         title: Zookeeper readiness probe initial delay in seconds
         display_group: Zookeeper Container Specs
       - name: zookeeper_readinessProbe_timeoutSeconds
-        default: '5'
+        default: 5
         type: number
         title: Zookeeper readiness probe timeout in seconds
         display_group: Zookeeper Container Specs
       - name: zookeeper_readinessProbe_failureThreshold
-        default: '3'
+        default: 3
         type: number
         title: Zookeeper readiness probe failure threshold
         display_group: Zookeeper Container Specs
       - name: zookeeper_readinessProbe_periodSeconds
-        default: '10'
+        default: 10
         type: number
         title: Zookeeper readiness probe period in seconds
         display_group: Zookeeper Container Specs
       - name: zookeeper_readinessProbe_successThreshold
-        default: '1'
+        default: 1
         type: number
         title: Zookeeper readiness probe success threshold
         display_group: Zookeeper Container Specs
@@ -903,7 +895,7 @@ plans:
         title: Zookeeper JVM heap size
         display_group: Zookeeper Config
       - name: zookeeper_env_init_limit
-        default: '5'
+        default: 5
         type: number
         title: Zookeeper number of ticks that an ensemble member is allowed to perform leader election
         display_group: Zookeeper Config
@@ -914,37 +906,37 @@ plans:
         title: Zookeeper process logger log level
         display_group: Zookeeper Config
       - name: zookeeper_env_max_client_cnxns
-        default: '60'
+        default: 60
         type: number
         title: Maximum number of concurrent client connections that a Zookeeper server in the ensemble will accept
         display_group: Zookeeper Config
       - name: zookeeper_env_max_session_timeout
-        default: '40000'
+        default: 40000
         type: number
         title: Maximum session timeout that the Zookeeper ensemble will allow a client to request. Upstream default is `20 * zookeeper_env_tick_time`
         display_group: Zookeeper Config
       - name: zookeeper_env_min_session_timeout
-        default: '4000'
+        default: 4000
         type: number
         title: Minimum session timeout that the Zookeeper ensemble will allow a client to request. Upstream default is `2 * zookeeper_env_tick_time`
         display_group: Zookeeper Config
       - name: zookeeper_env_purge_interval
-        default: '0'
+        default: 0
         type: number
         title: Delay, in hours, between ZooKeeper log and snapshot cleanups
         display_group: Zookeeper Config
       - name: zookeeper_env_snap_retain_count
-        default: '3'
+        default: 3
         type: number
         title: Number of snapshots that the ZooKeeper process will retain if `zookeeper_env_purge_interval` is greater than `0`
         display_group: Zookeeper Config
       - name: zookeeper_env_sync_limit
-        default: '10'
+        default: 10
         type: number
         title: Number of Tick by which a follower may lag behind the ensembles leader
         display_group: Zookeeper Config
       - name: zookeeper_env_tick_time
-        default: '2000'
+        default: 2000
         type: number
         title: Number of wall clock ms that corresponds to a Tick for the Zookeeper ensembles internal time
         display_group: Zookeeper Config
@@ -954,8 +946,8 @@ plans:
         title: Set environment variables for the main Zookeeper container
         display_group: Zookeeper Config
 
-      - name: tls_casubjectDistinguishedName
-        default: '/CN=nuxeo-backings.kafka.svc/OU=engineering/O=nuxeo/L=irvine/S=ca/C=us'
+      - name: tls_casubjectDistinguishedNameSuffix
+        default: '/OU=engineering/O=nuxeo/L=irvine/S=ca/C=us'
         type: string
         title: Certificate Authority Subject Distinguished Name for the Kafka cluster in single string format
         display_group: Kafka Security Config
