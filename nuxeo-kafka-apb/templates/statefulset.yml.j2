@@ -17,7 +17,7 @@ spec:
       component: {{ component }}
   serviceName: {{ name }}
   replicas: {{ replicas }}
-  podManagementPolicy: Parallel
+  podManagementPolicy: {{ podManagementPolicy }}
   updateStrategy:
     type: {{ updateStrategy_type }}
   template:
@@ -94,6 +94,12 @@ spec:
 {% if extraVars is defined and (extraVars | from_yaml) %}
 {{ extraVars | from_yaml | to_nice_yaml(indent=2) | indent(12, true) }}
 {% endif %}
+{% if configurationOverrides_configmap is defined  %}
+{% for key, value in (configurationOverrides_configmap|from_yaml).items() %}
+          - name: KAFKA_{{ key | replace(".", "_") | upper  }}
+            value: '{{ value }}'
+{% endfor %}
+{% endif %}
           - name: POD_IP
             valueFrom:
               fieldRef:
@@ -121,7 +127,6 @@ spec:
             value: PLAIN
           - name: KAFKA_SASL_MECHANISM_INTER_BROKER_PROTOCOL
             value: PLAIN
-
 {% endif %}
           command:
           - /bin/bash

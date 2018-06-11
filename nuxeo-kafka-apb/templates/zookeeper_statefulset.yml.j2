@@ -17,7 +17,7 @@ spec:
       component: {{ zookeeper_component }}
   serviceName: {{ zookeeper_name }}-headless
   replicas: {{ zookeeper_replicas }}
-  podManagementPolicy: Parallel
+  podManagementPolicy: {{ podManagementPolicy }}
   updateStrategy:
     type: {{ zookeeper_updateStrategy_type }}
   template:
