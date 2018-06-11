@@ -29,7 +29,7 @@ keytool -keystore $trust_store -storetype pkcs12 -noprompt -alias CARoot -import
 keytool -genkey -noprompt \
                  -alias searchguardkey \
                  -ext san=dns:${SERVICE_NAME}.${NAMESPACE}.svc.cluster.local,dns:${hostname}.elasticsearch.svc,dns:localhost,ip:127.0.0.1,oid:1.2.3.4.5.5 \
-                 -dname "CN=${hostname}.searchguard.elasticsearch.svc${DN_SUFFIX}" \
+                 -dname "CN=${SERVICE_NAME}.${NAMESPACE}.svc.cluster.local${DN_SUFFIX}" \
                  -keystore $key_store \
                  -keyalg RSA \
                  -storetype pkcs12 \
