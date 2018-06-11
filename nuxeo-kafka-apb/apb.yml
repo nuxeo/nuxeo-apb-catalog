@@ -27,6 +27,7 @@ plans:
   - name: cluster
     description: Cluster Kafka deployment without security
     free: True
+    bindable: True
     metadata:
       displayName: Cluster Deployment without security
       longDescription: This plan deploys a Kafka cluster without security
@@ -484,6 +485,7 @@ plans:
   - name: secure-cluster
     description: Cluster Kafka deployment with security enabled
     free: True
+    bindable: True
     metadata:
       displayName: Cluster Deployment with security enabled
       longDescription:

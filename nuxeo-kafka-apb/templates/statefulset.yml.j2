@@ -78,7 +78,26 @@ spec:
         - mountPath: /tmp/jaas
           name: config-jaas
 {% endif %}
-
+{% if external_enabled %}
+      ## Labelize each pod so that we can create a dedicated service to each pod.
+      ## ref: https://github.com/Yolean/kubernetes-kafka/blob/master/kafka/50kafka.yml
+      - name: init-ext
+        image: "{{ external_init_image_repository }}:{{ external_init_image_tag }}"
+        imagePullPolicy: "{{ external_init_image_pullPolicy }}"
+        command:
+          - sh
+          - -euxc
+          - "kubectl label pods ${POD_NAME} --namespace ${POD_NAMESPACE} pod=${POD_NAME}"
+        env:
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+{% endif %}
       containers:
         - name: kafka-broker
           image: "{{ image_repository }}:{{ image_tag }}"
@@ -132,7 +151,7 @@ spec:
           - /bin/bash
           - -exc
           - |
-            cp -v /work-dir/* /etc/kafka/secrets && \
+            [ -d /work-dir/ ] && cp -v /work-dir/* /etc/kafka/secrets && \
             export KAFKA_ZOOKEEPER_CONNECT=$(DOMAIN=`hostname -d`; \
                 for ((i=0; i<$ZOOKEEPER_SERVER_COUNT; i++)); do \
                     echo -n "{{ zookeeper_name }}-headless-$i.$DOMAIN:$ZOOKEEPER_CLIENT_PORT,"; \
