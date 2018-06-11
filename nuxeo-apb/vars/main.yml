@@ -17,6 +17,10 @@ nginx_secret_lookup: "{{ lookup('openshift', kind='Secret', namespace=namespace,
 mongodb_service_instance_lookup: "{{ lookup('openshift', kind='ServiceInstance', namespace=namespace, resource_name=mongoServiceName) }}"
 mongodb_servicebinding_lookup: "{{ lookup('openshift', kind='Binding', namespace=namespace, resource_name=mongodb_servicebinding_name) }}"
 mongodb_credentials_lookup: "{{ lookup('openshift', kind='Secret', namespace=namespace, resource_name=mongodb_credentials_name) }}"
+elasticsearch_service_instance_lookup: "{{ lookup('openshift', kind='ServiceInstance', namespace=namespace, resource_name=elasticsearchServiceName) }}"
+elasticsearch_servicebinding_lookup: "{{ lookup('openshift', kind='Binding', namespace=namespace, resource_name=elasticsearch_servicebinding_name) }}"
+elasticsearch_credentials_lookup: "{{ lookup('openshift', kind='Secret', namespace=namespace, resource_name=elasticsearch_credentials_name) }}"
+
 
 # Variables to hold queries
 ready_replicas_query: "[spec.replicas, status.ready_replicas]"
@@ -46,3 +50,5 @@ nginx_configmap_name: "{{ name + '-nginx-conf'}}"
 nginx_secret_name: "{{ name + '-cert-secret'}}"
 mongodb_servicebinding_name: "{{ name + '-mongodb-service-binding'}}"
 mongodb_credentials_name: "{{ name + '-mongodb-credentials'}}"
+elasticsearch_servicebinding_name: "{{ name + '-elasticsearch-service-binding'}}"
+elasticsearch_credentials_name: "{{ name + '-elasticsearch-credentials'}}"

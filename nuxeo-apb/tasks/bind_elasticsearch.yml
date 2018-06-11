@@ -1,0 +1,28 @@
+---
+
+- name: "Elasticsearch service binding state={{ state }}"
+  block:
+    - name: Fail if Service Instance not found
+      fail:
+        msg: Elasticsearch service instance not found
+      when: not elasticsearch_service_instance_lookup
+
+    - name: "Create Elasticsearch service binding from template"
+      template:
+        src: service_binding.yml.j2
+        dest: /tmp/elasticsearch_service_binding.yml
+      vars:
+        service_binding_name: "{{ elasticsearch_servicebinding_name }}"
+        service_to_bind: "{{ elasticsearchServiceName }}"
+        secret_name: "{{ elasticsearch_credentials_name }}"
+
+    - name: "Create Elasticsearch binding"
+      shell: kubectl create --filename=/tmp/elasticsearch_service_binding.yml
+  when:
+    - state == "present"
+
+- name: "Nuxeo Elasticsearch binding state={{ state }}"
+  shell: kubectl delete --ignore-not-found=true servicebinding {{ elasticsearch_servicebinding_name }} -n {{ namespace }}
+  when:
+    - state == "absent"
+
