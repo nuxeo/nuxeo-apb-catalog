@@ -391,7 +391,7 @@
 - name: encode bind credentials
   asb_encode_binding:
     fields:
-      uri: "https://{{ name }}.{{namespace}}.svc.cluster.local:9200"
+      uri: "https://{{ service_client_name }}.{{namespace}}.svc.cluster.local:9200"
       username: "{{ elastic_user_name }}"
       password: "{{ elastic_password }}"
       clustername: "{{ cluster_name }}"
@@ -404,7 +404,7 @@
 - name: encode bind credentials
   asb_encode_binding:
     fields:
-      uri: "http://{{ name }}.{{namespace}}.svc.cluster.local:9200"
+      uri: "http://{{ service_client_name }}.{{namespace}}.svc.cluster.local:9200"
       clustername: "{{ cluster_name }}"
   when:
     - in_cluster
