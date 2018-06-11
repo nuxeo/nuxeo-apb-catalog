@@ -172,8 +172,8 @@
   include_tasks: "bind_mongodb.yml"
   when: useExternalMongoDB
 
-- name: "MongoDB service binding ={{ state }}"
-  include_tasks: "bind_mongodb.yml"
+- name: "Elasticsearch service binding ={{ state }}"
+  include_tasks: "bind_elasticsearch.yml"
   when: useExternalElasticsearch
 
 

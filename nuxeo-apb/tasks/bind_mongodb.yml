@@ -2,11 +2,6 @@
 
 - name: "MongoDB service binding state={{ state }}"
   block:
-    - name: Fail if Service Instance not found
-      fail:
-        msg: MongoDB service instance not found
-      when: not mongodb_service_instance_lookup
-
     - name: "Create MongoDB service binding from template"
       template:
         src: service_binding.yml.j2

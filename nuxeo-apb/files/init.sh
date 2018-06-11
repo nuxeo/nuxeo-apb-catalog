@@ -53,6 +53,7 @@ if [ -d /opt/nuxeo/bindings/elasticsearch ]; then
 	ELASTICSEARCH_URI=$(< /opt/nuxeo/bindings/elasticsearch/uri)
 
 	cat >> $NUXEO_CONF <<EOT
+elasticsearch.addressList=${ELASTICSEARCH_URI}
 elasticsearch.client=RestClient
 elasticsearch.httpReadOnly.baseUrl=${ELASTICSEARCH_URI}
 elasticsearch.clusterName=${ELASTICSEARCH_CLUSTERNAME}
