@@ -3,7 +3,7 @@
 - name: "set fact statefulset persistentvolumeclaims"
   block:
   - name: "Register statefulset json cmd"
-    shell: kubectl get statefulset {{ zookeeper_name }} -o json
+    shell: kubectl get statefulset {{ zookeeper_name }} -o json -n {{ namespace }}
     register: sts_cmd
     failed_when: sts_cmd.rc >= 2
 
@@ -11,6 +11,16 @@
     set_fact:
       sts_json: "{{ sts_cmd.stdout | from_json }}"
     when: sts_cmd.rc != 1
+
+  - name: "Debug stdout"
+    debug:
+      msg: "{{ sts_cmd.stdout | from_json }}"
+    when: sts_cmd.rc == 1
+
+  - name: "Debug stderr"
+    debug:
+      msg: "{{ sts_cmd.stderr }}"
+    when: sts_cmd.rc == 1
 
   - name: "Set Fact statefulset replicas sequence"
     set_fact:

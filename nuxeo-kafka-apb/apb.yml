@@ -3,7 +3,7 @@ version: 1.0
 name: nuxeo-kafka-apb
 description:
   Apache Kafka is publish-subscribe messaging rethought as a distributed commit log
-bindable: "True"
+bindable: True
 async: optional
 tags:
   - kafka
@@ -113,7 +113,6 @@ plans:
         type: enum
         enum: ['ReadWriteOnce', 'ReadWriteMany']
         title: Persistent volume access mode
-        display_type: select
         display_group: Container Specs
       - name: persistentVolume_size
         default: '10Gi'
@@ -346,7 +345,6 @@ plans:
         type: enum
         enum: ['ReadWriteOnce', 'ReadWriteMany']
         title: Zookeeper persistent volume access mode
-        display_type: select
         display_group: Zookeeper Container Specs
       - name: zookeeper_persistentVolume_size
         default: '5Gi'
@@ -558,7 +556,7 @@ plans:
         title: The StatefulSet Update Strategy which Kafka will use when changes are applied
         display_group: Container Specs
       - name: podManagementPolicy
-        default: 'OrderedReady'
+        default: 'Parallel'
         type: enum
         enum: ['OrderedReady', 'Parallel']
         title: Start and stop pods in Parallel or OrderedReady (one-by-one.)  Note - Can not change after first release
@@ -580,7 +578,6 @@ plans:
         type: enum
         enum: ['ReadWriteOnce', 'ReadWriteMany']
         title: Persistent volume access mode
-        display_type: select
         display_group: Container Specs
       - name: persistentVolume_size
         default: '10Gi'
@@ -710,7 +707,7 @@ plans:
         title: Set environment variables for the main container
         display_group: Kafka Config
 
-      # Zookeeper parameters
+      #Zookeeper parameters
       - name: zookeeper_replicas
         default: 3
         type: number
@@ -813,7 +810,6 @@ plans:
         type: enum
         enum: ['ReadWriteOnce', 'ReadWriteMany']
         title: Zookeeper persistent volume access mode
-        display_type: select
         display_group: Zookeeper Container Specs
       - name: zookeeper_persistentVolume_size
         default: '5Gi'

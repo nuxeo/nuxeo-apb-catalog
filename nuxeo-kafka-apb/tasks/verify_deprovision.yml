@@ -20,7 +20,7 @@
 
 
 - name: "Verify statefulset persistentvolumeclaim objects removed"
-  shell: kubectl get persistentvolumeclaim {{ item }}
+  shell: kubectl get persistentvolumeclaim {{ item }} -n {{ namespace }}
   register: kubectl_cmd
   failed_when: kubectl_cmd.rc == 0 or kubectl_cmd.rc >= 2
   with_items: "{{ statefulset_pvcs }}"

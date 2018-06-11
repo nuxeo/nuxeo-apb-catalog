@@ -14,7 +14,7 @@
 
 # Work-around for https://github.com/kubernetes-client/python/issues/466
 - name: "Verify podisruptionbudget exists"
-  shell: kubectl get poddisruptionbudget {{ zookeeper_name }}
+  shell: kubectl get poddisruptionbudget {{ zookeeper_name }} -n {{ namespace }}
   when: podDisruptionBudget is defined and (podDisruptionBudget | from_yaml)
 
 - name: "Wait for statefulset to become ready"
@@ -30,5 +30,5 @@
 
 
 - name: "Verify statefulset persistentvolumeclaims exist"
-  shell: kubectl get persistentvolumeclaim {{ item }}
+  shell: kubectl get persistentvolumeclaim {{ item }} -n {{ namespace }}
   with_items: "{{ zookeeper_statefulset_pvcs }}"
