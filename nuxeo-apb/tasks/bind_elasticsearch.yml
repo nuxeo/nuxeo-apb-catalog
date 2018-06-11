@@ -2,11 +2,6 @@
 
 - name: "Elasticsearch service binding state={{ state }}"
   block:
-    - name: Fail if Service Instance not found
-      fail:
-        msg: Elasticsearch service instance not found
-      when: not elasticsearch_service_instance_lookup
-
     - name: "Create Elasticsearch service binding from template"
       template:
         src: service_binding.yml.j2
