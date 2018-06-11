@@ -42,7 +42,7 @@ keytool -keystore $key_store \
            -file key.csr \
            -storetype pkcs12 \
            -storepass changeit \
-           -ext san=dns:${hostname}.elasticsearch.svc,dns:localhost,ip:127.0.0.1,oid:1.2.3.4.5.5
+           -ext san=dns:${SERVICE_NAME}.${NAMESPACE}.svc.cluster.local,dns:${hostname}.elasticsearch.svc,dns:localhost,ip:127.0.0.1,oid:1.2.3.4.5.5 \
 # Sign CSR
 openssl x509 -req -CA $ca_crt -CAkey $ca_key -in key.csr -out key.crt -days 3650 -CAcreateserial -CAserial /tmp/tls.srl -extensions server_ext
 
@@ -56,7 +56,7 @@ keytool -keystore $key_store --noprompt \
     -import \
     -file key.crt \
     -storepass changeit \
-    -ext san=dns:${hostname}.elasticsearch.svc,dns:localhost,ip:127.0.0.1,oid:1.2.3.4.5.5
+    -ext san=dns:${SERVICE_NAME}.${NAMESPACE}.svc.cluster.local,dns:${hostname}.elasticsearch.svc,dns:localhost,ip:127.0.0.1,oid:1.2.3.4.5.5 \
 
 rm -f key.csr
 rm -f key.crt
