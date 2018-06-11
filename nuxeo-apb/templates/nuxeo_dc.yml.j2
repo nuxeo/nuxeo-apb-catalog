@@ -8,7 +8,7 @@ metadata:
     apb_service_class_id: '{{ _apb_service_class_id }}'
     apb_service_instance_id: '{{ _apb_service_instance_id }}'
     component: {{ component }}
-    nuxeo_type: {{ nuxeo_type }}  
+    nuxeo_type: {{ nuxeo_type }}
   namespace: {{ namespace }}
 {% if nuxeo_type == "interactive" %}
   name: {{ interactive_dc_name }}
@@ -18,7 +18,7 @@ metadata:
 {% endif %}
 spec:
 {% if deploymentStrategy is defined and (deploymentStrategy | from_yaml) %}
-  strategy:    
+  strategy:
 {{ deploymentStrategy | from_yaml | to_nice_yaml(indent=2) | indent(4, true) }}
 {% endif %}
 {% if nuxeo_type == "interactive" %}
@@ -31,15 +31,15 @@ spec:
   selector:
     app: {{ name }}
     component: nuxeo
-    nuxeo_type: {{ nuxeo_type }}  
+    nuxeo_type: {{ nuxeo_type }}
     deploymentconfig: {{ name }}-{{ nuxeo_type }}
-  
+
   template:
     metadata:
       labels:
         app: {{ name }}
         component: nuxeo
-        nuxeo_type: {{ nuxeo_type }}  
+        nuxeo_type: {{ nuxeo_type }}
         deploymentconfig: {{ name }}-{{ nuxeo_type }}
 {% if podAnnotations is defined and (podAnnotations | from_yaml) %}
       annotations:
@@ -56,7 +56,7 @@ spec:
 {% if use_front_ssl_proxy and nuxeo_type == "interactive" %}
       - name: nginx
         # TODO Bake a nuxeo image and allow parametrization
-        image: nginx        
+        image: nginx
         volumeMounts:
           - name: nginx-cert
             readOnly: true
@@ -103,7 +103,7 @@ spec:
 {% if nuxeoJavaOpts is defined and nuxeoJavaOpts != "" %}
         - name: JAVA_OPTS
           value: "{{ nuxeoJavaOpts }}"
-{% endif %}        
+{% endif %}
 {% if (nuxeoJavaOpts is not defined or nuxeoJavaOpts != "") and resources is defined %}
         # Limit the JVM to the CGroup limits.
         - name: JAVA_OPTS
@@ -157,6 +157,10 @@ spec:
         - name: mongodb-credentials
           mountPath: /opt/nuxeo/bindings/mongodb
 {% endif %}
+{% if useExternalElasticsearch %}
+        - name: elasticsearch-credentials
+          mountPath: /opt/nuxeo/bindings/elasticsearch
+{% endif %}
       volumes:
 {% if binaries_usePVC %}
       - name: binaries
@@ -187,6 +191,11 @@ spec:
       - name: mongodb-credentials
         secret:
           secretName: {{ mongodb_credentials_name }}
+{% endif %}
+{% if useExternalElasticsearch %}
+      - name: elasticsearch-credentials
+        secret:
+          secretName: {{ elasticsearch_credentials_name }}
 {% endif %}
 {% if use_front_ssl_proxy and nuxeo_type == "interactive" %}
       - name: nginx-conf

@@ -23,7 +23,7 @@ if [ -f /opt/nuxeo/bindings/mongodb/uri ]; then
 nuxeo.mongodb.server=${MONGODB_URI}
 nuxeo.mongodb.dbname=${MONGODB_DBNAME}
 EOT
-	
+
 	if [ -f /opt/nuxeo/bindings/mongodb/tls_cacert ]; then
 
 		# Temporary hack: Nuxeo launcher doesnt allow to specify Truststore https://jira.nuxeo.com/browse/NXP-25095
@@ -34,17 +34,62 @@ EOT
 		if [ -f $TRUSTSTORE_PATH ]; then
 			set +e
 			keytool -list -keystore $TRUSTSTORE_PATH -alias MongoDBCaCert -storepass changeit -noprompt
-			if [ "$?" == "0" ]; then 
+			if [ "$?" == "0" ]; then
 				keytool -delete -keystore $TRUSTSTORE_PATH -alias MongoDBCaCert -storepass changeit -noprompt
 			fi
 			set -e
 		fi
 
-		base64 -d /opt/nuxeo/bindings/mongodb/tls_cacert > /tmp/cert 		
+		base64 -d /opt/nuxeo/bindings/mongodb/tls_cacert > /tmp/cert
 		keytool -import -file /tmp/cert -alias MongoDBCaCert -keystore $TRUSTSTORE_PATH -storepass changeit -noprompt
-	fi 
+	fi
 
 fi
+
+
+# Configure Elasticsearch bindings
+if [ -d /opt/nuxeo/bindings/elasticsearch ]; then
+	ELASTICSEARCH_CLUSTERNAME=$(< /opt/nuxeo/bindings/elasticsearch/clustername)
+	ELASTICSEARCH_URI=$(< /opt/nuxeo/bindings/elasticsearch/uri)
+
+	cat >> $NUXEO_CONF <<EOT
+elasticsearch.client=RestClient
+elasticsearch.httpReadOnly.baseUrl=${ELASTICSEARCH_URI}
+elasticsearch.clusterName=${ELASTICSEARCH_CLUSTERNAME}
+EOT
+
+	if [ -f /opt/nuxeo/bindings/elasticsearch/username ]; then
+			ELASTICSEARCH_USERNAME=$(< /opt/nuxeo/bindings/elasticsearch/username)
+			ELASTICSEARCH_PASSWORD=$(< /opt/nuxeo/bindings/elasticsearch/password)
+			cat >> $NUXEO_CONF <<EOT
+elasticsearch.restClient.username=${ELASTICSEARCH_USERNAME}
+elasticsearch.restClient.password=${ELASTICSEARCH_PASSWORD}
+EOT
+	fi
+
+
+	if [ -f /opt/nuxeo/bindings/elasticsearch/tls_cacert ]; then
+
+		# Remove cert if already set.
+		if [ -f $TRUSTSTORE_PATH ]; then
+			set +e
+			keytool -list -keystore $TRUSTSTORE_PATH -alias ElasticsearchCaCert -storepass changeit -noprompt
+			if [ "$?" == "0" ]; then
+				keytool -delete -keystore $TRUSTSTORE_PATH -alias ElasticsearchCaCert -storepass changeit -noprompt
+			fi
+			set -e
+		fi
+
+		base64 -d /opt/nuxeo/bindings/elasticsearch/tls_cacert > /tmp/cert
+		keytool -import -file /tmp/cert -alias ElasticsearchCaCert -keystore $TRUSTSTORE_PATH -storepass changeit -noprompt
+	fi
+
+fi
+
+
+
+
+
 
 # Configure queues handling
 QUEUES_CONFIG=/docker-entrypoint-initnuxeo.d/interactive-queues-config.xml
@@ -56,7 +101,7 @@ cp $QUEUES_CONFIG /opt/nuxeo/server/templates/common/config/queues-config.xml
 
 if [ ! -f $NUXEO_DATA/instance.clid -a -f /opt/nuxeo/connect/connect.properties ]; then
   . /opt/nuxeo/connect/connect.properties
-  if [ -n "$NUXEO_CONNECT_USERNAME" -a -n "$NUXEO_CONNECT_PASSWORD" -a -n "$NUXEO_STUDIO_PROJECT" ]; then  
+  if [ -n "$NUXEO_CONNECT_USERNAME" -a -n "$NUXEO_CONNECT_PASSWORD" -a -n "$NUXEO_STUDIO_PROJECT" ]; then
     echo "---> Registering instance on connect"
     nuxeoctl register $NUXEO_CONNECT_USERNAME $NUXEO_STUDIO_PROJECT dev openshift $NUXEO_CONNECT_PASSWORD
   fi

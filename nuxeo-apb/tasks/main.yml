@@ -85,7 +85,7 @@
   when: state == "present"
 
 - name: "Nuxeo service state={{ state }}"
-  shell: kubectl delete --ignore-not-found=true service {{ service_name }} -n {{ namespace }}    
+  shell: kubectl delete --ignore-not-found=true service {{ service_name }} -n {{ namespace }}
   when: state == "absent"
 
 # Work-around k8s_raw inability to create ConfigMap directly
@@ -98,7 +98,7 @@
 
     - name: "Create Nuxeo route"
       shell: oc create --filename=/tmp/nuxeo_route.yml
-  when: 
+  when:
     - cluster == "openshift"
     - state == "present"
 
@@ -124,7 +124,7 @@
 
 - name: "Nuxeo binaries PVC state={{ state }}"
   shell: kubectl delete --ignore-not-found=true pvc {{ binaries_pvc_name }} -n {{ namespace }}
-  when: 
+  when:
     - binaries_usePVC
     - state == "absent"
 
@@ -170,7 +170,12 @@
 
 - name: "MongoDB service binding ={{ state }}"
   include_tasks: "bind_mongodb.yml"
-  when: useExternalMongoDB  
+  when: useExternalMongoDB
+
+- name: "MongoDB service binding ={{ state }}"
+  include_tasks: "bind_mongodb.yml"
+  when: useExternalElasticsearch
+
 
 # Work-around k8s_raw inability to create ConfigMap directly
 - name: "Nginx configuration ={{ state }}"
@@ -188,7 +193,7 @@
 
     - name: "Create Nuxeo Deployment Config interactive"
       shell: oc create --filename=/tmp/nuxeo_dc_interactive.yml
-  when: 
+  when:
     - cluster == "openshift"
     - state == "present"
 
@@ -210,7 +215,7 @@
 
     - name: "Create Nuxeo Deployment Config worker"
       shell: oc create --filename=/tmp/nuxeo_dc_worker.yml
-  when: 
+  when:
     - cluster == "openshift"
     - state == "present"
 
