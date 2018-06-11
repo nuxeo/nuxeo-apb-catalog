@@ -19,7 +19,7 @@
 
 # Work-around for https://github.com/kubernetes-client/python/issues/466
 - name: "Verify podisruptionbudget exists"
-  shell: kubectl get poddisruptionbudget {{ name }}
+  shell: kubectl get poddisruptionbudget {{ name }} -n {{ namespace }}
   when: podDisruptionBudget is defined and (podDisruptionBudget | from_yaml)
 
 
@@ -37,5 +37,5 @@
 
 
 - name: "Verify statefulset persistentvolumeclaims exist"
-  shell: kubectl get persistentvolumeclaim {{ item }}
+  shell: kubectl get persistentvolumeclaim {{ item }} -n {{ namespace }}
   with_items: "{{ statefulset_pvcs }}"

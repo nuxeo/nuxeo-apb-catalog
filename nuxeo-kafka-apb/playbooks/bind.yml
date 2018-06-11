@@ -1,4 +1,4 @@
-- name: nuxeo-mongo-apb bind
+- name: nuxeo-kafka-apb bind
   hosts: localhost
   gather_facts: false
   connection: local

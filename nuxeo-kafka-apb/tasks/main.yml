@@ -41,15 +41,24 @@
   include_tasks: "set_fact_service_uri.yml"
   when: state == "present"
 
-
+- name: encode bind credentials
+  asb_encode_binding:
+    fields:
+      user: admin
+      password: "{{ admin_password }}"
+      uri: "{{ hosts }}"
+      tls_cacert: "{{ tls_cacert_lookup | b64encode }}"
+  when:
+    - state == "present"
+    - tls_enabled
 
 - name: encode bind credentials
   asb_encode_binding:
     fields:
-      uri: "{{ service_uri }}"
-      tls_cacert: "{{ tls_cacert_lookup | b64encode }}"
-  when: state == "present"
-
+      uri: "{{ hosts }}"
+  when:
+    - state == "present"
+    - not tls_enabled
 
 - name: "Update last operation"
   asb_last_operation:

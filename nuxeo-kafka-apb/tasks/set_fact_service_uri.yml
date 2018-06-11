@@ -9,6 +9,7 @@
     with_nested:
       - "{{ sts_status_replicas_list }}"
 
+
   - debug:
       msg: "Kafka connexion: {{ hosts }}"
 
