@@ -1,0 +1,19 @@
+---
+- name: nuxeo-elasticsearch-apb test
+  hosts: localhost
+  gather_facts: false
+  connection: local
+  roles:
+  - role: ansibleplaybookbundle.asb-modules
+  tasks:
+    - name: Provision test
+      include_role:
+        name: nuxeo-elasticsearch-apb
+      vars:
+        apb_action: provision
+
+    - name: Deprovision test
+      include_role:
+        name: nuxeo-elasticsearch-apb
+      vars:
+        apb_action: deprovision

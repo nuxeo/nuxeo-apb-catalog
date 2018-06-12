@@ -2,7 +2,7 @@
 version: 1.0
 name: nuxeo-elasticsearch-apb
 description: Elasticsearch is a distributed RESTful search and analytics engine
-bindable: True
+bindable: true
 async: optional
 tags:
   - database
@@ -11,24 +11,27 @@ tags:
 metadata:
   displayName: Nuxeo Elasticsearch (APB)
   longDescription:
-    Elasticsearch is a distributed, RESTful search and analytics engine capable of solving
-    a growing number of use cases. As the heart of the Elastic Stack, it centrally stores
-    your data so you can discover the expected and uncover the unexpected.
-    This APB covers a clustered deployment without security and and one plan with the
-    open source SearchGuard plugin that features TLS encryption, Authentication and authorization mecanism.
+    Elasticsearch is a distributed, RESTful search and analytics engine capable
+    of solving a growing number of use cases. As the heart of the Elastic
+    Stack, it centrally stores your data so you can discover the expected and
+    uncover the unexpected. This APB covers a clustered deployment without
+    security and and one plan with the open source SearchGuard plugin that
+    features TLS encryption, Authentication and authorization mecanism.
   dependencies:
     - "docker.elastic.co/elasticsearch/elasticsearch:5.6.9"
     - "nuxeo/elasticsearch-sg:5.6.9"
     - "docker.io/busybox"
   providerDisplayName: "Nuxeo"
-  documentationUrl: "https://github.com/nuxeo-sandbox/nuxeo-apb-catalog/nuxeo-elasticsearch-apb/README.md"
+  documentationUrl: >-
+    https://github.com/nuxeo-sandbox/nuxeo-apb-catalog/nuxeo-elasticsearch-apb/
+    README.md
   imageUrl: "https://www.elastic.co/static/images/elastic-logo-200.png"
 
 plans:
   - name: clustered
     description: This plan deploys a clustered Elasticsearch
-    bindable: True
-    free: True
+    bindable: true
+    free: true
     metadata:
       displayName: Elasticsearch cluster
       longDescription: This plan deploys a guenine Elasticsearch cluster
@@ -62,7 +65,9 @@ plans:
         type: string
         display_group: Client pool Config
         required: true
-      - title: The client JAVA_OPTS (Heap defaults to half of the CGroup available memory)
+      - title: |
+          The client JAVA_OPTS (Heap defaults to half of the CGroup available
+          memory)
         name: client_java_opts
         default: -Xms2g -Xmx2g -Djava.net.preferIPv4Stack=true
         type: string
@@ -71,7 +76,8 @@ plans:
       - title: Client Pods resource requests and limits
         name: client_resources
         required: true
-        default: "{limits: {cpu: 1, memory: 3Gi}, requests: {cpu: 500m, memory: 2Gi}}"
+        default: |
+          {limits: {cpu: 1, memory: 3Gi}, requests: {cpu: 500m, memory: 2Gi}}
         display_type: textarea
         display_group: Client pool Config
         type: string
@@ -82,7 +88,9 @@ plans:
         type: string
         display_group: Master pool Config
         required: true
-      - title: The master JAVA_OPTS (Heap defaults to half of the CGroup available memory)
+      - title: |
+          The master JAVA_OPTS (Heap defaults to half of the CGroup available
+          memory)
         name: master_java_opts
         default: -Xms2g -Xmx2g -Djava.net.preferIPv4Stack=true
         type: string
@@ -91,7 +99,8 @@ plans:
       - title: Master Pods resource requests and limits
         name: master_resources
         required: true
-        default: "{limits: {cpu: 1, memory: 3Gi}, requests: {cpu: 500m, memory: 2Gi}}"
+        default: |
+          {limits: {cpu: 1, memory: 3Gi}, requests: {cpu: 500m, memory: 2Gi}}
         display_type: textarea
         display_group: Master pool Config
         type: string
@@ -113,7 +122,9 @@ plans:
         type: string
         display_group: Data pool Config
         required: true
-      - title: The data JAVA_OPTS (Heap defaults to half of the CGroup available memory)
+      - title: |
+          The data JAVA_OPTS (Heap defaults to half of the CGroup available
+          memory)
         name: data_java_opts
         default: -Xms2g -Xmx2g -Djava.net.preferIPv4Stack=true
         type: string
@@ -122,7 +133,8 @@ plans:
       - title: Data Pods resource requests and limits
         name: data_resources
         required: true
-        default: "{limits: {cpu: 1, memory: 3Gi}, requests: {cpu: 500m, memory: 2Gi}}"
+        default: |
+          {limits: {cpu: 1, memory: 3Gi}, requests: {cpu: 500m, memory: 2Gi}}
         display_type: textarea
         display_group: Data pool Config
         type: string
@@ -149,8 +161,8 @@ plans:
     description: |
         This plan deploys an Elasticsearch cluster with SearchGuard installed
         and configured.
-    free: True
-    bindable: True
+    free: true
+    bindable: true
     metadata:
       displayName: Elasticsearch cluster secured with SearchGuard
       longDescription: |
@@ -188,7 +200,9 @@ plans:
         type: string
         required: true
         display_group: Client pool config
-      - title: The client JAVA_OPTS (Heap defaults to half of the CGroup available memory)
+      - title: |
+          The client JAVA_OPTS (Heap defaults to half of the CGroup available
+          memory)
         name: client_java_opts
         default: -Xms2g -Xmx2g -Djava.net.preferIPv4Stack=true
         type: string
@@ -197,7 +211,8 @@ plans:
       - title: Client Pods resource requests and limits
         name: client_resources
         required: true
-        default: "{limits: {cpu: 1, memory: 3Gi}, requests: {cpu: 500m, memory: 2Gi}}"
+        default: |
+          {limits: {cpu: 1, memory: 3Gi}, requests: {cpu: 500m, memory: 2Gi}}"
         display_type: textarea
         display_group: Client pool config
         type: string
@@ -208,7 +223,9 @@ plans:
         type: string
         display_group: Master pool config
         required: true
-      - title: The master JAVA_OPTS (Heap defaults to half of the CGroup available memory)
+      - title: |
+          The master JAVA_OPTS (Heap defaults to half of the CGroup available
+          memory)
         name: master_java_opts
         default: -Xms2g -Xmx2g -Djava.net.preferIPv4Stack=true
         type: string
@@ -217,7 +234,8 @@ plans:
       - title: Master Pods resource requests and limits
         name: master_resources
         required: true
-        default: "{limits: {cpu: 1, memory: 3Gi}, requests: {cpu: 500m, memory: 2Gi}}"
+        default: |
+          {limits: {cpu: 1, memory: 3Gi}, requests: {cpu: 500m, memory: 2Gi}}
         display_type: textarea
         display_group: Master pool config
         type: string
@@ -240,7 +258,9 @@ plans:
         display_group: Data pool config
         required: true
 
-      - title: The data JAVA_OPTS (Heap defaults to half of the CGroup available memory)
+      - title: |
+          The data JAVA_OPTS (Heap defaults to half of the CGroup available
+          memory)
         name: data_java_opts
         default: -Xms2g -Xmx2g -Djava.net.preferIPv4Stack=true
         type: string
@@ -249,7 +269,8 @@ plans:
       - title: Data Pods resource requests and limits
         name: data_resources
         required: true
-        default: "{limits: {cpu: 1, memory: 3Gi}, requests: {cpu: 500m, memory: 2Gi}}"
+        default: |
+          {limits: {cpu: 1, memory: 3Gi}, requests: {cpu: 500m, memory: 2Gi}}
         display_type: textarea
         display_group: Data pool config
         type: string
@@ -287,7 +308,9 @@ plans:
       - name: tls_casubjectDistinguishedNameSuffix
         default: '/OU=engineering/O=nuxeo/L=irvine/ST=ca/C=us'
         type: string
-        title: Certificate Authority Subject Distinguished Name for the ElasticSearch cluster in single string format
+        title: |
+          Certificate Authority Subject Distinguished Name for the ElasticSearch
+          cluster in single string format
         display_group: ElasticSearch Security Config
       - name: certificate_validity
         title: Certificate validity period in days
@@ -300,11 +323,12 @@ plans:
     description: |
         This plan deploys a non clustered Elasticsearch
         for development purpose.
-    free: True
-    bindable: True
+    free: true
+    bindable: true
     metadata:
       displayName: Elasticsearch single node
-      longDescription: This plan deploys a single Elasticsearch node for development purpose
+      longDescription: |
+        This plan deploys a single Elasticsearch node for development purpose
       cost: €0.00
     parameters:
       - title: Elasticsearch Cluster name
@@ -334,7 +358,8 @@ plans:
       - title: Pod resource requests and limits
         name: client_resources
         required: true
-        default: "{limits: {cpu: 1, memory: 3Gi}, requests: {cpu: 500m, memory: 2Gi}}"
+        default: |
+          {limits: {cpu: 1, memory: 3Gi}, requests: {cpu: 500m, memory: 2Gi}}
         display_type: textarea
         display_group: Container Specs
         type: string

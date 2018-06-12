@@ -20,7 +20,7 @@ name: "nuxeo-elasticsearch-{{ _apb_service_instance_id  |truncate(5, True, '') }
 namespace: "{{ lookup('env','NAMESPACE') | default('nuxeo', true) }}"
 component: elasticsearch
 
-
+image_repository: "{{ 'docker.elastic.co/elasticsearch/elasticsearch' if _apb_plan_id != 'secure-replicaset' else 'nuxeo/elasticsearch-sg'}}"
 # Default values for the APB parameters
 image_tag: "5.6.9"
 image_pullPolicy: IfNotPresent

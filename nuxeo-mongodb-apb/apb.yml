@@ -10,17 +10,20 @@ tags:
   - nuxeo
 metadata:
   displayName: Nuxeo MongoDB (APB)
-  longDescription:
-    MongoDB is a NoSQL document-oriented database that stores JSON-like documents with
-    dynamic schemas, simplifying the integration of data in content-driven applications.
-    This APB covers a replicaset deployment without security and a replicaset deployment secured with
-    TLS encryption, X509 membership authentication, and SCRAM client authentication
+  longDescription: |
+    MongoDB is a NoSQL document-oriented database that stores JSON-like
+    documents with dynamic schemas, simplifying the integration of data in
+    content-driven applications. This APB covers a replicaset deployment without
+    security and a replicaset deployment secured with TLS encryption, X509
+    membership authentication, and SCRAM client authentication
   dependencies:
     - "docker.io/busybox:latest"
     - "k8s.gcr.io/mongodb-install:0.6"
     - "docker.io/mongo"
   providerDisplayName: "Nuxeo"
-  documentationUrl: "https://github.com/nuxeo-sandbox/nuxeo-apb-catalog/nuxeo-mongodb-apb/README.md"
+  documentationUrl: >-
+    "https://github.com/nuxeo-sandbox/nuxeo-apb-catalog/nuxeo-mongodb-apb/
+    README.md"
   imageUrl: "http://nightdeveloper.net/wp-content/uploads/2014/12/mongo_db.png"
 plans:
   - name: replicaset
@@ -67,7 +70,9 @@ plans:
       - name: installImage_pullPolicy
         default: 'IfNotPresent'
         type: string
-        title: Image pull policy for the init container that establishes the replica set
+        title: |
+          Image pull policy for the init container that establishes the replica
+          set
         display_group: Container Specs
       - name: image_repository
         default: 'docker.io/mongo'
@@ -98,7 +103,6 @@ plans:
         display_group: Container Specs
       - name: resources
         default: '{}'
-        # default: '{limits: {cpu: 500m, memory: 512Mi}, requests: {cpu: 100m, memory: 256Mi}}'
         type: string
         title: Pod resource requests and limits
         display_type: textarea
@@ -217,9 +221,10 @@ plans:
     free: True
     metadata:
       displayName: Replica Set Deployment with security enabled
-      longDescription:
+      longDescription: |
         This plan deploys a MongoDB replicaset that is secured with
-        TLS encryption, X509 membership authentication, and SCRAM client authentication
+        TLS encryption, X509 membership authentication, and SCRAM client
+        authentication
       cost: €0.00
     parameters:
       - name: replicas
@@ -258,7 +263,9 @@ plans:
       - name: installImage_pullPolicy
         default: 'IfNotPresent'
         type: string
-        title: Image pull policy for the init container that establishes the replica set
+        title: |
+          Image pull policy for the init container that establishes the replica
+          set
         display_group: Container Specs
       - name: image_repository
         default: 'docker.io/mongo'
@@ -289,7 +296,6 @@ plans:
         display_group: Container Specs
       - name: resources
         default: '{}'
-        # default: '{limits: {cpu: 500m, memory: 512Mi}, requests: {cpu: 100m, memory: 256Mi}}'
         type: string
         title: Pod resource requests and limits
         display_type: textarea
@@ -405,9 +411,13 @@ plans:
         display_group: MongoDB Config
 
       - name: tls_casubjectDistinguishedName
-        default: '/CN=nuxeo-backings.mongodb.svc/OU=engineering/O=nuxeo/L=irvine/S=ca/C=us'
+        default: >-
+          /CN=nuxeo-backings.mongodb.svc/OU=engineering/O=nuxeo/L=irvine/S=ca/
+          C=us
         type: string
-        title: Certificate Authority Subject Distinguished Name for the MongoDB cluster in single string format
+        title: |
+          Certificate Authority Subject Distinguished Name for the MongoDB
+          cluster in single string format
         display_group: MongoDB Security Config
       - name: auth_adminUser
         default: 'admin'
@@ -423,7 +433,8 @@ plans:
         display_group: MongoDB Security Config
       - name: auth_existingAdminSecret
         type: string
-        title: If set, an existing secret with this name is used for the admin user
+        title: |
+          If set, an existing secret with this name is used for the admin user
         display_group: MongoDB Security Config
       - name: auth_username
         default: 'nuxeo'
@@ -439,7 +450,8 @@ plans:
         display_group: MongoDB Security Config
       - name: auth_existingUserSecret
         type: string
-        title: If set, an existing secret with this name is used for the custom user
+        title: |
+          If set, an existing secret with this name is used for the custom user
         display_group: MongoDB Security Config
       - name: database
         default: 'nuxeo'
