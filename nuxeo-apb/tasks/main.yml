@@ -176,6 +176,10 @@
   include_tasks: "bind_elasticsearch.yml"
   when: useExternalElasticsearch
 
+- name: "Kafka service binding ={{ state }}"
+  include_tasks: "bind_kafka.yml"
+  when: useKafkaForStream
+
 
 # Work-around k8s_raw inability to create ConfigMap directly
 - name: "Nginx configuration ={{ state }}"
