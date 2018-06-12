@@ -161,6 +161,10 @@ spec:
         - name: elasticsearch-credentials
           mountPath: /opt/nuxeo/bindings/elasticsearch
 {% endif %}
+{% if useKafkaForStream %}
+        - name: kafka-credentials
+          mountPath: /opt/nuxeo/bindings/kafka
+{% endif %}
       volumes:
 {% if binaries_usePVC %}
       - name: binaries
@@ -196,6 +200,11 @@ spec:
       - name: elasticsearch-credentials
         secret:
           secretName: {{ elasticsearch_credentials_name }}
+{% endif %}
+{% if useKafkaForStream %}
+      - name: kafka-credentials
+        secret:
+          secretName: {{ kafka_credentials_name }}
 {% endif %}
 {% if use_front_ssl_proxy and nuxeo_type == "interactive" %}
       - name: nginx-conf
