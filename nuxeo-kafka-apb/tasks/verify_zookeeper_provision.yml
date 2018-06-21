@@ -1,6 +1,6 @@
 ---
 
-- name: "Verify {{ name }} objects exist"
+- name: "Verify {{ name }} Zookeeper objects exist"
   set_fact:
     zookeeper_statefulset: "{{ zookeeper_statefulset_lookup }}"
     zookeeper_service: "{{ zookeeper_service_lookup }}"

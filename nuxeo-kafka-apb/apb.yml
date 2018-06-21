@@ -65,7 +65,8 @@ plans:
         display_group: Container Specs
       - name: image_pullPolicy
         default: 'IfNotPresent'
-        type: string
+        type: enum
+        enum: ['IfNotPresent', 'Always', 'Never']
         title: Kafka image pull policy
         display_group: Container Specs
       - name: podAnnotations
@@ -147,7 +148,7 @@ plans:
         title: Enable external access
         display_group: Kafka Config
       - name: external_servicePort
-        default: '19092'
+        default: '9093'
         type: number
         title: External access service port
         display_group: Kafka Config
@@ -156,10 +157,16 @@ plans:
         type: number
         title: External access first listener port
         display_group: Kafka Config
+      - name: external_prop_to_advertise
+        default: 'status.hostIP'
+        type: enum
+        enum: ['status.hostIP', 'spec.nodeName']
+        title: Pod Property to use to advertise the node for the external service
+        display_group: Kafka Config
       - name: external_domain
-        default: 'cluster.local'
+        default: ''
         type: string
-        title: External domain
+        title: External domain (when using spec.nodeName, the domain is added to the nodeName)
         display_group: Kafka Config
       - name: external_init_image_repository
         default: 'lwolf/kubectl_deployer'
@@ -173,7 +180,8 @@ plans:
         display_group: Kafka Config
       - name: external_init_image_pullPolicy
         default: 'IfNotPresent'
-        type: string
+        type: enum
+        enum: ['IfNotPresent', 'Always', 'Never']
         title: External init image pull policy
         display_group: Kafka Config
       - name: configurationOverrides_configmap
@@ -277,7 +285,8 @@ plans:
         display_group: Zookeeper Container Specs
       - name: zookeeper_image_pullPolicy
         default: 'IfNotPresent'
-        type: string
+        type: enum
+        enum: ['IfNotPresent', 'Always', 'Never']
         title: Zookeeper image pull policy
         display_group: Zookeeper Container Specs
       - name: zookeeper_service_type
@@ -522,7 +531,8 @@ plans:
         display_group: Container Specs
       - name: image_pullPolicy
         default: 'IfNotPresent'
-        type: string
+        type: enum
+        enum: ['IfNotPresent', 'Always', 'Never']
         title: Kafka image pull policy
         display_group: Container Specs
       - name: podAnnotations
@@ -621,6 +631,12 @@ plans:
         type: number
         title: External access first listener port
         display_group: Container Specs
+      - name: external_prop_to_advertise
+        default: 'status.hostIP'
+        type: enum
+        enum: ['status.hostIP', 'spec.nodeName']
+        title: Pod Property to use to advertise the node for the external service
+        display_group: Kafka Config
       - name: external_domain
         default: 'cluster.local'
         type: string
@@ -638,7 +654,8 @@ plans:
         display_group: Container Specs
       - name: external_init_image_pullPolicy
         default: 'IfNotPresent'
-        type: string
+        type: enum
+        enum: ['IfNotPresent', 'Always', 'Never']
         title: External init image pull policy
         display_group: Container Specs
       - name: configurationOverrides_configmap
@@ -742,7 +759,8 @@ plans:
         display_group: Zookeeper Container Specs
       - name: zookeeper_image_pullPolicy
         default: 'IfNotPresent'
-        type: string
+        type: enum
+        enum: ['IfNotPresent', 'Always', 'Never']
         title: Zookeeper image pull policy
         display_group: Zookeeper Container Specs
       - name: zookeeper_service_type

@@ -4,7 +4,7 @@ metadata:
   annotations:
     ## ref: https://github.com/kubernetes/kops/blob/master/dns-controller/pkg/watchers/annotations.go#L21
     dns.alpha.kubernetes.io/internal: "{{ name }}.{{ external_domain }}"
-  name: {{ name }}-{{ index }}-external
+  name: {{ name }}-external-{{ index }}
   labels:
     app: {{ name }}
     apb_name: '{{ apb_name }}'
@@ -16,9 +16,9 @@ spec:
   type: NodePort
   ports:
     - name: external-broker
-      port: 9092
-      targetPort: {{ external_firstListenerPort + index }}
-      nodePort: {{ external_firstListenerPort + index }}
+      port: {{ external_servicePort }}
+      targetPort: {{ external_firstListenerPort + (index | int) }}
+      nodePort: {{ external_firstListenerPort + (index | int) }}
       protocol: TCP
   selector:
     app: {{ name }}
