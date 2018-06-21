@@ -1,5 +1,7 @@
 ---
 
+- include_tasks: rbac.yml
+  when: external_enabled
 
 # Work-around k8s_raw inability to create Secret directly
 - name: "Users secret state={{ state }}"
@@ -74,6 +76,35 @@
 - name: "Kafka service state={{ state }}"
   shell: kubectl delete --ignore-not-found=true service {{ name }} -n {{ namespace }}
   when: state == "absent"
+
+
+
+- name: "Kafka external service state={{ state }}"
+  block:
+    - name: "Create Kafka service from template"
+      template:
+        src: service_external.yml.j2
+        dest: /tmp/service_external-{{ item }}.yml
+      vars:
+        index: "{{ item }}"
+      with_sequence: start=0 end={{ replicas - 1}}
+
+    - name: "Create Kafka external service"
+      shell: kubectl create --filename=/tmp/service_external-{{ item }}.yml
+      with_sequence: start=0 end={{ replicas - 1}}
+  when:
+    - state == "present"
+    - external_enabled
+
+
+
+- name: "Kafka external service state={{ state }}"
+  shell: kubectl delete --ignore-not-found=true service {{ name }}-external-{{ item }} -n {{ namespace }}
+  with_sequence: start=0 end={{ replicas - 1}}
+  when:
+    - state == "absent"
+    - external_enabled
+
 
 # Work-around k8s_raw refusal to create service with clusterIP: None
 - name: "Kafka headless service state={{ state }}"

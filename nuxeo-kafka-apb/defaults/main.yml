@@ -43,7 +43,8 @@ persistentVolume_accessMode: ReadWriteOnce
 persistentVolume_size: 3Gi
 affinity:
 external_enabled: false
-external_servicePort: 19092
+external_prop_to_advertise: status.hostIP
+external_servicePort: 9093
 external_firstListenerPort: 31090
 external_domain: cluster.local
 external_init_image_repository: lwolf/kubectl_deployer
@@ -60,12 +61,12 @@ readinessProbe_timeoutSeconds: '5'
 readinessProbe_failureThreshold: '3'
 readinessProbe_periodSeconds: '10'
 readinessProbe_successThreshold: '1'
-terminationGracePeriodSeconds: '60'
+terminationGracePeriodSeconds: '30'
 extraVars: '{}'
 
 zookeeper_replicas: 3
 zookeeper_podDisruptionBudget: '{"maxUnavailable": 1}'
-zookeeper_terminationGracePeriodSeconds: 1800
+zookeeper_terminationGracePeriodSeconds: '30'
 zookeeper_updateStrategy_type: OnDelete
 zookeeper_image_repository: confluentinc/cp-zookeeper
 zookeeper_image_tag: '4.0.1-1'

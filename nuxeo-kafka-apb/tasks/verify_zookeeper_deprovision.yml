@@ -1,6 +1,6 @@
 ---
 
-- name: "Verify {{ zookeeper_name }} objects removed"
+- name: "Verify {{ zookeeper_name }} Zookeeper objects removed"
   set_fact:
     zookeeper_statefulset: "{{ zookeeper_statefulset_lookup }}"
     zookeeper_service: "{{ zookeeper_service_lookup }}"

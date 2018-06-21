@@ -1,0 +1,43 @@
+
+# Work-around k8s_raw inability to create Secret directly
+- name: "Service account state={{ state }}"
+  shell: kubectl create serviceaccount {{ kafka_serviceaccount_name }} -n {{ namespace }}
+  when: state == "present"
+
+- name: "Service account state={{ state }}"
+  shell: kubectl delete serviceaccount {{ kafka_serviceaccount_name }} -n {{ namespace }}
+  when: state == "absent"
+
+
+# Work-around k8s_raw refusal to create service with clusterIP: None
+- name: "Kafka role state={{ state }}"
+  block:
+    - name: "Create Kafka role from template"
+      template:
+        src: role.yml.j2
+        dest: /tmp/role.yml
+
+    - name: "Create Kafka role"
+      shell: kubectl create --filename=/tmp/role.yml
+  when: state == "present"
+
+- name: "Kafka role state={{ state }}"
+  shell: kubectl delete --ignore-not-found=true role {{ name }} -n {{ namespace }}
+  when: state == "absent"
+
+
+# Work-around k8s_raw refusal to create service with clusterIP: None
+- name: "Kafka rolebinding state={{ state }}"
+  block:
+    - name: "Create Kafka rolebinding from template"
+      template:
+        src: rolebinding.yml.j2
+        dest: /tmp/rolebinding.yml
+
+    - name: "Create Kafka rolebinding"
+      shell: kubectl create --filename=/tmp/rolebinding.yml
+  when: state == "present"
+
+- name: "Kafka rolebinding state={{ state }}"
+  shell: kubectl delete --ignore-not-found=true rolebinding {{ name }} -n {{ namespace }}
+  when: state == "absent"
