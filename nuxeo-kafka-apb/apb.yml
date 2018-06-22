@@ -146,44 +146,44 @@ plans:
         required: true
         type: boolean
         title: Enable external access
-        display_group: Kafka Config
+        display_group: External access
       - name: external_servicePort
         default: '9093'
         type: number
         title: External access service port
-        display_group: Kafka Config
+        display_group: External access
       - name: external_firstListenerPort
         default: '31090'
         type: number
         title: External access first listener port
-        display_group: Kafka Config
+        display_group: External access
       - name: external_prop_to_advertise
         default: 'status.hostIP'
         type: enum
         enum: ['status.hostIP', 'spec.nodeName']
         title: Pod Property to use to advertise the node for the external service
-        display_group: Kafka Config
+        display_group: External access
       - name: external_domain
         default: ''
         type: string
         title: External domain (when using spec.nodeName, the domain is added to the nodeName)
-        display_group: Kafka Config
+        display_group: External access
       - name: external_init_image_repository
         default: 'lwolf/kubectl_deployer'
         type: string
         title: External init image name
-        display_group: Kafka Config
+        display_group: External access
       - name: external_init_image_tag
         default: '0.4'
         type: string
         title: External init image tag
-        display_group: Kafka Config
+        display_group: External access
       - name: external_init_image_pullPolicy
         default: 'IfNotPresent'
         type: enum
         enum: ['IfNotPresent', 'Always', 'Never']
         title: External init image pull policy
-        display_group: Kafka Config
+        display_group: External access
       - name: configurationOverrides_configmap
         default: '{"offsets.topic.replication.factor": 3}'
         type: string
@@ -620,44 +620,39 @@ plans:
         required: true
         type: boolean
         title: Enable external access
-        display_group: Kafka Config
-      - name: external_servicePort
-        default: '19092'
-        type: number
-        title: External access service port
-        display_group: Container Specs
+        display_group: External access
       - name: external_firstListenerPort
-        default: '31090'
+        default: 31090
         type: number
         title: External access first listener port
-        display_group: Container Specs
+        display_group: External access
       - name: external_prop_to_advertise
         default: 'status.hostIP'
         type: enum
         enum: ['status.hostIP', 'spec.nodeName']
         title: Pod Property to use to advertise the node for the external service
-        display_group: Kafka Config
+        display_group: External access
       - name: external_domain
         default: 'cluster.local'
         type: string
         title: External domain
-        display_group: Kafka Config
+        display_group: External access
       - name: external_init_image_repository
         default: 'lwolf/kubectl_deployer'
         type: string
         title: External init image name
-        display_group: Container Specs
+        display_group: External access
       - name: external_init_image_tag
         default: '0.4'
         type: string
         title: External init image tag
-        display_group: Container Specs
+        display_group: External access
       - name: external_init_image_pullPolicy
         default: 'IfNotPresent'
         type: enum
         enum: ['IfNotPresent', 'Always', 'Never']
         title: External init image pull policy
-        display_group: Container Specs
+        display_group: External access
       - name: configurationOverrides_configmap
         default: '{"offsets.topic.replication.factor": 3}'
         type: string
