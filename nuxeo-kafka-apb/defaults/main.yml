@@ -37,7 +37,6 @@ securityContext: '{}'
 resources: '{}'
 kafkaHeapOptions: "-Xmx1G -Xms1G"
 updateStrategy_type: "OnDelete"
-podManagementPolicy:
 logSubPath: ""
 persistentVolume_accessMode: ReadWriteOnce
 persistentVolume_size: 3Gi

@@ -4,7 +4,6 @@
     description: "0%: Starting"
   when: in_cluster
 
-
 - name: "ca secret state={{ state }}"
   include_tasks: "create_ca_secret.yml"
   when: state == "present" and tls_enabled
@@ -41,6 +40,13 @@
   include_tasks: "set_fact_service_uri.yml"
   when: state == "present"
 
+
+- name: "set fact external_service_uri state={{ state }}"
+  include_tasks: "set_fact_external_service_uri.yml"
+  when:
+    - state == "present"
+    - external_enabled
+
 - name: encode bind credentials
   asb_encode_binding:
     fields:
@@ -51,6 +57,20 @@
   when:
     - state == "present"
     - tls_enabled
+    - not external_enabled
+
+- name: encode bind credentials
+  asb_encode_binding:
+    fields:
+      user: admin
+      password: "{{ admin_password }}"
+      uri: "{{ hosts }}"
+      external_uri: "{{ external_service_uri }}"
+      tls_cacert: "{{ tls_cacert_lookup | b64encode }}"
+  when:
+    - state == "present"
+    - tls_enabled
+    - external_enabled
 
 - name: encode bind credentials
   asb_encode_binding:
