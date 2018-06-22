@@ -91,7 +91,7 @@ fi
 # Configure Kafka bindings
 if [ -d /opt/nuxeo/bindings/kafka ]; then
 
-	KAFAK_URI=$(< /opt/nuxeo/bindings/elasticsearch/uri)
+	KAFAK_URI=$(< /opt/nuxeo/bindings/kafka/uri)
 
 	cat >> $NUXEO_CONF <<EOT
 kafka.bootstrap.servers=${KAFKA_URI}
@@ -101,7 +101,7 @@ nuxeo.pubsub.provider=stream
 EOT
 
 
-	if [ -f /opt/nuxeo/bindings/kafak/tls_cacert ]; then
+	if [ -f /opt/nuxeo/bindings/kafka/tls_cacert ]; then
 
 		# Remove cert if already set.
 		if [ -f $TRUSTSTORE_PATH ]; then
@@ -113,7 +113,7 @@ EOT
 			set -e
 		fi
 
-		base64 -d /opt/nuxeo/bindings/elasticsearch/tls_cacert > /tmp/cert
+		base64 -d /opt/nuxeo/bindings/kafka/tls_cacert > /tmp/cert
 		keytool -import -file /tmp/cert -alias KafkaCaCert -keystore $TRUSTSTORE_PATH -storepass changeit -noprompt
 	fi
 

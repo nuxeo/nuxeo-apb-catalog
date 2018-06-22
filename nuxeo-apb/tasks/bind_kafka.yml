@@ -11,12 +11,12 @@
         service_to_bind: "{{ kafkaServiceName }}"
         secret_name: "{{ kafka_credentials_name }}"
 
-    - name: "Create MongoDB binding"
+    - name: "Create Kafka binding"
       shell: kubectl create --filename=/tmp/kafka_service_binding.yml
   when:
     - state == "present"
 
-- name: "Nuxeo MongoDB binding state={{ state }}"
+- name: "Nuxeo Kafka binding state={{ state }}"
   shell: kubectl delete --ignore-not-found=true servicebinding {{ kafka_servicebinding_name }} -n {{ namespace }}
   when:
     - state == "absent"

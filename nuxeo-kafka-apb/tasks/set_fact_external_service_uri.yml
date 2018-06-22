@@ -1,0 +1,31 @@
+---
+- name: "set fact external service uri"
+  block:
+  - name: "Register statefulset json cmd"
+    shell: kubectl get statefulset {{ name }} -o json -n {{ namespace }}
+    register: sts_cmd
+    failed_when: sts_cmd.rc >= 2
+
+  - name: "Set Fact statefulset json"
+    set_fact:
+      sts_json: "{{ sts_cmd.stdout | from_json }}"
+    when: sts_cmd.rc != 1
+
+  - name: "Register pod json cmd"
+    shell: kubectl get pod {{ name }}-{{ item }} -o json -n {{ namespace }}
+    register: sts_cmd
+    failed_when: sts_cmd.rc >= 2
+    with_sequence: "{{ 'start=0 end=' + ([((sts_status_replicas | int) - 1), 0] | max | string) }}"
+
+  - name: "Set Fact external_service_uri"
+    set_fact:
+      external_service_uri: "{{external_service_uri}}{% if item.0 > 0 %},{% endif %}{{ item.1.stdout | from_json | json_query(external_prop_to_advertise) }}{% if external_prop_to_advertise == 'spec.nodeName' %}.{{ external_domain }}{% endif %}:{{ external_firstListenerPort + ( item.0 |int )}}"
+    with_indexed_items: "{{ sts_cmd.results }}"
+
+  - debug:
+      msg: "{{ external_service_uri}}"
+
+  vars:
+    external_service_uri: ''
+    sts_status_replicas: "{{ ('0' | int) if sts_json is undefined else sts_json | json_query('status.replicas') | int }}"
+
