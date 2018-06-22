@@ -28,4 +28,3 @@
   vars:
     external_service_uri: ''
     sts_status_replicas: "{{ ('0' | int) if sts_json is undefined else sts_json | json_query('status.replicas') | int }}"
-

@@ -10,8 +10,5 @@
       - "{{ sts_status_replicas_list }}"
 
 
-  - debug:
-      msg: "Kafka connexion: {{ hosts }}"
-
   vars:
     hosts: ""

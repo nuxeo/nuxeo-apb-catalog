@@ -12,16 +12,6 @@
       sts_json: "{{ sts_cmd.stdout | from_json }}"
     when: sts_cmd.rc != 1
 
-  - name: "Debug stdout"
-    debug:
-      msg: "{{ sts_cmd.stdout }}"
-    when: sts_cmd.rc == 1
-
-  - name: "Debug stderr"
-    debug:
-      msg: "{{ sts_cmd.stderr }}"
-    when: sts_cmd.rc == 1
-
   - name: "Set Fact statefulset replicas sequence"
     set_fact:
       sts_status_replicas_list: "{{ sts_status_replicas_list }} + [ '{{ item }}' ]"
