@@ -29,8 +29,8 @@ users_secret_name: "{{ name + '-user' if auth_existingUserSecret is undefined el
 ca_secret_name: "{{ name + '-ca' }}"
 init_configmap_name: "{{ name + '-init'}}"
 admin_password: "{{ password_lookup if auth_adminPassword is undefined else auth_adminPassword }}"
-tls_enabled: "{{ True if _apb_plan_id == 'secure-cluster' else False }}"
-auth_enabled: "{{ True if _apb_plan_id == 'secure-cluster' else False }}"
+tls_enabled: "{{ True if _apb_plan_id == 'secure-clustered' else False }}"
+auth_enabled: "{{ True if _apb_plan_id == 'secure-clustered' else False }}"
 persistentVolume_enabled: "{{ True }}"
 kafka_serviceaccount_name: "{{ name }}"
 
