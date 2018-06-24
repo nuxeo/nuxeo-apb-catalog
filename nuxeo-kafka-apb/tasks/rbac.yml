@@ -5,7 +5,7 @@
   when: state == "present"
 
 - name: "Service account state={{ state }}"
-  shell: kubectl delete serviceaccount {{ kafka_serviceaccount_name }} -n {{ namespace }}
+  shell: kubectl delete --ignore-not-found=true serviceaccount {{ kafka_serviceaccount_name }} -n {{ namespace }}
   when: state == "absent"
 
 

@@ -164,13 +164,13 @@ spec:
           - /bin/bash
           - -exc
           - |
-            [ -d /work-dir/ ] && cp -v /work-dir/* /etc/kafka/secrets && \
+            if [ -d /work-dir/ ]; then cp -v /work-dir/* /etc/kafka/secrets; fi  && \
             export KAFKA_ZOOKEEPER_CONNECT=$(DOMAIN=`hostname -d`; \
                 for ((i=0; i<$ZOOKEEPER_SERVER_COUNT; i++)); do \
                     echo -n "{{ zookeeper_name }}-headless-$i.$DOMAIN:$ZOOKEEPER_CLIENT_PORT,"; \
                 done| sed 's/,$//'| sed 's/kafka/zookeeper/g') && \
             export KAFKA_BROKER_ID=${HOSTNAME##*-} && \
-            export KAFKA_SSL_KEYSTORE_FILENAME=keystore.jks
+            export KAFKA_SSL_KEYSTORE_FILENAME=keystore.jks && \
             export NODEPORT=$(expr {{ external_firstListenerPort }} + $KAFKA_BROKER_ID) && \
             export KAFKA_LISTENERS=PLAINTEXT://${POD_IP}:9092{% if external_enabled %},SASL_SSL://${POD_IP}:{{ external_servicePort }}{% endif %} && \
             export KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://${POD_IP}:9092{% if external_enabled %},SASL_SSL://${NODE_HOST}{% if external_prop_to_advertise == 'spec.nodeName' %}.{{ external_domain }}{% endif %}:${NODEPORT} {% endif %}&& \
