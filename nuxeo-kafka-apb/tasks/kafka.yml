@@ -90,7 +90,7 @@
       with_sequence: start=0 end={{ replicas - 1}}
 
     - name: "Create Kafka external service"
-      shell: kubectl create --filename=/tmp/service_external-{{ item }}.yml
+      shell: kubectl create --filename=/tmp/service_external-{{ item }}.yml -n {{ namespace }}
       with_sequence: start=0 end={{ replicas - 1}}
   when:
     - state == "present"
