@@ -1,6 +1,6 @@
 DOCKERHOST = docker.io
-DOCKERORG = nuxeo-apb
-IMAGENAME = nuxeo
+DOCKERORG = nuxeoapbcatalog
+IMAGENAME = nuxeo-apb
 TAG = latest
 USER=$(shell id -u)
 PWD=$(shell pwd)
