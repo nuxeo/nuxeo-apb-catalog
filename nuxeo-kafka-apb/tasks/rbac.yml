@@ -39,5 +39,5 @@
   when: state == "present"
 
 - name: "Kafka rolebinding state={{ state }}"
-  shell: kubectl delete --ignore-not-found=true rolebinding {{ name }} -n {{ namespace }}
+  shell: kubectl delete --ignore-not-found=true rolebinding.rbac {{ name }} -n {{ namespace }}
   when: state == "absent"

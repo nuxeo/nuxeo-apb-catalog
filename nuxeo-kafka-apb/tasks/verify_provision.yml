@@ -4,15 +4,16 @@
   set_fact:
     ca_secret: "{{ ca_secret_lookup }}"
     users_secret: "{{ users_secret_lookup }}"
+    kafka_serviceaccount: "{{ kafka_serviceaccount_lookup }}"
     init_configmap: "{{ init_configmap_lookup }}"
     statefulset: "{{ statefulset_lookup }}"
     service: "{{ service_lookup }}"
-
   retries: 10
   delay: 5
   until:
-    - ca_secret_lookup
-    - users_secret_lookup
+    - ca_secret_lookup or not tls_enabled
+    - users_secret_lookup or not auth_enabled
+    - kafka_serviceaccount_lookup or not external_enabled
     - init_configmap_lookup
     - statefulset_lookup
     - service_lookup

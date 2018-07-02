@@ -6,7 +6,9 @@ ca_secret_lookup: "{{ lookup('k8s', kind='Secret', namespace=namespace, resource
 init_configmap_lookup: "{{ lookup('k8s', kind='ConfigMap', namespace=namespace, resource_name=init_configmap_name) }}"
 poddisruptionbudget_lookup: "{{ lookup('k8s', api_version='v1beta1', kind='PodDisruptionBudget', namespace=namespace, resource_name=name) }}"
 statefulset_lookup: "{{ lookup('k8s', kind='StatefulSet', namespace=namespace, resource_name=name) }}"
-service_lookup: "{{ lookup('openshift', kind='Service', namespace=namespace, resource_name=name) }}"
+service_lookup: "{{ lookup('k8s', kind='Service', namespace=namespace, resource_name=name) }}"
+headless_service_lookup: "{{ lookup('k8s', kind='Service', namespace=namespace, resource_name=name+'-headless') }}"
+kafka_serviceaccount_lookup: "{{ lookup('k8s', kind='ServiceAccount', namespace=namespace, resource_name=kafka_serviceaccount_name) }}"
 password_lookup: "{{ lookup('password', '/dev/null') }}"
 tls_cacert_lookup: "{{ lookup('file', tls_cacert_path) }}"
 

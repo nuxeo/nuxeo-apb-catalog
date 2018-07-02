@@ -23,7 +23,7 @@
 
 - name: "user secret state={{ state }}"
   shell: kubectl delete --ignore-not-found=true secret {{ users_secret_name }} -n {{ namespace }}
-  when: state == "absent" and auth_enabled and auth_existingUserSecret is undefined
+  when: state == "absent" and auth_enabled
 
 
 
