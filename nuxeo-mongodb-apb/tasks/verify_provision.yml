@@ -12,11 +12,11 @@
     service: "{{ service_lookup }}"
 
   retries: 20
-  delay: 5
+  delay: 10
   until:
-    - ca_secret_lookup
-    - admin_secret_lookup
-    - user_secret_lookup
+    - ca_secret_lookup or not tls_enabled
+    - admin_secret_lookup or not auth_enabled
+    - user_secret_lookup or not auth_enabled
     - init_configmap_lookup
     - mongodb_configmap_lookup
 #    - poddisruptionbudget_lookup or not (podDisruptionBudget is defined and (podDisruptionBudget | from_yaml))
@@ -32,7 +32,7 @@
 - name: "Wait for statefulset to become ready"
   debug:
     msg: "StatefulSet ready status: {{ statefulset_query }}"
-  retries: 20
+  retries: 30
   delay: 10
   until:
     - statefulset_query

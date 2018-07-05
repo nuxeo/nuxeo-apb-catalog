@@ -187,7 +187,18 @@
       uri: "{{ service_uri }}"
       dbname: "{{ database }}"
       tls_cacert: "{{ tls_cacert_lookup | b64encode }}"
-  when: state == "present"
+  when:
+    - state == "present"
+    - tls_enabled
+
+- name: encode bind credentials
+  asb_encode_binding:
+    fields:
+      uri: "{{ service_uri }}"
+      dbname: "{{ database }}"
+  when:
+    - state == "present"
+    - not tls_enabled
 
 
 - name: "Update last operation"
