@@ -11,7 +11,7 @@
     statefulset: "{{ statefulset_lookup }}"
     service: "{{ service_lookup }}"
 
-  retries: 10
+  retries: 20
   delay: 5
   until:
     - ca_secret_lookup
