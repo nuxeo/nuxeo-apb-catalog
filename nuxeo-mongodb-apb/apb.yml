@@ -215,6 +215,11 @@ plans:
         type: string
         title: Set environment variables for the main container
         display_group: MongoDB Config
+      - name: database
+        default: 'nuxeo'
+        type: string
+        title: Name of the MongoDB database accessed
+        display_group: MongoDB Security Config
 
   - name: secure-replicaset
     description: Replicaset MongoDB deployment with security enabled
