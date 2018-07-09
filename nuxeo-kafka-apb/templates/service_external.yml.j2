@@ -17,7 +17,7 @@ spec:
   ports:
     - name: external-broker
       port: {{ external_servicePort }}
-      targetPort: {{ external_firstListenerPort + (index | int) }}
+      targetPort: {{ external_servicePort }}
       nodePort: {{ external_firstListenerPort + (index | int) }}
       protocol: TCP
   selector:
