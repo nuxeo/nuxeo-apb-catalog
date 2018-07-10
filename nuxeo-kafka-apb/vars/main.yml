@@ -17,7 +17,7 @@ zookeeper_service_lookup: "{{ lookup('openshift', kind='Service', namespace=name
 zookeeper_service_headless_lookup: "{{ lookup('openshift', kind='Service', namespace=namespace, resource_name=zookeeper_name+'-headless') }}"
 
 # Variables to hold queries
-ready_replicas_query: "[spec.replicas, status.ready_replicas]"
+ready_replicas_query: "[spec.replicas, status.readyReplicas]"
 statefulset_query: "{{ statefulset_lookup | json_query(ready_replicas_query) | unique | count == 1 }}"
 zookeeper_statefulset_query: "{{ zookeeper_statefulset_lookup | json_query(ready_replicas_query) | unique | count == 1 }}"
 
