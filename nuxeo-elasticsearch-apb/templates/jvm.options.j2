@@ -1,5 +1,9 @@
 ## JVM configuration
 
+# Reduce the TTL for DNS name caching
+# cf https://www.elastic.co/guide/en/elasticsearch/reference/5.6/networkaddress-cache-ttl.html
+-Dsun.net.inetaddr.ttl=5
+
 ################################################################
 ## IMPORTANT: JVM heap size
 ################################################################
