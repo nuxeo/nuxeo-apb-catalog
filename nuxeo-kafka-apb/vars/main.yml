@@ -13,11 +13,11 @@ password_lookup: "{{ lookup('password', '/dev/null') }}"
 tls_cacert_lookup: "{{ lookup('file', tls_cacert_path) }}"
 
 zookeeper_statefulset_lookup: "{{ lookup('k8s', kind='StatefulSet', namespace=namespace, resource_name=zookeeper_name) }}"
-zookeeper_service_lookup: "{{ lookup('openshift', kind='Service', namespace=namespace, resource_name=zookeeper_name) }}"
-zookeeper_service_headless_lookup: "{{ lookup('openshift', kind='Service', namespace=namespace, resource_name=zookeeper_name+'-headless') }}"
+zookeeper_service_lookup: "{{ lookup('k8s', kind='Service', namespace=namespace, resource_name=zookeeper_name) }}"
+zookeeper_service_headless_lookup: "{{ lookup('k8s', kind='Service', namespace=namespace, resource_name=zookeeper_name+'-headless') }}"
 
 # Variables to hold queries
-ready_replicas_query: "[spec.replicas, status.readyReplicas]"
+ready_replicas_query: "[spec.replicas, status.ready_replicas]"
 statefulset_query: "{{ statefulset_lookup | json_query(ready_replicas_query) | unique | count == 1 }}"
 zookeeper_statefulset_query: "{{ zookeeper_statefulset_lookup | json_query(ready_replicas_query) | unique | count == 1 }}"
 

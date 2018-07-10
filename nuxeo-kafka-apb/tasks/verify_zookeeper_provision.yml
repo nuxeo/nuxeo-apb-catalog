@@ -17,6 +17,9 @@
   shell: kubectl get poddisruptionbudget {{ zookeeper_name }} -n {{ namespace }}
   when: podDisruptionBudget is defined and (podDisruptionBudget | from_yaml)
 
+- pause:
+    seconds: 20
+
 - name: "Wait for statefulset to become ready"
   debug:
     msg: "StatefulSet ready status: {{ zookeeper_statefulset_lookup | json_query(ready_replicas_query) }}"
