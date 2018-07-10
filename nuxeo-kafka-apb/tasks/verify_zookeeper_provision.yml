@@ -18,15 +18,15 @@
   when: podDisruptionBudget is defined and (podDisruptionBudget | from_yaml)
 
 - pause:
-    seconds: 20
+    seconds: 90
 
-- name: "Wait for statefulset to become ready"
-  debug:
-    msg: "StatefulSet ready status: {{ zookeeper_statefulset_lookup | json_query(ready_replicas_query) }}"
-  retries: 20
-  delay: 30
-  until:
-    - zookeeper_statefulset_query
+# - name: "Wait for statefulset to become ready"
+#   debug:
+#     msg: "StatefulSet ready status: {{ zookeeper_statefulset_lookup | json_query(ready_replicas_query) }}"
+#   retries: 20
+#   delay: 30
+#   until:
+#     - zookeeper_statefulset_query
 
 - name: "set fact statefulset pvcs state={{ state }}"
   include_tasks: "set_fact_zookeeper_statefulset_pvcs.yml"
