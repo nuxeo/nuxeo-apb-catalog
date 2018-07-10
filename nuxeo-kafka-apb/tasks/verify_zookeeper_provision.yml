@@ -19,7 +19,7 @@
 
 - name: "Wait for statefulset to become ready"
   debug:
-    msg: "StatefulSet ready status: {{ zookeeper_statefulset_query }}"
+    msg: "StatefulSet ready status: {{ zookeeper_statefulset_lookup | json_query(ready_replicas_query) }}"
   retries: 20
   delay: 30
   until:

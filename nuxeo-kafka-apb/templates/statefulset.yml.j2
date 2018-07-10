@@ -170,11 +170,12 @@ spec:
                     echo -n "{{ zookeeper_name }}-headless-$i.$DOMAIN:$ZOOKEEPER_CLIENT_PORT,"; \
                 done| sed 's/,$//'| sed 's/kafka/zookeeper/g') && \
             export KAFKA_BROKER_ID=${HOSTNAME##*-} && \
+            export KAFKA_AUTO_CREATE_TOPICS_ENABLE=true && \
             export KAFKA_SSL_KEYSTORE_FILENAME=keystore.jks && \
             export NODEPORT=$(expr {{ external_firstListenerPort }} + $KAFKA_BROKER_ID) && \
             export KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=CLIENT:PLAINTEXT{% if external_enabled %},REPLICATION:{% if tls_enabled %}SASL_SSL{% else %}PLAINTEXT{% endif %}{% endif %} && \
             export KAFKA_LISTENERS=CLIENT://${POD_IP}:9092{% if external_enabled %},REPLICATION://${POD_IP}:{{ external_servicePort }}{% endif %} && \
-            export KAFKA_ADVERTISED_LISTENERS=CLIENT://${POD_IP}:9092{% if external_enabled %},REPLICATION://${NODE_HOST}{% if external_prop_to_advertise == 'spec.nodeName' %}.{{ external_domain }}{% endif %}:${NODEPORT} {% endif %}&& \
+            export KAFKA_ADVERTISED_LISTENERS=CLIENT://{{ name }}-${KAFKA_BROKER_ID}.{{ name }}.{{ namespace }}.svc:9092{% if external_enabled %},REPLICATION://${NODE_HOST}{% if external_prop_to_advertise == 'spec.nodeName' %}.{{ external_domain }}{% endif %}:${NODEPORT} {% endif %}&& \
             export KAFKA_INTER_BROKER_LISTENER_NAME=CLIENT && \
             /etc/confluent/docker/run
           livenessProbe:
