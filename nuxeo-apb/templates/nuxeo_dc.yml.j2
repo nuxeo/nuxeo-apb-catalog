@@ -151,8 +151,10 @@ spec:
           mountPath: /opt/nuxeo/server/tmp
         - name: nuxeoconf
           mountPath: /docker-entrypoint-initnuxeo.d
+{% if connectEnabled %}
         - name: connect-secret
           mountPath: /opt/nuxeo/connect
+{% endif %}
 {% if useExternalMongoDB %}
         - name: mongodb-credentials
           mountPath: /opt/nuxeo/bindings/mongodb
@@ -188,9 +190,11 @@ spec:
       - name: nuxeoconf
         configMap:
           name: {{ init_configmap_name }}
+{% if connectEnabled %}
       - name: connect-secret
         secret:
           secretName: {{ connect_secret_name }}
+{% endif %}
 {% if useExternalMongoDB %}
       - name: mongodb-credentials
         secret:
