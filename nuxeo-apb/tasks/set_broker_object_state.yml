@@ -1,0 +1,15 @@
+---
+
+- name: "set broker object state={{ state }}"
+  block:
+
+    - name: "Create {{ desc }} template"
+      template:
+        src: "{{name}}.yml.j2"
+        dest: "/tmp/{{name}}.yml"
+
+    - name: "Set {{ desc }} state={{ state }}"
+      shell: "{{ kubectl_cmd + ' --filename=/tmp/' + name + '.yml' }}"
+
+  vars:
+    kubectl_cmd: "kubectl {{ 'create' if state == 'present' else 'delete --ignore-not-found=true' }}"

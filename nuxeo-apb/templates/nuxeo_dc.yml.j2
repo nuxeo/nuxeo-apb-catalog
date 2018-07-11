@@ -115,11 +115,11 @@ spec:
         - name: NUXEO_PACKAGES
           value: {{ nuxeoPackages }}
 {% endif %}
-{% if binaries_usePVC %}
+{% if binaries_persistentVolume_enabled %}
         - name: NUXEO_BINARY_STORE
           value: /var/lib/nuxeo/binaries
 {% endif %}
-{% if transientstore_usePVC %}
+{% if transientstore_persistentVolume_enabled %}
         - name: NUXEO_TRANSIENT_STORE
           value: /var/lib/nuxeo/transientstore
 {% endif %}
@@ -137,11 +137,11 @@ spec:
 {{ resources | from_yaml | to_nice_yaml(indent=2) | indent(10, true) }}
 {% endif %}
         volumeMounts:
-{% if binaries_usePVC %}
+{% if binaries_persistentVolume_enabled %}
         - name: binaries
           mountPath: /var/lib/nuxeo/binaries
 {% endif %}
-{% if transientstore_usePVC %}
+{% if transientstore_persistentVolume_enabled %}
         - name: transientstore
           mountPath: /var/lib/nuxeo/transientstore
 {% endif %}
@@ -168,18 +168,18 @@ spec:
           mountPath: /opt/nuxeo/bindings/kafka
 {% endif %}
       volumes:
-{% if binaries_usePVC %}
+{% if binaries_persistentVolume_enabled %}
       - name: binaries
         persistentVolumeClaim:
           claimName: {{ binaries_pvc_name }}
 {% endif %}
-{% if transientstore_usePVC %}
+{% if transientstore_persistentVolume_enabled %}
       - name: transientstore
         persistentVolumeClaim:
           claimName: {{ transientstore_pvc_name }}
 {% endif %}
       - name: data
-{% if data_usePVC %}
+{% if data_persistentVolume_enabled %}
         persistentVolumeClaim:
           claimName: {{ data_pvc_name }}
 {% else %}
