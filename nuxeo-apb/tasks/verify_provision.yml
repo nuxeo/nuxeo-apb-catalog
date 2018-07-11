@@ -21,9 +21,9 @@
     - init_configmap_lookup
     - service_lookup
     - cluster == "kubernetes" or route_lookup
-    - binaries_pvc_lookup or not binaries_usePVC
-    - transientstore_pvc_lookup or not transientstore_usePVC
-    - data_pvc_lookup or not data_usePVC    
+    - binaries_pvc_lookup or not binaries_persistentVolume_enabled
+    - transientstore_pvc_lookup or not transientstore_persistentVolume_enabled
+    - data_pvc_lookup or not data_persistentVolume_enabled
     - cluster == "kubernetes" or interactive_dc_lookup
     - cluster == "kubernetes" or worker_dc_lookup
     - nginx_configmap_name and use_front_ssl_proxy

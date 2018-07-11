@@ -109,64 +109,39 @@
     - state == "absent"
 
 
-- name: "Nuxeo binaries PVC state={{ state }}"
-  block:
-    - name: "Create Nuxeo binaries PVC from template"
-      template:
-        src: binaries_pvc.yml.j2
-        dest: /tmp/binaries_pvc.yml
+- name: "set pvc state={{ state }}"
+  include_tasks: "set_broker_object_state.yml
+      name=pvc
+      desc={{ item.desc }}
+      pvc_name={{ item.pvc_name }}
+      persistentVolume_annotations={{ item.persistentVolume_annotations }}
+      persistentVolume_accessMode={{ item.persistentVolume_accessMode }}
+      persistentVolume_size={{ item.persistentVolume_size }}
+      persistentVolume_storageClass={{ item.persistentVolume_storageClass }}"
+  when: item.apply | default(True)
+  loop:
+    - desc: 'binaries pvc'
+      pvc_name: "{{ binaries_pvc_name }}"
+      persistentVolume_annotations: "{{ binaries_persistentVolume_annotations }}"
+      persistentVolume_accessMode: "{{ binaries_persistentVolume_accessMode }}"
+      persistentVolume_size: "{{ binaries_persistentVolume_size }}"
+      persistentVolume_storageClass: "{{ binaries_persistentVolume_storageClass }}"
+      apply: "{{ binaries_persistentVolume_enabled }}"
+    - desc: 'transientstore pvc'
+      pvc_name: "{{ transientstore_pvc_name }}"
+      persistentVolume_annotations: "{{ transientstore_persistentVolume_annotations }}"
+      persistentVolume_accessMode: "{{ transientstore_persistentVolume_accessMode }}"
+      persistentVolume_size: "{{ transientstore_persistentVolume_size }}"
+      persistentVolume_storageClass: "{{ transientstore_persistentVolume_storageClass }}"
+      apply: "{{ transientstore_persistentVolume_enabled }}"
+    - desc: 'data pvc'
+      pvc_name: "{{ data_pvc_name }}"
+      persistentVolume_annotations: "{{ data_persistentVolume_annotations }}"
+      persistentVolume_accessMode: "{{ data_persistentVolume_accessMode }}"
+      persistentVolume_size: "{{ data_persistentVolume_size }}"
+      persistentVolume_storageClass: "{{ data_persistentVolume_storageClass }}"
+      apply: "{{ data_persistentVolume_enabled }}"
 
-    - name: "Create binaries PVC"
-      shell: kubectl create --filename=/tmp/binaries_pvc.yml
-  when:
-    - binaries_usePVC
-    - state == "present"
-
-- name: "Nuxeo binaries PVC state={{ state }}"
-  shell: kubectl delete --ignore-not-found=true pvc {{ binaries_pvc_name }} -n {{ namespace }}
-  when:
-    - binaries_usePVC
-    - state == "absent"
-
-
-- name: "Nuxeo Transient store PVC state={{ state }}"
-  block:
-    - name: "Create Transient store PVC from template"
-      template:
-        src: transient_pvc.yml.j2
-        dest: /tmp/transient_pvc.yml
-
-    - name: "Create Transient store PVC"
-      shell: kubectl create --filename=/tmp/transient_pvc.yml
-  when:
-    - transientstore_usePVC
-    - state == "present"
-
-- name: "Nuxeo Transient store PVC state={{ state }}"
-  shell: kubectl delete --ignore-not-found=true pvc {{ transientstore_pvc_name }} -n {{ namespace }}
-  when:
-    - transientstore_usePVC
-    - state == "absent"
-
-
-- name: "Nuxeo Data PVC state={{ state }}"
-  block:
-    - name: "Create Data PVC from template"
-      template:
-        src: data_pvc.yml.j2
-        dest: /tmp/data_pvc.yml
-
-    - name: "Create Data PVC"
-      shell: kubectl create --filename=/tmp/data_pvc.yml
-  when:
-    - data_usePVC
-    - state == "present"
-
-- name: "Nuxeo Data PVC state={{ state }}"
-  shell: kubectl delete --ignore-not-found=true pvc {{ data_pvc_name }} -n {{ namespace }}
-  when:
-    - data_usePVC
-    - state == "absent"
 
 - name: "MongoDB service binding ={{ state }}"
   include_tasks: "bind_mongodb.yml"

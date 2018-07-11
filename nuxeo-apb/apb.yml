@@ -79,66 +79,66 @@ plans:
         display_type: textarea
         display_group: Container Specs      
 
-      - name: binaries_usePVC
+      - name: binaries_persistentVolume_enabled
         default: true
         type: boolean
-        title: Use PVC for binaries (if not uses emptyDir{})
+        title: Use persistent volume for binaries (if not uses emptyDir{})
         display_group: Storage specs
-      - name: binaries_storageClass
+      - name: binaries_persistentVolume_storageClass
         type: string
-        title: Binaries volume storage class (Must be RWX capable in cluster)
+        title: Binaries persistent volume storage class (Must be RWX capable in cluster)
         display_group: Storage specs
-      - name: binaries_size
+      - name: binaries_persistentVolume_size
         default: '10Gi'
         type: string
-        title: Binaries volume size
+        title: Binaries persistent volume size in Gi
         display_group: Storage specs
-      - name: binaries_annotations
+      - name: binaries_persistentVolume_annotations
         default: '{}'
         type: string
-        title: Binaries volume annotations
+        title: Binaries persistent volume annotations
         display_type: textarea
         display_group: Storage specs
 
-      - name: transientstore_usePVC
+      - name: transientstore_persistentVolume_enabled
         type: boolean
         default: true
-        title: Transient store volume storage class
+        title: Use persistent volume for Transient store
         display_group: Storage specs
-      - name: transientstore_storageClass
+      - name: transientstore_persistentVolume_storageClass
         type: string
-        title: Transient store volume storage class
+        title: Transient store persistent volume storage class
         display_group: Storage specs
-      - name: transientstore_size
+      - name: transientstore_persistentVolume_size
         default: '10Gi'
         type: string
-        title: Transient store volume size
+        title: Transient store persistent volume size in Gi
         display_group: Storage specs
-      - name: transientstore_annotations
+      - name: transientstore_persistentVolume_annotations
         default: '{}'
         type: string
-        title: Transient store volume annotations
+        title: Transient store persistent volume annotations
         display_type: textarea
         display_group: Storage specs
 
-      - name: data_usePVC
+      - name: data_persistentVolume_enabled
         default: false
         type: boolean
-        title: Use PVC for NUXEO_DATA (if not uses emptyDir{})
+        title: Use persistent volume for NUXEO_DATA (if not uses emptyDir{})
         display_group: Storage specs
-      - name: data_storageClass
+      - name: data_persistentVolume_storageClass
         type: string
-        title: Data folder volume storage class
+        title: Data folder persistent volume storage class
         display_group: Storage specs
-      - name: data_size
+      - name: data_persistentVolume_size
         default: '10Gi'
         type: string
-        title: Data folder volume size in Gi
+        title: Data folder persistent volume size in Gi
         display_group: Storage specs
-      - name: data_annotations
+      - name: data_persistentVolume_annotations
         default: '{}'
         type: string
-        title: Data folder volume annotations
+        title: Data folder persistent volume annotations
         display_type: textarea
         display_group: Storage specs
 
