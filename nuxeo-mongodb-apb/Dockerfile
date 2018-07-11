@@ -1,4 +1,4 @@
-FROM nuxeoapbcatalog/nuxeo-apb-base:latest
+FROM nuxeoapbcatalog/nuxeo-apb-base:1.0
 
 LABEL "com.redhat.apb.spec"=\
 "LS0tCnZlcnNpb246IDEuMApuYW1lOiBudXhlby1tb25nb2RiLWFwYgpkZXNjcmlwdGlvbjogTW9u\
