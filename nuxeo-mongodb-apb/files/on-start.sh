@@ -131,7 +131,7 @@ for peer in "${peers[@]}"; do
             sleep 1
         done
 
-        log '✓ Replica reached SECONDARY state.'
+        log 'Replica reached SECONDARY state.'
 
         shutdown_mongo "60"
         log "Good bye."
@@ -151,7 +151,7 @@ if mongo "${ssl_args[@]}" --eval "rs.status()" | grep "no replset config has bee
         sleep 1
     done
 
-    log '✓ Replica reached PRIMARY state.'
+    log 'Replica reached PRIMARY state.'
 
     if [[ "$AUTH" == "true" ]]; then
         log "Creating admin user..."
