@@ -1,4 +1,4 @@
-FROM ansibleplaybookbundle/apb-base
+FROM ansibleplaybookbundle/apb-base:sprint150
 
 RUN yum install -y openssl java-1.8.0-openjdk httpd-tools && yum clean all
 
