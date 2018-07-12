@@ -30,7 +30,6 @@
   "persistentVolume_annotations": {},
   "tls_casubjectDistinguishedName": "/CN=nuxeo-backings.mongodb.svc/OU=engineering/O=nuxeo/L=irvine/ST=ca/C=us",
   "auth_adminUser": "admin",
-  "auth_adminPassword": "admin",
   "auth_username": "nuxeo",
   "database": "nuxeo",
   "serviceAnnotations": {},

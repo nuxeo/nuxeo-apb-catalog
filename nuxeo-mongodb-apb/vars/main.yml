@@ -28,8 +28,6 @@ user_secret_name: "{{ name + '-user' if auth_existingUserSecret is undefined els
 ca_secret_name: "{{ name + '-ca' }}"
 init_configmap_name: "{{ name + '-init'}}"
 mongodb_configmap_name: "{{ name + '-mongodb' }}"
-admin_password: "{{ password_lookup if auth_adminPassword is undefined else auth_adminPassword }}"
-user_password: "{{ password_lookup if auth_password is undefined else auth_password }}"
 tls_enabled: "{{ True if _apb_plan_id == 'secure-replicaset' else False }}"
 auth_enabled: "{{ True if _apb_plan_id == 'secure-replicaset' else False }}"
 persistentVolume_enabled: "{{ True }}"
