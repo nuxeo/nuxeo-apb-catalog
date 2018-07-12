@@ -14,6 +14,11 @@
   when: state == "absent" and tls_enabled
 
 
+- name: "set fact admin_password state={{ state }}"
+  set_fact:
+    admin_password: "{{ password_lookup if auth_adminPassword is undefined else auth_adminPassword }}"
+  when: state == "present" and auth_enabled
+
 # Work-around k8s_raw inability to create Secret directly
 - name: "admin secret state={{ state }}"
   block:
@@ -30,6 +35,11 @@
   shell: kubectl delete --ignore-not-found=true secret {{ admin_secret_name }} -n {{ namespace }}
   when: state == "absent" and auth_enabled and auth_existingAdminSecret is undefined
 
+
+- name: "set fact user_password state={{ state }}"
+  set_fact:
+    user_password: "{{ password_lookup if auth_password is undefined else auth_password }}"
+  when: state == "present" and auth_enabled
 
 # Work-around k8s_raw inability to create Secret directly
 - name: "user secret state={{ state }}"
