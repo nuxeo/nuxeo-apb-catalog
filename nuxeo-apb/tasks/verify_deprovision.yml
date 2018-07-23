@@ -21,7 +21,7 @@
     - not service
     - cluster == "kubernetes" or not nuxeo_route
     - not binaries_pvc
-    - not transientstore
+    - not transientstore_pvc
     - not data_pvc
     - cluster == "kubernetes" or not interactive_dc
     - cluster == "kubernetes" or not worker_dc
