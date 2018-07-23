@@ -15,6 +15,7 @@
 
 replica_set="$REPLICA_SET"
 script_name=${0##*/}
+port="$PORT"
 
 if [[ "$AUTH" == "true" ]]; then
     admin_user="$ADMIN_USER"
@@ -40,7 +41,7 @@ function shutdown_mongo() {
         args='force: true'
     fi
     log "Shutting down MongoDB ($args)..."
-    mongo admin "${admin_creds[@]}" "${ssl_args[@]}" --eval "db.shutdownServer({$args})"
+    mongo admin "${admin_creds[@]}" "${ssl_args[@]}" --port=$port --eval "db.shutdownServer({$args})"
 }
 
 my_hostname=$(hostname)
@@ -107,10 +108,10 @@ log "Peers: ${peers[*]}"
 
 
 log "Starting a MongoDB instance..."
-mongod --config /data/configdb/mongod.conf --dbpath=/data/db --replSet="$replica_set" --port=27017 ${auth_args} "${ssl_server_args[@]}" --bind_ip 0.0.0.0 >> /work-dir/log.txt 2>&1 &
+mongod --config /data/configdb/mongod.conf --dbpath=/data/db --replSet="$replica_set" --port=$port ${auth_args} "${ssl_server_args[@]}" --bind_ip 0.0.0.0 >> /work-dir/log.txt 2>&1 &
 
 log "Waiting for MongoDB to be ready..."
-until mongo "${ssl_args[@]}" --eval "db.adminCommand('ping')"; do
+until mongo "${ssl_args[@]}" --port=$port --eval "db.adminCommand('ping')"; do
     log "Retrying..."
     sleep 2
 done
@@ -119,15 +120,15 @@ log "Initialized."
 
 # try to find a master and add yourself to its replica set.
 for peer in "${peers[@]}"; do
-    if mongo admin --host "$peer" "${admin_creds[@]}" "${ssl_args[@]}" --eval "rs.isMaster()" | grep '"ismaster" : true'; then
+    if mongo admin --host "$peer" "${admin_creds[@]}" "${ssl_args[@]}" --eval "rs.isMaster()" --port=$port | grep '"ismaster" : true'; then
         log "Found master: $peer"
         log "Adding myself ($service_name) to replica set..."
-        mongo admin --host "$peer" "${admin_creds[@]}" "${ssl_args[@]}" --eval "rs.add('$service_name')"
+        mongo admin --host "$peer" "${admin_creds[@]}" "${ssl_args[@]}" --eval "rs.add('$service_name:$port')" --port=$port
 
         sleep 3
 
         log 'Waiting for replica to reach SECONDARY state...'
-        until printf '.'  && [[ $(mongo admin "${admin_creds[@]}" "${ssl_args[@]}" --quiet --eval "rs.status().myState") == '2' ]]; do
+        until printf '.'  && [[ $(mongo admin "${admin_creds[@]}" "${ssl_args[@]}" --quiet --eval "rs.status().myState" --port=$port) == '2' ]]; do
             sleep 1
         done
 
@@ -140,14 +141,14 @@ for peer in "${peers[@]}"; do
 done
 
 # else initiate a replica set with yourself.
-if mongo "${ssl_args[@]}" --eval "rs.status()" | grep "no replset config has been received"; then
+if mongo "${ssl_args[@]}" --eval "rs.status()" --port=$port | grep "no replset config has been received"; then
     log "Initiating a new replica set with myself ($service_name)..."
-    mongo "${ssl_args[@]}" --eval "rs.initiate({'_id': '$replica_set', 'members': [{'_id': 0, 'host': '$service_name'}]})"
+    mongo "${ssl_args[@]}" --port=$port --eval "rs.initiate({'_id': '$replica_set', 'members': [{'_id': 0, 'host': '$service_name:$port'}]})"
 
     sleep 3
 
     log 'Waiting for replica to reach PRIMARY state...'
-    until printf '.'  && [[ $(mongo "${ssl_args[@]}" --quiet --eval "rs.status().myState") == '1' ]]; do
+    until printf '.'  && [[ $(mongo "${ssl_args[@]}" --quiet --port=$port --eval "rs.status().myState") == '1' ]]; do
         sleep 1
     done
 
@@ -155,13 +156,12 @@ if mongo "${ssl_args[@]}" --eval "rs.status()" | grep "no replset config has bee
 
     if [[ "$AUTH" == "true" ]]; then
         log "Creating admin user..."
-        mongo admin "${ssl_args[@]}" --eval "db.createUser({user: '$admin_user', pwd: '$admin_password', roles: [{role: 'root', db: 'admin'}]})"
+        mongo admin "${ssl_args[@]}" --port=$port --eval "db.createUser({user: '$admin_user', pwd: '$admin_password', roles: [{role: 'root', db: 'admin'}]})"
 
         log "Creating user '$user' in database '$database'..."
-        mongo "${admin_creds[@]}" "${ssl_args[@]}" --authenticationDatabase='admin' "$database" \
+        mongo "${admin_creds[@]}" "${ssl_args[@]}" --port=$port --authenticationDatabase='admin' "$database" \
             --eval "db.createUser({user: '$user', pwd: '$password', roles: [{role: 'dbAdmin', db: '$database'},{role: 'readWrite', db: '$database'},{role: 'clusterMonitor', db: 'admin'}]})"
     fi
-
     log "Done."
 fi
 

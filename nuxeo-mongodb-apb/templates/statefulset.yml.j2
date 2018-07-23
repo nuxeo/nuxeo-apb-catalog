@@ -138,6 +138,8 @@ spec:
                   fieldPath: metadata.namespace
             - name: REPLICA_SET
               value: {{ replicaSetName }}
+            - name: PORT
+              value: '{{ port }}'
 {% if auth_enabled %}
             - name: AUTH
               value: "true"
@@ -183,7 +185,7 @@ spec:
 {% endif %}
           ports:
             - name: peer
-              containerPort: 27017
+              containerPort: {{ port }}
           resources:
 {% if resources is defined and (resources | from_yaml) %}
 {{ resources | from_yaml | to_nice_yaml(indent=2) | indent(12, true) }}
@@ -217,6 +219,8 @@ spec:
                 - --sslCAFile=/data/configdb/tls.crt
                 - --sslPEMKeyFile=/work-dir/mongo.pem
 {% endif %}
+                - --port
+                - "{{ port }}"
                 - --eval
                 - "db.adminCommand('ping')"
             initialDelaySeconds: {{ livenessProbe_initialDelaySeconds }}
@@ -233,6 +237,8 @@ spec:
                 - --sslCAFile=/data/configdb/tls.crt
                 - --sslPEMKeyFile=/work-dir/mongo.pem
 {% endif %}
+                - --port
+                - "{{ port }}"
                 - --eval
                 - "db.adminCommand('ping')"
             initialDelaySeconds: {{ readinessProbe_initialDelaySeconds }}
