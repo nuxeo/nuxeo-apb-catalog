@@ -14,12 +14,49 @@ state_map:
   deprovision: absent
 state: "{{ state_map[apb_action] }}"
 
-cluster: kubernetes
+cluster: openshift
 
-name: "nuxeo-{{ _apb_service_instance_id  |truncate(5, True, '') }}"
+name: "{{ 'nuxeo-' + (_apb_service_instance_id | string |truncate(5, True, '') ) }}"
 namespace: "{{ lookup('env','NAMESPACE') | default('nuxeo', true) }}"
 component: nuxeo
 pod_type: interactive
+
+
+interactive_replicas: 3
+worker_replicas: 0
+podDisruptionBudget: {}
+image_repository: nuxeo/nuxeo
+image_tag: LTS
+image_pullPolicy: IfNotPresent
+binaries_persistentVolume_enabled: false
+binaries_persistentVolume_storageClass: ""
+binaries_persistentVolume_size: 10Gi
+binaries_persistentVolume_annotations: {}
+transientstore_persistentVolume_enabled: false
+transientstore_persistentVolume_size: 5Gi
+transientstore_persistentVolume_storageClass: ""
+transientstore_persistentVolume_annotations: {}
+data_persistentVolume_enabled: false
+data_persistentVolume_size: 5Gi
+data_persistentVolume_storageClass: ""
+data_persistentVolume_annotations: {}
+livenessProbe_initialDelaySeconds: 40
+livenessProbe_timeoutSeconds: 5
+livenessProbe_failureThreshold: 3
+livenessProbe_periodSeconds: 10
+livenessProbe_successThreshold: 1
+readinessProbe_initialDelaySeconds: 40
+readinessProbe_timeoutSeconds: 5
+readinessProbe_failureThreshold: 3
+readinessProbe_periodSeconds: 10
+readinessProbe_successThreshold: 1
+applicationUrl: nuxeo
+useExternalLoadBalancer:
+connect_enabled: false
+useExternalMongoDB: false
+useExternalElasticsearch: false
+useKafkaForStream: false
+auth_adminUser: Administrator
 
 interactiveNodesDisabledQueues:
   - pictureViewsGeneration
@@ -33,4 +70,4 @@ interactiveNodesDisabledQueues:
   - csvImporter
 workerNodesDisabledQueues: []
 
-useExternalMongoDB: false
+useJsonLogging: false

@@ -31,11 +31,11 @@
 
     - name: "Create user secret"
       shell: kubectl create --filename=/tmp/connect_secret.yml
-  when: state == "present" and connectEnabled and auth_existingUserSecret is undefined
+  when: state == "present" and connect_enabled and auth_existingUserSecret is undefined
 
 - name: "user secret state={{ state }}"
   shell: kubectl delete --ignore-not-found=true secret {{ connect_secret_name }} -n {{ namespace }}
-  when: state == "absent" and connectEnabled and existingConnnectSecret is undefined
+  when: state == "absent" and connect_enabled and existingConnnectSecret is undefined
 
 
 # Work-around k8s_raw inability to create ConfigMap directly
@@ -118,7 +118,7 @@
       persistentVolume_accessMode={{ item.persistentVolume_accessMode }}
       persistentVolume_size={{ item.persistentVolume_size }}
       persistentVolume_storageClass={{ item.persistentVolume_storageClass }}"
-  when: item.apply | default(True)
+  when: item.apply | default(False)
   loop:
     - desc: 'binaries pvc'
       pvc_name: "{{ binaries_pvc_name }}"

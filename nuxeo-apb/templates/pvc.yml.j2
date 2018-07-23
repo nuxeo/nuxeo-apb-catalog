@@ -12,7 +12,7 @@ metadata:
     apb_plan_id: '{{ _apb_plan_id }}'
     apb_service_class_id: '{{ _apb_service_class_id }}'
     apb_service_instance_id: '{{ _apb_service_instance_id }}'
-    component: {{ component }}  
+    component: {{ component }}
   name: {{ pvc_name }}
   namespace: {{ namespace }}
 spec:
@@ -23,8 +23,8 @@ spec:
       storage: {{ persistentVolume_size }}
 {% if persistentVolume_storageClass is defined and (persistentVolume_storageClass | trim | length) > 0 %}
 {% if '-' == persistentVolume_storageClass %}
-        storageClassName: ""
+  storageClassName: ""
 {% else %}
-        storageClassName: "{{ persistentVolume_storageClass }}"
+  storageClassName: "{{ persistentVolume_storageClass }}"
 {% endif %}
 {% endif %}

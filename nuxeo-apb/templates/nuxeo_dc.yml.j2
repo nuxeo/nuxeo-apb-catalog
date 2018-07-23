@@ -110,7 +110,7 @@ spec:
           value: "-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=1 -Djavax.net.ssl.trustStore=/var/lib/nuxeo/data/cacerts -Djavax.net.ssl.trustStorePassword=changeit -Djavax.net.ssl.keyStoreType=jks"
 {% endif %}
         - name: NUXEO_TEMPLATES
-          value: "default{% if useExternalMongoDB %},mongodb,mongodb-audit{% endif %}{% if nuxeoTemplates != ""%},{{nuxeoTemplates}}{% endif %}"
+          value: "default{% if useExternalMongoDB %},mongodb,mongodb-audit{% endif %}{% if nuxeoTemplates is defined and nuxeoTemplates != ""%},{{nuxeoTemplates}}{% endif %}"
 {% if nuxeoPackages is defined %}
         - name: NUXEO_PACKAGES
           value: {{ nuxeoPackages }}
@@ -151,7 +151,7 @@ spec:
           mountPath: /opt/nuxeo/server/tmp
         - name: nuxeoconf
           mountPath: /docker-entrypoint-initnuxeo.d
-{% if connectEnabled %}
+{% if connect_enabled %}
         - name: connect-secret
           mountPath: /opt/nuxeo/connect
 {% endif %}
@@ -190,7 +190,7 @@ spec:
       - name: nuxeoconf
         configMap:
           name: {{ init_configmap_name }}
-{% if connectEnabled %}
+{% if connect_enabled %}
       - name: connect-secret
         secret:
           secretName: {{ connect_secret_name }}

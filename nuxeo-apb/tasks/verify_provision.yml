@@ -5,6 +5,7 @@
     admin_secret: "{{ admin_secret_lookup }}"
     connect_secret: "{{ connect_secret_lookup }}"
     init_config: "{{ init_configmap_lookup }}"
+    service: "{{ service_lookup}}"
     nuxeo_route: "{{ route_lookup }}"
     binaries_pvc: "{{ binaries_pvc_lookup }}"
     transientstore_pvc: "{{ transientstore_pvc_lookup }}"
@@ -17,24 +18,24 @@
   delay: 5
   until:
     - admin_secret_lookup
-    - connect_secret_lookup
+    - connect_secret_lookup or not connect_enabled
     - init_configmap_lookup
-    - service_lookup
+    - service
     - cluster == "kubernetes" or route_lookup
     - binaries_pvc_lookup or not binaries_persistentVolume_enabled
     - transientstore_pvc_lookup or not transientstore_persistentVolume_enabled
     - data_pvc_lookup or not data_persistentVolume_enabled
-    - cluster == "kubernetes" or interactive_dc_lookup
-    - cluster == "kubernetes" or worker_dc_lookup
-    - nginx_configmap_name and use_front_ssl_proxy
-    - nginx_secret_name and use_front_ssl_proxy
+    - cluster == "kubernetes" or interactive_dc
+    - cluster == "kubernetes" or worker_dc
+    - nginx_configmap_name or not use_front_ssl_proxy
+    - nginx_secret_name or not use_front_ssl_proxy
 
 - name: "Wait for interactive Deployment Config to become ready"
   debug:
     msg: "Deployment Config status: {{ dc_interactive_query }}"
   retries: 15
   delay: 10
-  until:    
+  until:
     - dc_interactive_query
     - cluster == "openshift"
   when:
@@ -45,7 +46,7 @@
     msg: "Deployment Config status: {{ dc_worker_query }}"
   retries: 15
   delay: 10
-  until:    
+  until:
     - dc_worker_query
     - cluster == "openshift"
   when:

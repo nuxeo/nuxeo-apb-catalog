@@ -4,13 +4,6 @@
 cp -f /docker-entrypoint-initnuxeo.d/log4j.xml $NUXEO_HOME/lib/log4j.xml
 
 
-# DL libs to be able to log in JSON
-# Temporary hack, it should be included in the image or in a Nuxeo Package
-pushd $NUXEO_HOME/lib
-wget http://repo1.maven.org/maven2/net/minidev/json-smart/1.1.1/json-smart-1.1.1.jar
-wget http://repo1.maven.org/maven2/net/logstash/log4j/jsonevent-layout/1.7/jsonevent-layout-1.7.jar
-popd
-
 cp $JAVA_HOME/jre/lib/security/cacerts $NUXEO_DATA/cacerts
 TRUSTSTORE_PATH=$NUXEO_DATA/cacerts
 
@@ -91,9 +84,11 @@ fi
 # Configure Kafka bindings
 if [ -d /opt/nuxeo/bindings/kafka ]; then
 
-	KAFAK_URI=$(< /opt/nuxeo/bindings/kafka/uri)
+	KAFKA_URI=$(< /opt/nuxeo/bindings/kafka/uri)
 
 	cat >> $NUXEO_CONF <<EOT
+kafka.enabled=true
+nuxeo.stream.work.enabled=true
 kafka.bootstrap.servers=${KAFKA_URI}
 kafka.topicPrefix=nuxeo-
 kafka.offsets.retention.minutes=20160
@@ -133,6 +128,11 @@ if [ ! -f $NUXEO_DATA/instance.clid -a -f /opt/nuxeo/connect/connect.properties 
   if [ -n "$NUXEO_CONNECT_USERNAME" -a -n "$NUXEO_CONNECT_PASSWORD" -a -n "$NUXEO_STUDIO_PROJECT" ]; then
     echo "---> Registering instance on connect"
     nuxeoctl register $NUXEO_CONNECT_USERNAME $NUXEO_STUDIO_PROJECT dev openshift $NUXEO_CONNECT_PASSWORD
-    nuxeoctl mp-hotfix
   fi
+fi
+
+
+if [ -f $NUXEO_DATA/instance.clid ]; then
+	echo "---> Installing hotfixes"
+	nuxeoctl mp-hotfix
 fi

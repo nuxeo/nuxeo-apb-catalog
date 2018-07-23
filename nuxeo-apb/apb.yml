@@ -39,7 +39,7 @@ plans:
         title: Number of Worker nuxeo nodes
         display_group: Container Specs
       - name: podDisruptionBudget
-        default: '{minAvailable: 1}'        
+        default: '{minAvailable: 1}'
         type: string
         title: Pod disruption budget
         display_type: textarea
@@ -77,7 +77,7 @@ plans:
         type: string
         title: Pod resource requests and limits
         display_type: textarea
-        display_group: Container Specs      
+        display_group: Container Specs
 
       - name: binaries_persistentVolume_enabled
         default: true
@@ -257,11 +257,11 @@ plans:
         default: false
         display_group: Nuxeo Config
 
-      - name: connectEnabled
+      - name: connect_enabled
         title: Register to Nuxeo Connect
         type: boolean
         default: true
-        display_group: Nuxeo Config    
+        display_group: Nuxeo Config
       - name: nuxeoConnectUsername
         title: A Nuxeo Connect userId passed to register the instances.
         type: string
@@ -290,7 +290,7 @@ plans:
         display_group: Nuxeo Config
       - name: nuxeoTemplates
         default: ''
-        type: string        
+        type: string
         title: Comma separated list of Nuxeo templates to be added to the configuration
         display_group: Nuxeo Config
       - name: nuxeoconf
@@ -299,10 +299,10 @@ plans:
         display_type: textarea
         title: Entries to be added to nuxeo.conf file
         display_group: Nuxeo Config
-      - name: nuxeoJavaOpts        
+      - name: nuxeoJavaOpts
         type: string
         title: JAVA_OPTS to pass to the Nuxe containers.
-        display_group: Nuxeo Config        
+        display_group: Nuxeo Config
       - name: extraVars
         default: '{}'
         type: string
