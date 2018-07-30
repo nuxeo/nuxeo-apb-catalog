@@ -32,7 +32,7 @@
 - name: "Wait for statefulset to become ready"
   debug:
     msg: "StatefulSet ready status: {{ statefulset_query }}"
-  retries: 30
+  retries: 60
   delay: 10
   until:
     - statefulset_query
