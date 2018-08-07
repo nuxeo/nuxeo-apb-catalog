@@ -334,6 +334,8 @@ plans:
       - title: Elasticsearch Cluster name
         name: cluster_name
         type: string
+        default: nuxeo
+        display_group: Elasticsearch config
       - name: image_repository
         default: 'docker.elastic.co/elasticsearch/elasticsearch'
         type: string

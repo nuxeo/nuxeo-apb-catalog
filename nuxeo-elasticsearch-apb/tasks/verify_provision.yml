@@ -18,8 +18,8 @@
   until:
     - ca_secret_lookup or not use_searchguard
     - client_configmap_lookup
-    - data_configmap_lookup
-    - master_configmap_lookup
+    - singlenode or data_configmap_lookup
+    - singlenode or master_configmap_lookup
     - sg_configmap_lookup or not use_searchguard
     - service_client_lookup
     - singlenode or service_master_lookup
