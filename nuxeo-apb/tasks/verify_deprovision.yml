@@ -16,7 +16,7 @@
   delay: 5
   until:
     - not admin_secret or auth_existingAdminSecret is undefined
-    - not connect_secret or (connect_enabled and existingConnnectSecret is undefined)
+    - not connect_secret or (connectExistingSecret is defined)
     - not init_config
     - not service
     - cluster == "kubernetes" or not nuxeo_route
