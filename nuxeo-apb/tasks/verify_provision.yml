@@ -18,7 +18,7 @@
   delay: 5
   until:
     - admin_secret_lookup
-    - connect_secret_lookup or not connect_enabled
+    - connect_secret_lookup or ( not connect_enabled ) or ( connectExistingSecret is defined )
     - init_configmap_lookup
     - service
     - cluster == "kubernetes" or route_lookup
