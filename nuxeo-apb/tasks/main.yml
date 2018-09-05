@@ -31,11 +31,11 @@
 
     - name: "Create user secret"
       shell: kubectl create --filename=/tmp/connect_secret.yml
-  when: state == "present" and connect_enabled and existingConnectSecret is undefined
+  when: state == "present" and connect_enabled and connectExistingSecret is undefined
 
 - name: "user secret state={{ state }}"
   shell: kubectl delete --ignore-not-found=true secret {{ connect_secret_name }} -n {{ namespace }}
-  when: state == "absent" and connect_enabled and existingConnnectSecret is undefined
+  when: state == "absent" and connect_enabled and connectExistingSecret is undefined
 
 
 # Work-around k8s_raw inability to create ConfigMap directly
