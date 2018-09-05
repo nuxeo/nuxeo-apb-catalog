@@ -35,6 +35,9 @@ plans:
     parameters:
 
       # Kafka parameters
+      - name: app_name
+        type: string
+        title: Name to use for the application otherwise it is generated (nuxeo-kafka-XXXXX)
       - name: configurationOverrides_configmap
         default: '{"offsets.topic.replication.factor": 3}'
         type: string
@@ -509,6 +512,9 @@ plans:
       cost: €0.00
     parameters:
       # Kafka parameters
+      - name: app_name
+        type: string
+        title: Name to use for the application otherwise it is generated (nuxeo-kafka-XXXXX)
       - name: configurationOverrides_configmap
         default: '{"offsets.topic.replication.factor": 3}'
         type: string

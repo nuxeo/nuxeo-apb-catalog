@@ -28,6 +28,9 @@ plans:
         This plan provides a clustered Nuxeo deployment.
       cost: $0.00
     parameters:
+      - name: app_name
+        type: string
+        title: Name to use for the application otherwise it is generated (nuxeo-XXXXX)
       - name: interactive_replicas
         default: 3
         type: number

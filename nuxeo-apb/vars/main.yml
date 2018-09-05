@@ -22,6 +22,8 @@ kafka_servicebinding_lookup: "{{ lookup('openshift', kind='Binding', namespace=n
 kafka_credentials_lookup: "{{ lookup('openshift', kind='Secret', namespace=namespace, resource_name=kafka_credentials_name) }}"
 
 
+name: "{{ app_name if app_name is defined else 'nuxeo-' + (_apb_service_instance_id | string |truncate(5, True, '') ) }}"
+
 # Variables to hold queries
 ready_replicas_query: "[spec.replicas, status.ready_replicas]"
 dc_interactive_query: "{{ interactive_dc_lookup | json_query(ready_replicas_query) | unique | count == 1 }}"
