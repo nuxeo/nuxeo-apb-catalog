@@ -24,6 +24,7 @@ statefulset_data_query: "{{ statefulset_data_lookup | json_query(ready_replicas_
 statefulset_client_query: "{{ statefulset_client_lookup | json_query(ready_replicas_query) | unique | count == 1 }}"
 
 
+name: "{{ app_name if app_name is defined else 'nuxeo-elasticsearch-' + (_apb_service_instance_id | string |truncate(5, True, '') ) }}"
 
 # Whether we are in a cluster or not.
 pod_name: "{{ lookup('env', 'POD_NAME') }}"

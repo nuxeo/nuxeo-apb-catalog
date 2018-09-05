@@ -37,6 +37,9 @@ plans:
       longDescription: This plan deploys a guenine Elasticsearch cluster
       cost: €0.00
     parameters:
+      - name: app_name
+        type: string
+        title: Name to use for the application otherwise it is generated (nuxeo-elasticsearch-XXXXX)
       - title: Elasticsearch Cluster name
         name: cluster_name
         type: string
@@ -170,6 +173,9 @@ plans:
         and configured.
       cost: €0.00
     parameters:
+      - name: app_name
+        type: string
+        title: Name to use for the application otherwise it is generated (nuxeo-elasticsearch-XXXXX)
       - title: Elasticsearch Cluster name
         name: cluster_name
         default: nuxeo
@@ -331,6 +337,9 @@ plans:
         This plan deploys a single Elasticsearch node for development purpose
       cost: €0.00
     parameters:
+      - name: app_name
+        type: string
+        title: Name to use for the application otherwise it is generated (nuxeo-elasticsearch-XXXXX)
       - title: Elasticsearch Cluster name
         name: cluster_name
         type: string

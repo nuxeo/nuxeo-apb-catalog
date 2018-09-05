@@ -22,6 +22,8 @@ pod_name: "{{ lookup('env', 'POD_NAME') }}"
 pod_namespace: "{{ lookup('env', 'POD_NAMESPACE') }}"
 in_cluster: "{{ True if (pod_name and pod_namespace) else False }}"
 
+name: "{{ app_name if app_name is defined else 'nuxeo-mongodb-' + (_apb_service_instance_id | string |truncate(5, True, '') ) }}"
+
 # Variables to hold resource names
 admin_secret_name: "{{ name + '-admin' if auth_existingAdminSecret is undefined else auth_existingAdminSecret }}"
 user_secret_name: "{{ name + '-user' if auth_existingUserSecret is undefined else auth_existingUserSecret }}"

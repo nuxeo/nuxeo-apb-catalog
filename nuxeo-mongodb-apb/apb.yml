@@ -34,6 +34,9 @@ plans:
       longDescription: This plan deploys a MongoDB replicaset without security
       cost: €0.00
     parameters:
+      - name: app_name
+        type: string
+        title: Name to use for the application otherwise it is generated (nuxeo-mongodb-XXXXX)
       - name: replicas
         default: 3
         type: number
@@ -232,6 +235,9 @@ plans:
         authentication
       cost: €0.00
     parameters:
+      - name: app_name
+        type: string
+        title: Name to use for the application otherwise it is generated (nuxeo-mongodb-XXXXX)
       - name: replicas
         default: 3
         type: number
