@@ -218,6 +218,7 @@ plans:
         type: string
         title: Set environment variables for the main container
         display_group: MongoDB Config
+    bind_parameters:
       - name: database
         default: 'nuxeo'
         type: string
@@ -447,6 +448,7 @@ plans:
         title: |
           If set, an existing secret with this name is used for the admin user
         display_group: MongoDB Security Config
+    bind_parameters:
       - name: auth_username
         default: 'nuxeo'
         type: string
