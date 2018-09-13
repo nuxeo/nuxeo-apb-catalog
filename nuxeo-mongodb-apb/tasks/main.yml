@@ -190,6 +190,14 @@
   include_tasks: "set_fact_service_uri.yml"
   when: state == "bind"
 
+# Create credential during provisioning to work around https://github.com/openshift/ansible-service-broker/issues/847
+- name: encode bind credentials
+  asb_encode_binding:
+    fields:
+      dummy: dummy
+  when:
+    - state == "present"
+
 
 - name: encode bind credentials
   asb_encode_binding:
