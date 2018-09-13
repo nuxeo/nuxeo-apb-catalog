@@ -1,4 +1,4 @@
-
+---
 - name: "Update last operation"
   asb_last_operation:
     description: "0%: Starting"
@@ -146,7 +146,7 @@
 
 - name: "set fact statefulset pvcs state={{ state }}"
   include_tasks: "set_fact_statefulset_pvcs.yml"
-  when: state == "absent"
+  when: state == "absent" or state == "bind"
 
 
 # Work-around k8s_raw inability to create StatefulSet directly
@@ -188,7 +188,7 @@
 
 - name: "set fact service_uri state={{ state }}"
   include_tasks: "set_fact_service_uri.yml"
-  when: state == "present"
+  when: state == "bind"
 
 
 - name: encode bind credentials
@@ -198,7 +198,7 @@
       dbname: "{{ database }}"
       tls_cacert: "{{ tls_cacert_lookup | b64encode }}"
   when:
-    - state == "present"
+    - state == "bind"
     - tls_enabled
 
 - name: encode bind credentials
@@ -207,7 +207,7 @@
       uri: "{{ service_uri }}"
       dbname: "{{ database }}"
   when:
-    - state == "present"
+    - state == "bind"
     - not tls_enabled
 
 
