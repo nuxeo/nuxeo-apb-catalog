@@ -10,7 +10,7 @@ To activate them, simply add the following snippet in the Ansible Service Broker
 registry:
  - type: dockerhub
     name: nuxeo-apb-catalog
-    url:  
+    url:
     org:  nuxeoapbcatalog
     tag:  latest
     white_list:
@@ -18,6 +18,119 @@ registry:
 
     auth_type: ""
     auth_name: ""
+
+dao:
+  etcd_host: asb-etcd.openshift-ansible-service-broker.svc
+  etcd_port: 2379
+  etcd_ca_file: /var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt
+  etcd_client_cert: /var/run/asb-etcd-auth/client.crt
+  etcd_client_key: /var/run/asb-etcd-auth/client.key
+log:
+  stdout: true
+  level: info
+  color: true
+openshift:
+  host: ""
+  ca_file: ""
+  bearer_token_file: ""
+  namespace: openshift-ansible-service-broker
+  sandbox_role: cluster-admin
+  image_pull_policy: IfNotPresent
+  keep_namespace: false
+  keep_namespace_on_error: true
+broker:
+  dev_broker: dev
+  bootstrap_on_startup: true
+  refresh_interval: 600s
+  launch_apb_on_bind: false
+  output_request: false
+  recovery: true
+  ssl_cert_key: /etc/tls/private/tls.key
+  ssl_cert: /etc/tls/private/tls.crt
+  auto_escalate: True
+  auth:
+    - type: basic
+      enabled: false
+```
+
+Notice the `sandbox_role` which is set to `cluster-admin` as some APB needs to specify some SCC (Elasticsearch). That also means that we must give the APB serviceaccount user the `cluster-admin` role:
+
+```
+oc adm policy add-cluster-role-to-user cluster-admin system:serviceaccount:openshift-ansible-service-broker:asb
+```
+
+and finally rollout the new ASB service:
+
+```
+oc rollout latest dc/asb -n openshift-ansible-service-broker
+```
+
+
+In order to have our APB present in the catalog, we also have to tell the Cluster service broker to relist the services:
+
+
+```
+oc edit clusterservicebroker ansible-service-broker
+```
+
+and then increase the `relistRequests` value and save.
+
+# Development
+
+
+## Create the build
+In a given project you can create those builds:
+
+```
+oc new-build https://github.com/nuxeo-sandbox/nuxeo-apb-catalog --context-dir=nuxeo-apb --name=nuxeo-apb
+oc new-build https://github.com/nuxeo-sandbox/nuxeo-apb-catalog --context-dir=nuxeo-mongodb-apb --name=nuxeo-mongodb-apb
+oc new-build https://github.com/nuxeo-sandbox/nuxeo-apb-catalog --context-dir=nuxeo-elasticsearch-apb --name=nuxeo-elasticsearch-apb
+oc new-build https://github.com/nuxeo-sandbox/nuxeo-apb-catalog --context-dir=nuxeo-kafka-apb --name=nuxeo-kafka-apb
+```
+
+
+## Add builts APBs in the registry
+
+Edit the `openshift-ansible-service-broker` configmap:
+
+```
+registry:
+
+   ...
+
+    auth_type: ""
+    auth_name: ""
+  - type: local_openshift
+    name: nuxeo
+    namespaces: ['int-apb-dev']
+    white_list: [ ".*-apb"]
+
+  ...
+```
+
+For ease of development, you can also edit the broker configuration:
+
+
+```
+...
+openshift:
+  ...
+  image_pull_policy: Always
+  ...
+broker:
+  ...
+  refresh_interval: 60s
+  ...
+...
+```
+
+## Rebuild
+
+Before rebuilding the APBs, we have to get rid of the old images:
+```
+oc get images | grep nuxeo.*-apb | awk '{ print $1 }' | while read i; do oc delete image $i;done
+oc start-build nuxeo-apb && oc start-build nuxeo-mongodb-apb && oc start-build nuxeo-elasticsearch-apb && oc start-build nuxeo-kafka-apb
+
 ```
 
 # Licensing
