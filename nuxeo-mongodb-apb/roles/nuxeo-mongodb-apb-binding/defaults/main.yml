@@ -1,0 +1,17 @@
+---
+apb_name: nuxeo-mongodb-apb
+
+default_debug: True
+bootstrap_debug_enabled: False
+
+state_map:
+  bind: present
+  unbind: absent
+state: "{{ state_map[apb_action] }}"
+
+
+namespace: "{{ lookup('env','NAMESPACE') | default('nuxeo', true) }}"
+
+
+auth_username: nuxeo
+database: nuxeo

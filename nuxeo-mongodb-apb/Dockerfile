@@ -284,7 +284,7 @@ c2VkCiAgICAgICAgZGlzcGxheV9ncm91cDogTW9uZ29EQiBTZWN1cml0eSBDb25maWcK"
 ADD playbooks /opt/apb/actions
 
 # Add our role into the ansible roles dir
-ADD . /opt/ansible/roles/nuxeo-mongodb-apb
+ADD roles /opt/ansible/roles
 
 RUN chmod -R g=u /opt/{ansible,apb}
 

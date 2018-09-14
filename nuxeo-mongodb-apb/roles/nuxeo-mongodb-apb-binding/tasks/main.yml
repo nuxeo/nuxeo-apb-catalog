@@ -1,0 +1,40 @@
+
+- name: "Update last operation"
+  asb_last_operation:
+    description: "0%: Starting"
+  when: in_cluster
+
+- name: "Manage DB and User"
+  include_tasks: "db_user.yml"
+
+
+
+- name: "set fact service uri"
+  block:
+
+  - name: "Set Fact service uri"
+    set_fact:
+      service_uri: "{{ 'mongodb://' + auth_creds + hosts + db_name + '?replicaSet=' + replicaSetName + ssl_parm + auth_parm }}"
+
+  vars:
+    auth_creds: "{{ '' if not auth_enabled else auth_username + ':' + user_password + '@' }}"
+    db_name: "{{ '' if database is undefined or not database else '/' + database }}"
+    ssl_parm: "{{ '' if not tls_enabled else '&ssl=true' }}"
+    auth_parm: "{{ '' if not auth_enabled else '&authMechanism=SCRAM-SHA-1' }}"
+
+
+- name: encode bind credentials
+  asb_encode_binding:
+    fields:
+      uri: "{{ service_uri }}"
+      dbname: "{{ database }}"
+      tls_cacert: "{{ tls_cacert }}"
+      replicaSetName: "{{ replicaSetName }}"
+  when:
+    - state == "present"
+
+
+- name: "Update last operation"
+  asb_last_operation:
+    description: "100%: Done"
+  when: in_cluster

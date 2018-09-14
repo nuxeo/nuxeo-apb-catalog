@@ -10,7 +10,8 @@
         service_binding_name: "{{ mongodb_servicebinding_name }}"
         service_to_bind: "{{ mongoServiceName }}"
         secret_name: "{{ mongodb_credentials_name }}"
-
+        binding_parameters:
+          database: "{{ name }}"
     - name: "Create MongoDB binding"
       shell: kubectl create --filename=/tmp/mongodb_service_binding.yml
   when:

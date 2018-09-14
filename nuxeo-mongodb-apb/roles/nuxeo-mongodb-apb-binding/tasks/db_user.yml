@@ -1,0 +1,25 @@
+---
+
+- name: "set fact user_password state={{ state }}"
+  set_fact:
+    user_password: "{{ password_lookup if auth_password is undefined else auth_password }}"
+  when: state == "present" and auth_enabled
+
+- name: "Get first MongoDB pod name"
+  shell: kubectl get pods --selector=app={{ app_name }},component=mongodb --output=jsonpath={.items[0].metadata.name} -n {{ namespace }}
+  register: first_sts_pod
+
+- name: "Create user for DB"
+  shell: |
+    kubectl exec {{ first_sts_pod.stdout }} -n {{ namespace }} -- mongo  --ssl --sslCAFile "/data/configdb/tls.crt" --sslPEMKeyFile "/work-dir/mongo.pem" -u "{{ admin_user }}" -p "{{ admin_password }}" --host {{ replicaSetName }}/{{ hosts }} --authenticationDatabase='admin' {{ database }} --eval "db.createUser({user: '{{ auth_username }}', pwd: '"{{ user_password }}"', roles: [{role: 'dbAdmin', db: '{{ database }}'},{role: 'readWrite', db: '{{ database }}'},{role: 'clusterMonitor', db: 'admin'}]})"
+  register: result
+  when: state == "present" and auth_enabled
+
+- name: "Drop DB"
+  shell: |
+    kubectl exec {{ first_sts_pod.stdout }} -n {{ namespace }} -- mongo  --ssl --sslCAFile "/data/configdb/tls.crt" --sslPEMKeyFile "/work-dir/mongo.pem" -u "{{ admin_user }}" -p "{{ admin_password }}" --host {{ replicaSetName }}/{{ hosts }} --authenticationDatabase='admin' {{ database }} --eval "db.dropDb()"
+  register: result
+  when: state == "absent"
+
+
+

@@ -1,0 +1,22 @@
+---
+
+
+# Whether we are in a cluster or not.
+pod_name: "{{ lookup('env', 'POD_NAME') }}"
+pod_namespace: "{{ lookup('env', 'POD_NAMESPACE') }}"
+in_cluster: "{{ True if (pod_name and pod_namespace) else False }}"
+user_secret_name: "{{ name + '-user' if auth_existingUserSecret is undefined else auth_existingUserSecret }}"
+
+
+hosts: "{{ _apb_provision_creds.hosts}}"
+auth_enabled: "{{ _apb_provision_creds.auth_enabled }}"
+tls_enabled: "{{ _apb_provision_creds.tls_enabled }}"
+tls_cacert: "{{ _apb_provision_creds.tls_cacert }}"
+replicaSetName: "{{ _apb_provision_creds.replicaSetName }}"
+app_name: "{{ _apb_provision_creds.app_name }}"
+admin_uri: "{{ _apb_provision_creds.admin_uri }}"
+admin_user: "{{ _apb_provision_creds.admin_user }}"
+admin_password: "{{ _apb_provision_creds.admin_password }}"
+
+
+password_lookup: "{{ lookup('password', '/dev/null chars=ascii_letters,digits,hexdigits') }}"

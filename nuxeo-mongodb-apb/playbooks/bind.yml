@@ -4,6 +4,6 @@
   connection: local
   roles:
   - role: ansibleplaybookbundle.asb-modules
-  - role: nuxeo-mongodb-apb
+  - role: nuxeo-mongodb-apb-binding
   vars:
     apb_action: bind
