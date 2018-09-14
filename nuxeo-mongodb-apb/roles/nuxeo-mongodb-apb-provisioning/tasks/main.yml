@@ -1,4 +1,4 @@
----
+
 - name: "Update last operation"
   asb_last_operation:
     description: "0%: Starting"
@@ -35,27 +35,6 @@
   shell: kubectl delete --ignore-not-found=true secret {{ admin_secret_name }} -n {{ namespace }}
   when: state == "absent" and auth_enabled and auth_existingAdminSecret is undefined
 
-
-- name: "set fact user_password state={{ state }}"
-  set_fact:
-    user_password: "{{ password_lookup if auth_password is undefined else auth_password }}"
-  when: state == "present" and auth_enabled
-
-# Work-around k8s_raw inability to create Secret directly
-- name: "user secret state={{ state }}"
-  block:
-    - name: "Create user secret from template"
-      template:
-        src: user_secret.yml.j2
-        dest: /tmp/user_secret.yml
-
-    - name: "Create user secret"
-      shell: kubectl create --filename=/tmp/user_secret.yml
-  when: state == "present" and auth_enabled and auth_existingUserSecret is undefined
-
-- name: "user secret state={{ state }}"
-  shell: kubectl delete --ignore-not-found=true secret {{ user_secret_name }} -n {{ namespace }}
-  when: state == "absent" and auth_enabled and auth_existingUserSecret is undefined
 
 
 # Work-around k8s_raw inability to create ConfigMap directly
@@ -146,7 +125,7 @@
 
 - name: "set fact statefulset pvcs state={{ state }}"
   include_tasks: "set_fact_statefulset_pvcs.yml"
-  when: state == "absent" or state == "bind"
+  when: state == "absent"
 
 
 # Work-around k8s_raw inability to create StatefulSet directly
@@ -188,34 +167,34 @@
 
 - name: "set fact service_uri state={{ state }}"
   include_tasks: "set_fact_service_uri.yml"
-  when: state == "bind"
+  when: state == "present"
 
-# Create credential during provisioning to work around https://github.com/openshift/ansible-service-broker/issues/847
 - name: encode bind credentials
   asb_encode_binding:
     fields:
-      dummy: dummy
+      app_name: "{{ name }}"
+      hosts: "{{ hosts }}"
+      replicaSetName: "{{ replicaSetName }}"
+      tls_enabled: "{{ tls_enabled }}"
+      auth_enabled: "{{ auth_enabled }}"
+      tls_cacert: "{{ tls_cacert_lookup | b64encode }}"
+      admin_user: "{{ auth_adminUser }}"
+      admin_password: "{{ admin_password }}"
   when:
     - state == "present"
-
-
-- name: encode bind credentials
-  asb_encode_binding:
-    fields:
-      uri: "{{ service_uri }}"
-      dbname: "{{ database }}"
-      tls_cacert: "{{ tls_cacert_lookup | b64encode }}"
-  when:
-    - state == "bind"
     - tls_enabled
 
 - name: encode bind credentials
   asb_encode_binding:
     fields:
-      uri: "{{ service_uri }}"
-      dbname: "{{ database }}"
+      app_name: "{{ name }}"
+      hosts: "{{ hosts }}"
+      replicaSetName: "{{ replicaSetName }}"
+      tls_enabled: "{{ tls_enabled }}"
+      auth_enabled: "{{ auth_enabled }}"
+      tls_cacert: ""
   when:
-    - state == "bind"
+    - state == "present"
     - not tls_enabled
 
 

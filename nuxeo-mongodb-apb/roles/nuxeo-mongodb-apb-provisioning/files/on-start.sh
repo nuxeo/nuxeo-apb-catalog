@@ -22,9 +22,6 @@ if [[ "$AUTH" == "true" ]]; then
     admin_password="$ADMIN_PASSWORD"
     admin_creds=(-u "$admin_user" -p "$admin_password")
     auth_args=(--auth --keyFile=/data/configdb/key.txt)
-    user="$MONGO_INITDB_USER"
-    password="$MONGO_INITDB_PASSWORD"
-    database="$MONGO_INITDB_DATABASE"
 fi
 
 function log() {
@@ -158,9 +155,9 @@ if mongo "${ssl_args[@]}" --eval "rs.status()" --port=$port | grep "no replset c
         log "Creating admin user..."
         mongo admin "${ssl_args[@]}" --port=$port --eval "db.createUser({user: '$admin_user', pwd: '$admin_password', roles: [{role: 'root', db: 'admin'}]})"
 
-        log "Creating user '$user' in database '$database'..."
-        mongo "${admin_creds[@]}" "${ssl_args[@]}" --port=$port --authenticationDatabase='admin' "$database" \
-            --eval "db.createUser({user: '$user', pwd: '$password', roles: [{role: 'dbAdmin', db: '$database'},{role: 'readWrite', db: '$database'},{role: 'clusterMonitor', db: 'admin'}]})"
+        #log "Creating user '$user' in database '$database'..."
+        #mongo "${admin_creds[@]}" "${ssl_args[@]}" --port=$port --authenticationDatabase='admin' "$database" \
+        #    --eval "db.createUser({user: '$user', pwd: '$password', roles: [{role: 'dbAdmin', db: '$database'},{role: 'readWrite', db: '$database'},{role: 'clusterMonitor', db: 'admin'}]})"
     fi
     log "Done."
 fi

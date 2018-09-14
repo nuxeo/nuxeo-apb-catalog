@@ -98,18 +98,6 @@ spec:
                 secretKeyRef:
                   name: "{{ admin_secret_name }}"
                   key: password
-            - name: MONGO_INITDB_DATABASE
-              value: "{{ database }}"
-            - name: MONGO_INITDB_USER
-              valueFrom:
-                secretKeyRef:
-                  name: "{{ user_secret_name }}"
-                  key: user
-            - name: MONGO_INITDB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: "{{ user_secret_name }}"
-                  key: password
 {% endif %}
           volumeMounts:
             - name: workdir
@@ -152,18 +140,6 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: "{{ admin_secret_name }}"
-                  key: password
-            - name: MONGO_INITDB_DATABASE
-              value: "{{ database }}"
-            - name: MONGO_INITDB_USER
-              valueFrom:
-                secretKeyRef:
-                  name: "{{ user_secret_name }}"
-                  key: user
-            - name: MONGO_INITDB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: "{{ user_secret_name }}"
                   key: password
 {% endif %}
           volumeMounts:
