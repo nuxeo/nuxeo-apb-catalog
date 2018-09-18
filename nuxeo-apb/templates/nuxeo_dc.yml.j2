@@ -125,6 +125,8 @@ spec:
 {% endif %}
         - name: NUXEO_URL
           value: {{ applicationUrl }}
+        - name: NUXEO_ENV_NAME
+          value: {{ name }}
 {% if extraVars is defined and (extraVars | from_yaml) %}
 {{ extraVars | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
 {% endif %}

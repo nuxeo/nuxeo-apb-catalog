@@ -7,6 +7,9 @@ cp -f /docker-entrypoint-initnuxeo.d/log4j.xml $NUXEO_HOME/lib/log4j.xml
 cp $JAVA_HOME/jre/lib/security/cacerts $NUXEO_DATA/cacerts
 TRUSTSTORE_PATH=$NUXEO_DATA/cacerts
 
+
+NUXEO_ENV_NAME=${NUXEO_ENV_NAME:-nuxeo}
+
 # Configure MongoDB bindings
 if [ -f /opt/nuxeo/bindings/mongodb/uri ]; then
 	MONGODB_URI=$(< /opt/nuxeo/bindings/mongodb/uri)
@@ -50,6 +53,7 @@ elasticsearch.addressList=${ELASTICSEARCH_URI}
 elasticsearch.client=RestClient
 elasticsearch.httpReadOnly.baseUrl=${ELASTICSEARCH_URI}
 elasticsearch.clusterName=${ELASTICSEARCH_CLUSTERNAME}
+elasticsearch.indexName=${NUXEO_ENV_NAME}
 EOT
 
 	if [ -f /opt/nuxeo/bindings/elasticsearch/username ]; then
@@ -90,7 +94,7 @@ if [ -d /opt/nuxeo/bindings/kafka ]; then
 kafka.enabled=true
 nuxeo.stream.work.enabled=true
 kafka.bootstrap.servers=${KAFKA_URI}
-kafka.topicPrefix=nuxeo-
+kafka.topicPrefix=${NUXEO_ENV_NAME}-
 kafka.offsets.retention.minutes=20160
 nuxeo.pubsub.provider=stream
 EOT
