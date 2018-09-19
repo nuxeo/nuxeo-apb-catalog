@@ -12,7 +12,7 @@ registry:
     name: nuxeo-apb-catalog
     url:
     org:  nuxeoapbcatalog
-    tag:  latest
+    tag:  2.0
     white_list:
      - ".*-apb$"
 
@@ -42,7 +42,7 @@ broker:
   dev_broker: dev
   bootstrap_on_startup: true
   refresh_interval: 600s
-  launch_apb_on_bind: false
+  launch_apb_on_bind: true
   output_request: false
   recovery: true
   ssl_cert_key: /etc/tls/private/tls.key
@@ -58,6 +58,8 @@ Notice the `sandbox_role` which is set to `cluster-admin` as some APB needs to s
 ```
 oc adm policy add-cluster-role-to-user cluster-admin system:serviceaccount:openshift-ansible-service-broker:asb
 ```
+
+As we use asynchronous binding, we also has set `launch_apb_on_bind` to `true`. This also requires to setup Openshift accordingly following https://blog.openshift.com/asynchronous-bind-with-the-automation-broker/
 
 and finally rollout the new ASB service:
 
