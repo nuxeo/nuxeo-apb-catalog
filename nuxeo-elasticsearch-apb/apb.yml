@@ -61,6 +61,11 @@ plans:
         enum: ['IfNotPresent', 'Always', 'Never']
         title: Elasticsearch image pull policy
         display_group: Elasticsearch config
+      - name: configure_xpack
+        default: true
+        type: boolean
+        title: Configure XPack (if ES version < 6.x)
+        display_group: Elasticsearch config
 
       - title: The client replica count
         name: client_replica_count
@@ -197,6 +202,11 @@ plans:
         type: enum
         enum: ['IfNotPresent', 'Always', 'Never']
         title: Elasticsearch image pull policy
+        display_group: Elasticsearch config
+      - name: configure_xpack
+        default: true
+        type: boolean
+        title: Configure XPack (if ES version < 6.x)
         display_group: Elasticsearch config
 
 
@@ -355,12 +365,18 @@ plans:
         type: string
         title: Elasticsearch Image tag
         display_group: Container Specs
+      - name: configure_xpack
+        default: true
+        type: boolean
+        title: Configure XPack (if ES version < 6.x)
+        display_group: Container Specs
       - name: image_pullPolicy
         default: 'IfNotPresent'
         type: enum
         enum: ['IfNotPresent', 'Always', 'Never']
         title: Elasticsearch image pull policy
         display_group: Container Specs
+
       - title: JAVA_OPTS (Heap defaults to half of the CGroup available memory)
         name: client_java_opts
         default: -Xms2g -Xmx2g -Djava.net.preferIPv4Stack=true
