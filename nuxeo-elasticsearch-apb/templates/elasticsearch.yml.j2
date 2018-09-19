@@ -22,11 +22,14 @@ discovery:
     minimum_master_nodes: 1
 {% endif %}
 
+
+{% if configure_xpack %}
 # see https://www.elastic.co/guide/en/x-pack/current/xpack-settings.html
 xpack.ml.enabled: ${XPACK_ML_ENABLED:false}
 xpack.monitoring.enabled: ${XPACK_MONITORING_ENABLED:false}
 xpack.security.enabled: ${XPACK_SECURITY_ENABLED:false}
 xpack.watcher.enabled: ${XPACK_WATCHER_ENABLED:false}
+{% endif %}
 
 # see https://github.com/elastic/elasticsearch-definitive-guide/pull/679
 processors: ${PROCESSORS:}
