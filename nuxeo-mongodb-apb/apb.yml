@@ -2,7 +2,7 @@
 version: 1.0
 name: nuxeo-mongodb-apb
 description: MongoDB, the NoSQL document-oriented database
-bindable: True
+bindable: true
 async: optional
 tags:
   - database
@@ -28,7 +28,7 @@ metadata:
 plans:
   - name: replicaset
     description: Replicaset MongoDB deployment without security
-    free: True
+    free: true
     metadata:
       displayName: Replica Set Deployment without security
       longDescription: This plan deploys a MongoDB replicaset without security
@@ -36,7 +36,9 @@ plans:
     parameters:
       - name: app_name
         type: string
-        title: Name to use for the application otherwise it is generated (nuxeo-mongodb-XXXXX)
+        title: |
+          Name to use for the application otherwise it is generated
+          (nuxeo-mongodb-XXXXX)
       - name: replicas
         default: 3
         type: number
@@ -227,7 +229,7 @@ plans:
 
   - name: secure-replicaset
     description: Replicaset MongoDB deployment with security enabled
-    free: True
+    free: true
     metadata:
       displayName: Replica Set Deployment with security enabled
       longDescription: |
@@ -238,7 +240,9 @@ plans:
     parameters:
       - name: app_name
         type: string
-        title: Name to use for the application otherwise it is generated (nuxeo-mongodb-XXXXX)
+        title: |
+          Name to use for the application otherwise it is generated
+          (nuxeo-mongodb-XXXXX)
       - name: replicas
         default: 3
         type: number
