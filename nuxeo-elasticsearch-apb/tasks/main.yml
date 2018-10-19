@@ -5,9 +5,14 @@
     description: "0%: Starting"
   when: in_cluster
 
-- debug:
-    msg: "{{ name }}"
+# These can always be overridden at the command line
+# http://docs.ansible.com/ansible/devel/user_guide/playbooks_variables.html#variable-precedence-where-should-i-put-a-variable
+- name: 'Set facts'
+  set_fact:
+    cluster: '{{ "openshift" if "openshift" in lookup("k8s", cluster_info="version") else "kubernetes" }}'
 
+- include_tasks: os-prerequisites.yml
+  when: cluster == "openshift"
 
 - include_tasks: secured-prerequisites.yml
   when: use_searchguard
@@ -229,11 +234,13 @@
     - state == "present"
     - not elasticsearch_serviceaccount_lookup
 
-# We do not delete the ES service account as a special SCC has to be positioned on
-# it and it must be done manually by an admin.
-# - name: "Elasticsearch Service Account state={{ state }}"
-#   shell: kubectl delete --ignore-not-found=true serviceaccount {{ elasticsearch_serviceaccount_name }} -n {{ namespace }}
-#   when: state == "absent"
+- name: "Give ES account the ES SCC "
+  shell: oc adm policy add-scc-to-user es-scc system:serviceaccount:{{ namespace }}:{{ elasticsearch_serviceaccount_name }}
+  when: cluster == "openshift"
+
+- name: "Elasticsearch Service Account state={{ state }}"
+  shell: kubectl delete --ignore-not-found=true serviceaccount {{ elasticsearch_serviceaccount_name }} -n {{ namespace }}
+  when: state == "absent"
 
 - name: "set fact statefulset pvcs state={{ state }}"
   include_tasks: "set_fact_statefulset_pvcs.yml"

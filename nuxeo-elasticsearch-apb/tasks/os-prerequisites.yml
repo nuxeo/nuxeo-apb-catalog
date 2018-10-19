@@ -1,0 +1,17 @@
+---
+- name: Lookup for ES Security Context Constraint
+  shell: oc get scc es-scc
+  ignore_errors: yes
+  register: es_scc
+
+- name: "Create Elasticsearch Security context constraint if not exists"
+  block:
+  - name: "Create ES SCC definition from template"
+    template:
+      src: es-scc.yml.j2
+      dest: /tmp/es-scc.yml
+
+  - name: Create ES Security Context Constraint
+    shell: oc create --filename=/tmp/es-scc.yml
+
+  when: es_scc.rc == 1

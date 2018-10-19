@@ -9,6 +9,7 @@ env:
   - APB_NAME=nuxeo-mongodb-apb OPENSHIFT_VERSION=v3.9
   - APB_NAME=nuxeo-mongodb-apb KUBERNETES_VERSION=v1.9.0
   - APB_NAME=nuxeo-elasticsearch-apb KUBERNETES_VERSION=v1.9.0
+  - APB_NAME=nuxeo-elasticsearch-apb OPENSHIFT_VERSION=v3.9
 
 script:
   # Configure test values
