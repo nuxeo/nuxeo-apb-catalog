@@ -14,7 +14,7 @@ state_map:
   deprovision: absent
 state: "{{ state_map[apb_action] }}"
 
-cluster: kubernetes
+cluster: openshift
 
 
 namespace: "{{ lookup('env','NAMESPACE') | default('nuxeo', true) }}"

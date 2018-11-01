@@ -7,9 +7,9 @@
 
 # These can always be overridden at the command line
 # http://docs.ansible.com/ansible/devel/user_guide/playbooks_variables.html#variable-precedence-where-should-i-put-a-variable
-- name: 'Set facts'
-  set_fact:
-    cluster: '{{ "openshift" if "openshift" in lookup("k8s", cluster_info="version") else "kubernetes" }}'
+#- name: 'Set facts'
+#  set_fact:
+#    cluster: '{{ "openshift" if "openshift" in lookup("k8s", cluster_info="version") else "kubernetes" }}'
 
 - include_tasks: os-prerequisites.yml
   when: cluster == "openshift"

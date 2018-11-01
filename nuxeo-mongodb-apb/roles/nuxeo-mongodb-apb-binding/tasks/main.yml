@@ -42,6 +42,7 @@
       replicaSetName: "{{ replicaSetName }}"
   when:
     - state == "present"
+    - not tls_enabled
 
 
 - name: "Update last operation"
