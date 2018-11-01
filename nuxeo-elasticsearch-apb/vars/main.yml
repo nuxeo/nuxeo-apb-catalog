@@ -43,7 +43,7 @@ data_configmap_name: "{{ name + '-data-config' }}"
 sg_configmap_name: "{{ name + '-searchguard' }}"
 service_client_name: "{{ name + '-client' }}"
 service_master_name: "{{ name + '-master' }}"
-elasticsearch_serviceaccount_name: "{{ name + '-elasticsearch'}}"
+elasticsearch_serviceaccount_name: elasticsearch
 statefulset_client_name: "{{ name + '-client' }}"
 statefulset_master_name: "{{ name + '-master' }}"
 statefulset_data_name: "{{ name + '-data' }}"
