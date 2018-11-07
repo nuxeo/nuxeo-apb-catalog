@@ -52,6 +52,7 @@ readinessProbe_successThreshold: 1
 applicationUrl: nuxeo
 useExternalLoadBalancer:
 connect_enabled: false
+connectInstallHotfix: true
 useExternalMongoDB: false
 useExternalElasticsearch: false
 useKafkaForStream: false

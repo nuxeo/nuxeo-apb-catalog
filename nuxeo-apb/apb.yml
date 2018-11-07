@@ -291,6 +291,11 @@ plans:
         title: If set, an existing secret with this name is used for the Connect credentials.
         type: string
         display_group: Nuxeo Config
+      - name: connectInstallHotfix
+        title: If true, Hotfixes will be installed at startup
+        type: boolean
+        default: true
+        display_group: Nuxeo Config
       - name: nuxeoTemplates
         default: ''
         type: string

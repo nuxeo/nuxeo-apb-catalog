@@ -136,7 +136,7 @@ if [ ! -f $NUXEO_DATA/instance.clid -a -f /opt/nuxeo/connect/connect.properties 
 fi
 
 
-if [ -f $NUXEO_DATA/instance.clid ]; then
+if [ -f $NUXEO_DATA/instance.clid ]  && [ ${NUXEO_INSTALL_HOTFIX:='true'} == "true" ]; then
 	echo "---> Installing hotfixes"
 	nuxeoctl mp-hotfix
 fi
