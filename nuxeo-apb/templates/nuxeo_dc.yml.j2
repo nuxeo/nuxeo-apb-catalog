@@ -117,7 +117,7 @@ spec:
 {% endif %}
 {% if binaries_persistentVolume_enabled %}
         - name: NUXEO_BINARY_STORE
-          value: /var/lib/nuxeo/binaries
+          value: /var/lib/nuxeo/binaries/binaries
 {% endif %}
 {% if transientstore_persistentVolume_enabled %}
         - name: NUXEO_TRANSIENT_STORE
