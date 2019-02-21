@@ -1,0 +1,42 @@
+version: 1.0
+name: nuxeo-arender-apb
+description: ARender deployment in Openshift for Nuxeo
+bindable: True
+async: optional
+tags:
+  - nuxeo
+  - arender
+metadata:
+  displayName: ARender environment for Nuxeo
+  imageUrl: "https://www.nuxeo.com/assets/imgs/logo340x60.png"
+  longDescription:
+    This Deploys an ARender environment that can be used with Nuxeo
+  dependencies: []
+  providerDisplayName: "Nuxeo"
+plans:
+  - name: default
+    description: Default ARender deployment
+    free: true
+    metadata: {}
+    parameters:
+    - name: project_name
+      type: string
+      title: Project Name
+      default: arender
+      display_group: Project properties
+    - name: arender_previewer_image
+      type: string
+      title: ARender previewer image
+      default: docker-registry.default.svc:5000/common-infra/arender-previewer
+      display_group: Project properties
+    - name: arender_rendition_image
+      type: string
+      title: ARender rendition image
+      default: docker-registry.default.svc:5000/common-infra/arender-rendition
+      display_group: Project properties
+    - name: arender_image_version
+      type: string
+      title: Image version
+      default: "1.0.1"
+      display_group: Project properties
+
