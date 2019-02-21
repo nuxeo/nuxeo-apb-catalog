@@ -1,0 +1,21 @@
+---
+
+# Defaults for values we could expect from a broker
+
+_apb_plan_id: default
+_apb_service_class_id: 0
+_apb_service_instance_id: 0
+
+default_debug: True
+bootstrap_debug_enabled: False
+
+apb_name: nuxeo-arender-apb
+app_image: docker.io/nuxeoapbcatalog/nuxeo-arender-apb
+namespace: "{{ lookup('env','NAMESPACE') | default('hello-world', true) }}"
+
+testing: false
+arender_previewer_image: docker-registry.default.svc:5000/common-infra/arender-previewer
+arender_rendition_image: docker-registry.default.svc:5000/common-infra/arender-rendition
+arender_image_version: "1.0.1"
+
+
