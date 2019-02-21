@@ -30,7 +30,15 @@ spec:
       labels:
         app: {{ app_name }}
         role: previewer
+{% if previewer_podAnnotations is defined and (previewer_podAnnotations | from_yaml) %}
+      annotations:
+{{ previewer_podAnnotations | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
+{% endif %}
     spec:
+{% if previewer_securityContext is defined and (previewer_securityContext | from_yaml) %}
+      previewer_securityContext:
+{{ previewer_securityContext | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
+{% endif %}
       containers:
         - env:
             - name: CATALINA_TMPDIR
@@ -38,7 +46,7 @@ spec:
             - name: renditionHostEnv
               value: 'http://{{ arender_rendition_service_name }}:8761'
           image: {{ arender_previewer_image }}:{{ arender_image_version }}
-          imagePullPolicy: Always
+          imagePullPolicy: "{{ previewer_image_pullPolicy }}"
           name: arender-previewer
           readinessProbe:
             failureThreshold: 3
@@ -49,13 +57,7 @@ spec:
             periodSeconds: 10
             successThreshold: 1
             timeoutSeconds: 1
-          resources:
-            limits:
-              cpu: '4'
-              memory: 1Gi
-            requests:
-              cpu: '2'
-              memory: 500Mi
+          resources: {{ previewer_resources }}
           volumeMounts:
             - mountPath: /docker-entrypoint-init.d
               name: config-volume

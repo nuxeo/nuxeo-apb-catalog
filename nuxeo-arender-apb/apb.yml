@@ -40,3 +40,52 @@ plans:
       default: "1.0.1"
       display_group: Project properties
 
+    - name: previewer_image_pullPolicy
+      default: 'IfNotPresent'
+      type: enum
+      enum: ['IfNotPresent', 'Always', 'Never']
+      title: ARender Previewer image pull policy
+      display_group: Container Specs
+    - name: previewer_podAnnotations
+      default: '{}'
+      type: string
+      title: Annotations to be added to ARender Previewer pods
+      display_type: textarea
+      display_group: Container Specs
+    - name: previewer_securityContext
+      default: '{}'
+      type: string
+      title: Previewer Security context for the pod
+      display_type: textarea
+      display_group: Container Specs
+    - name: previewer_resources
+      default: '{"limits": {"cpu": "2","memory": "2Gi"},"requests": {"cpu": "1","memory": "1Gi"}}'
+      type: string
+      title: Previewer Pod resource requests and limits
+      display_type: textarea
+      display_group: Container Specs
+
+    - name: rendition_image_pullPolicy
+      default: 'IfNotPresent'
+      type: enum
+      enum: ['IfNotPresent', 'Always', 'Never']
+      title: ARender Rendition image pull policy
+      display_group: Container Specs
+    - name: rendition_podAnnotations
+      default: '{}'
+      type: string
+      title: Annotations to be added to ARender Rendition pods
+      display_type: textarea
+      display_group: Container Specs
+    - name: rendition_securityContext
+      default: '{}'
+      type: string
+      title: Security context for the Rendition pod
+      display_type: textarea
+      display_group: Container Specs
+    - name: rendition_resources
+      default: '{"limits": {"cpu": "2","memory": "2Gi"},"requests": {"cpu": "1","memory": "1Gi"}}'
+      type: string
+      title: Rendition Pod resource requests and limits
+      display_type: textarea
+      display_group: Container Specs
