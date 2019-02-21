@@ -18,4 +18,13 @@ arender_previewer_image: docker-registry.default.svc:5000/common-infra/arender-p
 arender_rendition_image: docker-registry.default.svc:5000/common-infra/arender-rendition
 arender_image_version: "1.0.1"
 
+previewer_image_pullPolicy: IfNotPresent
+previewer_podAnnotations: '{}'
+previewer_securityContext: '{}'
+previewer_resources: '{"limits": {"cpu": "2","memory": "2Gi"},"requests": {"cpu": "1","memory": "1Gi"}}'
 
+
+rendition_image_pullPolicy: IfNotPresent
+rendition_podAnnotations: '{}'
+rendition_securityContext: '{}'
+rendition_resources: '{"limits": {"cpu": "2","memory": "2Gi"},"requests": {"cpu": "1","memory": "1Gi"}}'
