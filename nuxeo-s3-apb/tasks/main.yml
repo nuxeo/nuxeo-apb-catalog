@@ -1,0 +1,53 @@
+---
+
+- name: "Update last operation"
+  asb_last_operation:
+    description: "0%: Starting"
+  when: in_cluster
+
+
+- name: "set fact access state={{ state }}"
+  set_fact:
+    minio_access: "{{ secret_lookup }}"
+- name: "set fact secret state={{ state }}"
+  set_fact:
+    minio_secret: "{{ secret_lookup }}"
+
+- name: "Set S3 objects state={{ state }}"
+  k8s:
+    state: "{{ state }}"
+    definition: "{{ lookup('template', item.name) | from_yaml }}"
+  when: item.apply | default(True)
+  loop:
+    - name: minio_secret.yml.j2
+    - name: minio_pv.yml.j2
+      apply: mode == 'Standalone'
+    - name: minio_dc.yml.j2
+      apply: mode == 'Standalone
+    - name: minio_service.yml.j2
+    - name: minio_route.yml.j2
+
+- name: "Wait for Minio Deployment to become ready"
+  debug:
+    msg: "DeploymentConfig ready status: {{ minio_dc_query }}"
+  retries: 20
+  delay: 10
+  until:
+    - minio_dc_query
+  when: state == 'present'
+
+- name: encode bind credentials
+  asb_encode_binding:
+    fields:
+      url: "{{ minio_service_name}}.{{ namespace }}.svc"
+      access: "{{ minio_access }}"
+      secret: "{{ minio_secret }}"
+  when:
+    - state == "present"
+    - in_cluster
+
+
+- name: "Update last operation"
+  asb_last_operation:
+    description: "100%: Cluster objects state={{ state }}"
+  when: in_cluster

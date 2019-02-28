@@ -1,0 +1,12 @@
+---
+- name: nuxeo-s3-apb bind
+  hosts: localhost
+  gather_facts: false
+  connection: local
+  roles:
+  - role: ansibleplaybookbundle.asb-modules
+  tasks:
+    - name: encode bind credentials
+      asb_encode_binding:
+        fields: "{{ _apb_provision_creds | from_yaml }}"
+

@@ -1,0 +1,6 @@
+---
+- name: nuxeo-s3-apb unbind
+  hosts: localhost
+  gather_facts: false
+  connection: local
+  tasks: []

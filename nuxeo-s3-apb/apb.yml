@@ -1,0 +1,82 @@
+version: 1.0
+name: nuxeo-s3-apb
+description: S3 bucket deployment in Openshift for Nuxeo
+bindable: True
+async: optional
+tags:
+  - nuxeo
+  - s3
+metadata:
+  displayName: S3 environment for Nuxeo
+  imageUrl: "https://www.nuxeo.com/assets/imgs/logo340x60.png"
+  longDescription:
+    This Deploys an S3 environment that can be used with Nuxeo
+  dependencies: []
+  providerDisplayName: "Nuxeo"
+plans:
+  - name: minio
+    description: S3 bucket deployed with Minio
+    free: true
+    metadata: {}
+    parameters:
+    - name: project_name
+      type: string
+      title: Project Name
+      default: minio
+      display_group: Project properties
+    - name: minio_image
+      type: string
+      title: Minio image
+      default: minio/minio
+      display_group: Project properties
+    - name: minio_image_version
+      type: string
+      title: Image version
+      default: "RELEASE.2019-02-26T19-51-46Z"
+      display_group: Project properties
+    - name: minio_mode
+      title: Mode
+      default: 'Standalone'
+      type: enum
+      enum: ['Standalone', 'Distributed']
+      display_group: Project properties
+    - name: minio_nodes
+      type: integer
+      title: Number of nodes (must be even)
+      default: '4'
+      display_group: Project properties
+    - name: minio_size
+      type: integer
+      title: Storage size in Gb
+      default: '5'
+      display_group: Project properties
+    - name: minio_storage_class
+      type: string
+      title: Storage class (RWX for standalone and RWO for distributed)
+      display_group: Project properties
+
+    - name: image_pullPolicy
+      default: 'IfNotPresent'
+      type: enum
+      enum: ['IfNotPresent', 'Always', 'Never']
+      title: Image pull policy
+      display_group: Container Specs
+    - name: podAnnotations
+      default: '{}'
+      type: string
+      title: Annotations to be added to Minio pods
+      display_type: textarea
+      display_group: Container Specs
+    - name: securityContext
+      default: '{}'
+      type: string
+      title: Security context for the pod
+      display_type: textarea
+      display_group: Container Specs
+    - name: resources
+      default: '{"limits": {"cpu": "1","memory": "512Mi"},"requests": {"cpu": "0.5","memory": "256Mi"}}'
+      type: string
+      title: Pod resource requests and limits
+      display_type: textarea
+      display_group: Container Specs
+

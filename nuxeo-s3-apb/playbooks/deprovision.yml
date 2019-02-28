@@ -1,0 +1,11 @@
+- name: Playbook to deprovision s3 service
+  hosts: localhost
+  gather_facts: false
+  connection: local
+  roles:
+  - role: ansible.kubernetes-modules
+    install_python_requirements: no
+  - role: ansibleplaybookbundle.asb-modules
+  - role: nuxeo-s3-apb
+  vars:
+    apb_action: deprovision
