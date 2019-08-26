@@ -17,7 +17,6 @@ ready_replicas_query: "[spec.replicas, status.readyReplicas]"
 arender_rendition_dc_query: "{{ arender_rendition_dc_lookup | json_query(ready_replicas_query) | unique | count == 1 }}"
 
 app_name: "{{ name }}"
-#app_service_label: "{{ (arender_rendition_image_version | regex_replace('.|-', '')) }}"
 arender_rendition_service_name: "{{ name }}-rendition"
 arender_rendition_dc_name: "{{ name }}-rendition"
 
