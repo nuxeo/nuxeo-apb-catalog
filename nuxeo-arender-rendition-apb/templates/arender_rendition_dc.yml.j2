@@ -1,0 +1,62 @@
+---
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  name: {{ arender_rendition_dc_name }}
+  namespace: {{ namespace }}
+  labels:
+    apb_name: '{{ apb_name }}'
+    apb_plan_id: '{{ _apb_plan_id }}'
+    apb_service_class_id: '{{ _apb_service_class_id }}'
+    apb_service_instance_id: '{{ _apb_service_instance_id }}'
+    app: {{ app_name }}
+spec:
+  replicas: 1
+  selector:
+    app: {{ app_name }}
+    role: rendition
+  strategy:
+    activeDeadlineSeconds: 21600
+    resources: {}
+    rollingParams:
+      intervalSeconds: 1
+      maxSurge: 25%
+      maxUnavailable: 25%
+      timeoutSeconds: 600
+      updatePeriodSeconds: 1
+    type: Rolling
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: {{ app_name }}
+        role: rendition
+{% if rendition_podAnnotations is defined and (rendition_podAnnotations | from_yaml) %}
+      annotations:
+{{ rendition_podAnnotations | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
+{% endif %}
+    spec:
+{% if rendition_securityContext is defined and (rendition_securityContext | from_yaml) %}
+      rendition_securityContext:
+{{ rendition_securityContext | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
+{% endif %}
+      containers:
+        - image: {{ arender_rendition_image }}:{{ arender_rendition_image_version }}
+          imagePullPolicy: {{ rendition_image_pullPolicy }}
+          name: arender-rendition
+          readinessProbe:
+            failureThreshold: 4
+            httpGet:
+              path: /capabilities
+              port: 8761
+              scheme: HTTP
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources: {{ rendition_resources }}
+      volumes:
+        - emptyDir: {}
+          name: home
+  triggers:
+    - type: ConfigChange

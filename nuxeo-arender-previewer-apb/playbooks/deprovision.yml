@@ -1,0 +1,12 @@
+- name: nuxeo-arender-previewer-apb playbook to deprovision the application
+  hosts: localhost
+  gather_facts: false
+  connection: local
+  roles:
+  - role: ansible.kubernetes-modules
+    install_python_requirements: no
+  - role: ansibleplaybookbundle.asb-modules
+  - role: nuxeo-arender-previewer-apb
+    playbook_debug: false
+  vars:
+    apb_action: deprovision
