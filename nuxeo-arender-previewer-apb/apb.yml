@@ -5,10 +5,53 @@ bindable: False
 async: optional
 metadata:
   displayName: nuxeo-arender-previewer
+  imageUrl: "https://www.nuxeo.com/assets/imgs/logo340x60.png"
+  longDescription:
+    This Deploys an ARender Previewer environment that can be used with Nuxeo
   dependencies: []
+  providerDisplayName: "Nuxeo"
 plans:
   - name: default
-    description: This default plan deploys nuxeo-arender-previewer-apb
-    free: True
+    description: Default ARender Previewer deployment
+    free: true
     metadata: {}
-    parameters: []
+    parameters:
+    - name: project_name
+      type: string
+      title: Project Name
+      default: arender
+      display_group: Project properties
+    - name: arender_previewer_image
+      type: string
+      title: ARender previewer image
+      default: docker-registry.default.svc:5000/common-infra/arender-previewer
+      display_group: Project properties
+    - name: arender_previewer_image_version
+      type: string
+      title: Image version
+      default: "1.0.3-RC7"
+      display_group: Project properties
+    - name: previewer_image_pullPolicy
+      default: 'IfNotPresent'
+      type: enum
+      enum: ['IfNotPresent', 'Always', 'Never']
+      title: ARender Previewer image pull policy
+      display_group: Container Specs
+    - name: previewer_podAnnotations
+      default: '{}'
+      type: string
+      title: Annotations to be added to ARender Previewer pods
+      display_type: textarea
+      display_group: Container Specs
+    - name: previewer_securityContext
+      default: '{}'
+      type: string
+      title: Previewer Security context for the pod
+      display_type: textarea
+      display_group: Container Specs
+    - name: previewer_resources
+      default: '{"limits": {"cpu": "2","memory": "2Gi"},"requests": {"cpu": "1","memory": "1Gi"}}'
+      type: string
+      title: Previewer Pod resource requests and limits
+      display_type: textarea
+      display_group: Container Specs
