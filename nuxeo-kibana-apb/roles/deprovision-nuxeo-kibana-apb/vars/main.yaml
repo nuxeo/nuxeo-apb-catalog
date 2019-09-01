@@ -1,0 +1,6 @@
+name: "{{ project_name if project_name is defined else 'nuxeo-kibana-' + (_apb_service_instance_id | string |truncate(5, True, '') ) }}"
+
+kibana_dc_name: "{{ name }}-kibana"
+app_name: "{{ name }}"
+_apb_service_class_id: 0
+_apb_service_instance_id: 0

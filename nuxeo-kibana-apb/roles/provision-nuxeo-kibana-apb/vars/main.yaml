@@ -1,0 +1,19 @@
+---
+state_map:
+  provision: present
+  deprovision: absent
+state: "{{ state_map[apb_action] }}"
+
+# Whether we are in a cluster or not.
+pod_name: "{{ lookup('env', 'POD_NAME') }}"
+pod_namespace: "{{ lookup('env', 'POD_NAMESPACE') }}"
+in_cluster: "{{ True if (pod_name and pod_namespace) else False }}"
+
+name: "{{ project_name if project_name is defined else 'nuxeo-kibana-' + (_apb_service_instance_id | string |truncate(5, True, '') ) }}"
+
+kibana_dc_name: "{{ name }}-kibana"
+kibana_config_name: "{{ name }}-kibana"
+elasticsearch_service_lookup: "{{ lookup('openshift', kind='Service', namespace=namespace, label_selector='component=elasticsearch' ) }}"
+elasticsearch_service_name: "{{ elasticsearch_service_lookup | json_query('metadata.name') }}.{{ namespace }}.svc:9200"
+
+app_name: "{{ name }}"

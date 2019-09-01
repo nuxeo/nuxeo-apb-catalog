@@ -1,0 +1,53 @@
+version: 1.0
+name: nuxeo-kibana-apb
+description: Kibana is a data visualization plugin for Elasticsearch 
+bindable: False
+async: optional
+tags:
+  - nuxeo
+  - kibana
+metadata:
+  displayName: "Nuxeo Kibana (APB)"
+  dependencies: []
+  imageUrl: "https://www.elastic.co/assets/blt282ae2420e32fc38/icon-kibana-bb.svg"
+  providerDisplayName: "Nuxeo"
+plans:
+  - name: default
+    description: This plan deploys Kibana without persistent cache
+    free: True
+    metadata:
+      displayName: Ephemeral installation by default
+    default: True
+    parameters:
+      - name: app_name
+        type: string
+        default: kibana
+        description: Kibana application
+        title: Application name
+        required: true
+      - name: kibana_memory_limit
+        type: string
+        default: 256Mi
+        description: Memory limit for Kibana container
+        title: Memory limit
+        required: true
+      - name: kibana_image
+        type: string
+        title: Kibana image
+        default: docker.elastic.co/kibana/kibana-oss
+      - name: kibana_image_version
+        title: Version
+        required: true
+        default: 6.3.2
+        type: enum
+        enum: ["6.3.2", "5.6.9"]
+      - name: kibana_storage_plan
+        type: string
+        title: ephemeral or persistent
+        description: Take the default option ephemeral storage or choose persistent
+        default: ephemeral
+      - name: kibana_secure
+        type: boolean
+        default: true
+        description: Allow access only to OpenShift users having access to the service
+        title: Secured access
