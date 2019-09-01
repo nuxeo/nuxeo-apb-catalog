@@ -1,0 +1,119 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  name: {{ kibana_dc_name }}
+  namespace: {{ namespace }}
+  labels:
+    apb_name: '{{ apb_name }}'
+    apb_plan_id: '{{ _apb_plan_id }}'
+    apb_service_class_id: '{{ _apb_service_class_id }}'
+    apb_service_instance_id: '{{ _apb_service_instance_id }}'
+    app: {{ app_name }}
+spec:
+  replicas: 1
+  selector:
+    app: {{ app_name }}
+    role: kibana
+  strategy:
+    activeDeadlineSeconds: 21600
+    recreateParams:
+      timeoutSeconds: 600
+    resources: {}
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: {{ app_name }}
+        role: kibana
+    spec:
+      containers:
+{% if secure %}
+      - name: oauth-proxy
+        image: openshift/oauth-proxy:v1.0.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8443
+          name: public
+        args:
+        - --https-address=:8443
+        - --provider=openshift
+        - --openshift-service-account={{ app_name }}-proxy
+        - --upstream=http://localhost:5601
+        - --tls-cert=/etc/tls/private/tls.crt
+        - --tls-key=/etc/tls/private/tls.key
+        - --cookie-secret={{ lookup('password', '/tmp/secret chars=ascii_letters,digits') }}
+        - --openshift-sar={"namespace":"{{ namespace }}","resource":"services","name":"{{ app_name }}","verb":"get"}
+        volumeMounts:
+        - mountPath: /etc/tls/private
+          name: proxy-tls
+        livenessProbe:
+          httpGet:
+            path: /oauth/healthz
+            port: public
+            scheme: HTTPS
+        readinessProbe:
+          httpGet:
+            path: /oauth/healthz
+            port: public
+            scheme: HTTPS
+{% endif %}
+      - image: {{ kibana-image }}:{{kibana_image_version}}
+        imagePullPolicy: IfNotPresent
+        name: {{ app_name }}
+        env:
+          - name: ELASTICSERACH_URL 
+            value: {{ elasticsearch_service_name }}
+        resources:
+          limits:
+            memory: {{ kibana_memory_limit }}
+          requests:
+            memory: {{ kibana_memory_limit }}
+{% if not secure %}
+        ports:
+        - containerPort: 5601
+          protocol: TCP
+{% endif %}
+        resources: {}
+        volumeMounts:
+        - mountPath: /usr/share/kibana/data
+          name: kibana-data
+          subPath: data
+        - mountPath: /usr/share/kibana/optimize
+          name: kibana-data
+          subPath: optimize
+        livenessProbe:
+          initialDelaySeconds: 300
+          httpGet:
+            path: /
+            port: 5601
+        readinessProbe:
+          initialDelaySeconds: 20
+          periodSeconds: 10
+          failureThreshold: 30
+          httpGet:
+            path: /
+            port: 5601
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+{% if secure %}
+      serviceAccountName: {{ app_name }}-proxy
+{% endif %}
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - name: kibana-data
+{% if _apb_plan_storage == 'ephemeral' %}
+          emptyDir: {}
+{% else %}
+          persistentVolumeClaim:
+            claimName: {{ app_name }}-claim
+{% endif %}
+{% if secure %}
+        - name: proxy-tls
+          secret:
+            secretName: {{ app_name }}-proxy-tls
+{% endif %}
+  triggers:
+  - type: ConfigChange

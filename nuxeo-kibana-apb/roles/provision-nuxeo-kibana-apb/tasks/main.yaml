@@ -1,0 +1,97 @@
+---
+- name: Normalize secure value
+  set_fact:
+    secure: "{{ kibana_secure | bool }}"
+
+- name: Create Secure Service
+  k8s_v1_service:
+    name: "{{ app_name }}"
+    namespace: "{{ namespace }}"
+    state: present
+    annotations:
+      service.alpha.openshift.io/serving-cert-secret-name: "{{ app_name }}-proxy-tls"
+    selector:
+      app: "{{ app_name }}"
+    ports:
+      - name: proxy
+        port: 8443
+        target_port: 8443
+    labels:
+      app: "{{ app_name }}"
+  when: secure
+
+- name: Create Insecure Service
+  k8s_v1_service:
+    name: "{{ app_name }}"
+    namespace: "{{ namespace }}"
+    state: present
+    selector:
+      app: "{{ app_name }}"
+    ports:
+      - name: web
+        port: 5601
+        target_port: 5601
+    labels:
+      app: "{{ app_name }}"
+  when: not secure
+
+- name: Create Route
+  openshift_v1_route:
+    name: "{{ app_name }}"
+    namespace: "{{ namespace }}"
+    state: present
+    spec_to_kind: Service
+    spec_to_name: "{{ app_name }}"
+    spec_tls_termination: "{{ 'Reencrypt' if secure else 'Edge'}}"
+    labels:
+      app: "{{ app_name }}"
+
+- name: Process ServiceAccount from template
+  template:
+    src: kibana_sa.yml.j2
+    dest: "/tmp/kibana_sa.yml"
+  register: sa
+  when: secure
+
+- name: Create ServiceAccount
+  k8s_v1_service_account:
+    name: "{{ app_name }}"
+    namespace: "{{ namespace}}"
+    state: present
+    src: "{{ sa.dest | default(sa.path) }}"
+  when: secure
+
+- name: Create PersistentVolumeClaim
+  k8s_v1_persistent_volume_claim:
+    name: "{{ app_name }}-claim"
+    namespace: "{{ namespace}}"
+    labels:
+      app: "{{ app_name }}"
+    state: present
+    access_modes:
+    - ReadWriteOnce
+    resources_requests:
+      storage: "{{ kibana_pvc_size }}"
+  when: kibana_storage_plan == 'persistent'
+
+- name: "Kibana objects state={{ state }}"
+  k8s:
+    state: "{{ state }}"
+    definition: "{{ lookup('template', item.name) | from_yaml }}"
+  when: item.apply | default(True)
+  loop:
+    - name: kibana_configmap.yml.j2
+    - name: kibana_dc.yml.j2
+
+#- name: Process DeploymentConfig from template
+#  template:
+#    src: kibana_dc.yml.j2
+#    dest: "/tmp/kibana_dc.yml"
+#  register: dc
+
+#- name: Create DeploymentConfig
+#  openshift_v1_deployment_config:
+#    name: "{{ app_name }}"
+#    namespace: "{{ namespace}}"
+#    state: present
+#    src: "{{ dc.dest | default(dc.path) }}"
