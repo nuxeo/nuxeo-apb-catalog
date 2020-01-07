@@ -1,0 +1,78 @@
+---
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  name: {{ arender_broker_dc_name }}
+  namespace: {{ namespace }}
+  labels:
+    apb_name: '{{ apb_name }}'
+    apb_plan_id: '{{ _apb_plan_id }}'
+    apb_service_class_id: '{{ _apb_service_class_id }}'
+    apb_service_instance_id: '{{ _apb_service_instance_id }}'
+    app: {{ app_name }}
+spec:
+  replicas: 1
+  selector:
+    app: {{ app_name }}
+    role: rendition-broker 
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: {{ app_name }}
+        role: rendition-broker
+{% if rendition_podAnnotations is defined and (rendition_podAnnotations | from_yaml) %}
+      annotations:
+{{ rendition_podAnnotations | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
+{% endif %}
+    spec:
+{% if rendition_securityContext is defined and (rendition_securityContext | from_yaml) %}
+      rendition_securityContext:
+{{ rendition_securityContext | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
+{% endif %}
+{% if broker_image_pull_secret is defined and (broker_image_pull_secret | from_yaml) %}
+      imagePullSecrets:
+      - name: {{ broker_image_pull_secret }}
+{{ broker_image_pull_secret | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
+{% endif %}
+      containers:
+        - name: arender-broker
+          image: {{ arender_broker_image }}:{{ arender_broker_image_version }}
+          imagePullPolicy: {{ arender_broker_image_pullPolicy }}
+          ports:
+          - containerPort: {{ arender_broker_internal_port }}
+          readinessProbe:
+            failureThreshold: 4
+            httpGet:
+              path: {{ arender_broker_readiness_probe_path }}
+              port: {{ arender_broker_internal_port }}
+              scheme: HTTP
+            initialDelaySeconds: {{ arender_broker_readiness_probe_initial_delay_secs }}
+            periodSeconds: {{ arender_broker_readiness_probe_period_seconds }}
+            successThreshold: {{ arender_broker_readiness_probe_success_threshold }}
+            timeoutSeconds: {{ arender_broker_readiness_probe_timeout_seconds }}
+          livenessProbe:
+            httpGet:
+              path: {{ arender_broker_liveness_probe_path }}
+              port: {{ arender_broker_internal_port }}
+            initialDelaySeconds: {{ arender_broker_liveness_probe_initial_delay_secs }}
+            periodSeconds: {{ arender_broker_liveness_probe_period_seconds }}
+            successThreshold: {{ arender_broker_liveness_probe_success_threshold }}
+            timeoutSeconds: {{ arender_broker_liveness_probe_timeout_seconds }}
+          resources: {{ arender_broker_resources }}
+          env:
+          - name: BRK_CONVERSION_HOSTNAME
+            value: {{ arender_broker_service_name }}
+          - name: BRK_DFS_HOSTNAME
+            value: {{ arender_dfs_service_name }}
+          - name: BRK_JNI_HOSTNAME
+            value: {{ arender_jni_service_name }}
+          - name: BRK_PDFBOX_HOSTNAME
+            value: {{ arender_pdfbox_service_name }}
+          securityContext:
+              fsGroup: 1000
+      volumes:
+        - emptyDir: {}
+          name: home
+  triggers:
+    - type: ConfigChange

@@ -1,0 +1,91 @@
+version: 1.0
+name: nuxeo-arender-rendition-apb
+description: ARender Rendition deployment in Openshift for Nuxeo
+bindable: True
+async: optional
+tags:
+  - nuxeo
+  - nuxeo-arender-rendition
+metadata:
+  displayName: ARender Rendition environment for Nuxeo
+  imageUrl: "https://www.nuxeo.com/assets/imgs/logo340x60.png"
+  longDescription:
+    This Deploys an ARender Rendition environment that can be used with Nuxeo
+  dependencies: []
+  providerDisplayName: "Nuxeo"
+plans:
+  - name: default
+    description: Default ARender Rendition deployment
+    free: true
+    metadata: {}
+    parameters:
+    - name: project_name
+      type: string
+      title: Project Name
+      default: arender
+      display_group: Project properties
+
+    - name: arender_broker_image
+      type: string
+      title: Arender broker image
+      default: docker-arender.packages.nuxeo.com/arender-rendition-broker
+      display_group: Project properties
+
+    - name: arender_broker_image_pullPolicy
+      default: 'IfNotPresent'
+      type: enum
+      enum: ['IfNotPresent', 'Always', 'Never']
+      title: ARender Converter image pull policy
+      display_group: Container Specs
+
+    - name: arender_converter_image
+      type: string
+      title: ARender converter image
+      default: docker-arender.packages.nuxeo.com/arender-converter
+      display_group: Project properties
+
+    - name: arender_converter_image_pullPolicy
+      default: 'IfNotPresent'
+      type: enum
+      enum: ['IfNotPresent', 'Always', 'Never']
+      title: ARender Converter image pull policy
+      display_group: Container Specs
+
+    - name: arender_dfs_image
+      type: string
+      title: ARender dfs image
+      default: docker-arender.packages.nuxeo.com/arender-dfs
+      display_group: Project properties
+
+    - name: arender_dfs_image_pullPolicy
+      default: 'IfNotPresent'
+      type: enum
+      enum: ['IfNotPresent', 'Always', 'Never']
+      title: ARender dfs image pull policy
+      display_group: Container Specs
+
+    - name: arender_jni_image
+      type: string
+      title: ARender jni image
+      default: docker-arender.packages.nuxeo.com/arender-jni
+      display_group: Project properties
+
+    - name: arender_jni_image_pullPolicy
+      default: 'IfNotPresent'
+      type: enum
+      enum: ['IfNotPresent', 'Always', 'Never']
+      title: ARender jni image pull policy
+      display_group: Container Specs
+
+    - name: arender_pdfbox_image
+      type: string
+      title: ARender pdfbox image
+      default: docker-arender.packages.nuxeo.com/arender-pdfbox
+      display_group: Project properties
+
+    - name: arender_pdfbox_image_pullPolicy
+      default: 'IfNotPresent'
+      type: enum
+      enum: ['IfNotPresent', 'Always', 'Never']
+      title: ARender pdfbox image pull policy
+      display_group: Container Specs

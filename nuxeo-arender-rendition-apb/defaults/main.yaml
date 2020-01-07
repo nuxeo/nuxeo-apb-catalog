@@ -1,0 +1,53 @@
+---
+
+# Defaults for values we could expect from a broker
+
+_apb_plan_id: default
+_apb_service_class_id: 0
+_apb_service_instance_id: 0
+
+default_debug: True
+bootstrap_debug_enabled: False
+
+apb_name: nuxeo-arender-rendition-apb
+app_image: docker.io/nuxeoapbcatalog/nuxeo-arender-rendition-apb
+namespace: "{{ lookup('env','NAMESPACE') | default('hello-world', true) }}"
+
+testing: false
+arender_rendition_image: docker-registry.default.svc:5000/common-infra/arender-rendition
+arender_broker_image: docker-arender.packages.nuxeo.com/arender-rendition-broker
+arender_converter_image: docker-arender.packages.nuxeo.com/arender-converter
+arender_dfs_image: docker-arender.packages.nuxeo.com/arender-dfs
+arender_jni_image: docker-arender.packages.nuxeo.com/arender-jni
+arender_pdfbox_image: docker-arender.packages.nuxeo.com/arender-pdfbox
+
+arender_image_version: "1.0.1"
+arender_broker_image_version: "1.0.1"
+arender_converter_image_version: "1.0.1"
+arender_dfs_image_version: "1.0.1"
+arender_jni_image_version: "1.0.1"
+arender_pdfbox_image_version: "1.0.1"
+
+rendition_image_pullPolicy: IfNotPresent
+arender_broker_image_pullPolicy: IfNotPresent
+arender_converter_image_pullPolicy: IfNotPresent
+arender_dfs_image_pullPolicy: IfNotPresent
+arender_jni_image_pullPolicy: IfNotPresent
+arender_pdfbox_image_pullPolicy: IfNotPresent
+
+broker_image_pull_secret: ""
+converter_image_pull_secret: ""
+dfs_image_pull_secret: ""
+jni_image_pull_secret: ""
+pdfbox_image_pull_secret: ""
+
+rendition_podAnnotations: '{}'
+rendition_securityContext: '{}'
+
+#rendition_resources: '{"limits": {"cpu": "2","memory": "2Gi"},"requests": {"cpu": "1","memory": "1Gi"}}'
+arender_broker_resources: '{"limits": {"cpu": "1","memory": "1Gi"},"requests": {"cpu": "1","memory": "1Gi"}}'
+arender_converter_resources: '{"limits": {"cpu": "1","memory": "2Gi"},"requests": {"cpu": "1","memory": "2Gi"}}'
+arender_pdfbox_resources: '{"limits": {"cpu": "1","memory": "1Gi"},"requests": {"cpu": "1","memory": "1Gi"}}'
+arender_jni_resources: '{"limits": {"cpu": "2","memory": "2Gi"},"requests": {"cpu": "2","memory": "2Gi"}}'
+arender_dfs_resources: '{"limits": {"cpu": "1","memory": "512M"},"requests": {"cpu": "1","memory": "512M"}}'
+
