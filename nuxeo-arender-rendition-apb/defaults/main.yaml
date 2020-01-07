@@ -1,0 +1,23 @@
+---
+
+# Defaults for values we could expect from a broker
+
+_apb_plan_id: default
+_apb_service_class_id: 0
+_apb_service_instance_id: 0
+
+default_debug: True
+bootstrap_debug_enabled: False
+
+apb_name: nuxeo-arender-rendition-apb
+app_image: docker.io/nuxeoapbcatalog/nuxeo-arender-rendition-apb
+namespace: "{{ lookup('env','NAMESPACE') | default('hello-world', true) }}"
+
+testing: false
+arender_rendition_image: docker-registry.default.svc:5000/common-infra/arender-rendition
+arender_image_version: "1.0.1"
+
+rendition_image_pullPolicy: IfNotPresent
+rendition_podAnnotations: '{}'
+rendition_securityContext: '{}'
+rendition_resources: '{"limits": {"cpu": "2","memory": "2Gi"},"requests": {"cpu": "1","memory": "1Gi"}}'

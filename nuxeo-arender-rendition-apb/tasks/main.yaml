@@ -1,0 +1,43 @@
+---
+
+- name: "Update last operation"
+  asb_last_operation:
+    description: "0%: Starting"
+  when: in_cluster
+
+
+- name: "Set ARender objects state={{ state }}"
+  k8s:
+    state: "{{ state }}"
+    definition: "{{ lookup('template', item.name) | from_yaml }}"
+  when: item.apply | default(True)
+  loop:
+    - name: arender_broker_dc.yml.j2
+    - name: arender_broker_service.yml.j2
+    - name: arender_converter_dc.yml.j2
+    - name: arender_converter_service.yml.j2
+
+- name: "Wait for Rendition Deployment to become ready"
+  debug:
+    msg: "DeploymentConfig ready status: {{ arender_converter_dc_query }}"
+  retries: 20
+  delay: 10
+  until:
+    - arender_converter_dc_query
+  when: state == 'present'
+
+
+- name: encode bind credentials
+  asb_encode_binding:
+    fields:
+      app_name: "{{ name }}"
+      url: "{{ arender_previewer_route_lookup.spec.host  }}"
+  when:
+    - state == "present"
+    - in_cluster
+
+
+- name: "Update last operation"
+  asb_last_operation:
+    description: "100%: Cluster objects state={{ state }}"
+  when: in_cluster

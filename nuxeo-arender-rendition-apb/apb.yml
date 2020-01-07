@@ -1,0 +1,119 @@
+version: 1.0
+name: nuxeo-arender-rendition-apb
+description: ARender Rendition deployment in Openshift for Nuxeo
+bindable: True
+async: optional
+tags:
+  - nuxeo
+  - nuxeo-arender-rendition
+metadata:
+  displayName: ARender Rendition environment for Nuxeo
+  imageUrl: "https://www.nuxeo.com/assets/imgs/logo340x60.png"
+  longDescription:
+    This Deploys an ARender Rendition environment that can be used with Nuxeo
+  dependencies: []
+  providerDisplayName: "Nuxeo"
+plans:
+  - name: default
+    description: Default ARender Rendition deployment
+    free: true
+    metadata: {}
+    parameters:
+    - name: project_name
+      type: string
+      title: Project Name
+      default: arender
+      display_group: Project properties
+
+    - name: arender_broker
+      type: string
+      title: Arender broker image
+      default: docker-arender.packages.nuxeo.com/arender-rendition-broker
+      display_group: Project properties
+
+    - name: arender_broker_image_pullPolicy
+      default: 'IfNotPresent'
+      type: enum
+      enum: ['IfNotPresent', 'Always', 'Never']
+      title: ARender Converter image pull policy
+      display_group: Container Specs
+
+    - name: arender_converter
+      type: string
+      title: ARender converter image
+      default: docker-arender.packages.nuxeo.com/arender-converter
+      display_group: Project properties
+
+    - name: arender_converter_image_pullPolicy
+      default: 'IfNotPresent'
+      type: enum
+      enum: ['IfNotPresent', 'Always', 'Never']
+      title: ARender Converter image pull policy
+      display_group: Container Specs
+
+    
+
+
+
+
+    - name: arender_rendition_image
+      type: string
+      title: ARender rendition image
+      default: docker-registry.default.svc:5000/common-infra/arender-rendition
+      display_group: Project properties
+
+    - name: arender_image_version
+      type: string
+      title: Image version
+      default: "1.0.1"
+      display_group: Project properties
+
+    - name: previewer_image_pullPolicy
+      default: 'IfNotPresent'
+      type: enum
+      enum: ['IfNotPresent', 'Always', 'Never']
+      title: ARender Previewer image pull policy
+      display_group: Container Specs
+    - name: previewer_podAnnotations
+      default: '{}'
+      type: string
+      title: Annotations to be added to ARender Previewer pods
+      display_type: textarea
+      display_group: Container Specs
+    - name: previewer_securityContext
+      default: '{}'
+      type: string
+      title: Previewer Security context for the pod
+      display_type: textarea
+      display_group: Container Specs
+    - name: previewer_resources
+      default: '{"limits": {"cpu": "2","memory": "2Gi"},"requests": {"cpu": "1","memory": "1Gi"}}'
+      type: string
+      title: Previewer Pod resource requests and limits
+      display_type: textarea
+      display_group: Container Specs
+
+    - name: rendition_image_pullPolicy
+      default: 'IfNotPresent'
+      type: enum
+      enum: ['IfNotPresent', 'Always', 'Never']
+      title: ARender Rendition image pull policy
+      display_group: Container Specs
+    - name: rendition_podAnnotations
+      default: '{}'
+      type: string
+      title: Annotations to be added to ARender Rendition pods
+      display_type: textarea
+      display_group: Container Specs
+    - name: rendition_securityContext
+      default: '{}'
+      type: string
+      title: Security context for the Rendition pod
+      display_type: textarea
+      display_group: Container Specs
+    - name: rendition_resources
+      default: '{"limits": {"cpu": "2","memory": "2Gi"},"requests": {"cpu": "1","memory": "1Gi"}}'
+      type: string
+      title: Rendition Pod resource requests and limits
+      display_type: textarea
+      display_group: Container Specs
