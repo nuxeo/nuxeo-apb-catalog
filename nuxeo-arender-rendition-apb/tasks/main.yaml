@@ -16,6 +16,12 @@
     - name: arender_broker_service.yml.j2
     - name: arender_converter_dc.yml.j2
     - name: arender_converter_service.yml.j2
+    - name: arender_dfs_dc.yml.j2
+    - name: arender_dfs_service.yml.j2
+    - name: arender_jni_dc.yml.j2
+    - name: arender_jni_service.yml.j2
+    - name: arender_pdfbox_dc.yml.j2
+    - name: arender_pdfbox_service.yml.j2
 
 - name: "Wait for Rendition Deployment to become ready"
   debug:
@@ -23,7 +29,11 @@
   retries: 20
   delay: 10
   until:
+    - arender_broker_dc_query
     - arender_converter_dc_query
+    - arender_dfs_dc_query
+    - arender_jni_dc_query
+    - arender_pdfbox_dc_query
   when: state == 'present'
 
 

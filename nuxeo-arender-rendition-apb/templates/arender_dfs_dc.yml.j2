@@ -2,7 +2,7 @@
 apiVersion: apps.openshift.io/v1
 kind: DeploymentConfig
 metadata:
-  name: {{ arender_broker_dc_name }}
+  name: {{ arender_dfs_dc_name }}
   namespace: {{ namespace }}
   labels:
     apb_name: '{{ apb_name }}'
@@ -14,7 +14,7 @@ spec:
   replicas: 1
   selector:
     app: {{ app_name }}
-    role: rendition-broker
+    role: rendition-dfs
   strategy:
     activeDeadlineSeconds: 21600
     resources: {}
@@ -30,7 +30,7 @@ spec:
       creationTimestamp: null
       labels:
         app: {{ app_name }}
-        role: rendition-broker
+        role: rendition-dfs
 {% if rendition_podAnnotations is defined and (rendition_podAnnotations | from_yaml) %}
       annotations:
 {{ rendition_podAnnotations | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
@@ -41,9 +41,9 @@ spec:
 {{ rendition_securityContext | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
 {% endif %}
       containers:
-        - image: {{ arender_broker_image }}:{{ arender_image_version }}
-          imagePullPolicy: {{ arender_broker_image_pullPolicy }}
-          name: arender-broker
+        - image: {{ arender_converter_image }}:{{ arender_image_version }}
+          imagePullPolicy: {{ arender_converter_image_pullPolicy }}
+          name: arender-dfs
           readinessProbe:
             failureThreshold: 4
             httpGet:
@@ -54,7 +54,7 @@ spec:
             periodSeconds: 10
             successThreshold: 1
             timeoutSeconds: 1
-          resources: {{ arender_broker_resources }}
+          resources: {{ arender_converter_resources }}
       volumes:
         - emptyDir: {}
           name: home

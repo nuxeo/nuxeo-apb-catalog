@@ -8,7 +8,7 @@ metadata:
     apb_plan_id: '{{ _apb_plan_id }}'
     apb_service_class_id: '{{ _apb_service_class_id }}'
     apb_service_instance_id: '{{ _apb_service_instance_id }}'
-  name: {{ arender_broker_service_name }}
+  name: {{ arender_jni_service_name }}
   namespace: {{ namespace }}
 spec:
   type: ClusterIP
@@ -20,5 +20,5 @@ spec:
       targetPort: 8761
   selector:
     app: {{ app_name }}
-    role: rendition-broker
+    role: rendition-jni
   sessionAffinity: None

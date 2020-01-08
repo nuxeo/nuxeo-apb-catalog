@@ -15,9 +15,27 @@ namespace: "{{ lookup('env','NAMESPACE') | default('hello-world', true) }}"
 
 testing: false
 arender_rendition_image: docker-registry.default.svc:5000/common-infra/arender-rendition
+arender_broker_image: docker-arender.packages.nuxeo.com/arender-rendition-broker
+arender_converter_image: docker-arender.packages.nuxeo.com/arender-converter
+arender_dfs_image: docker-arender.packages.nuxeo.com/arender-dfs
+arender_jni_image: docker-arender.packages.nuxeo.com/arender-jni
+arender_pdfbox_image: docker-arender.packages.nuxeo.com/arender-pdfbox
 arender_image_version: "1.0.1"
 
 rendition_image_pullPolicy: IfNotPresent
+arender_broker_image_pullPolicy: IfNotPresent
+arender_converter_image_pullPolicy: IfNotPresent
+arender_dfs_image_pullPolicy: IfNotPresent
+arender_jni_image_pullPolicy: IfNotPresent
+arender_pdfbox_image_pullPolicy: IfNotPresent
+
 rendition_podAnnotations: '{}'
 rendition_securityContext: '{}'
-rendition_resources: '{"limits": {"cpu": "2","memory": "2Gi"},"requests": {"cpu": "1","memory": "1Gi"}}'
+
+#rendition_resources: '{"limits": {"cpu": "2","memory": "2Gi"},"requests": {"cpu": "1","memory": "1Gi"}}'
+arender_broker_resources: '{"limits": {"cpu": "1","memory": "1Gi"},"requests": {"cpu": "1","memory": "1Gi"}}'
+arender_converter_resources: '{"limits": {"cpu": "1","memory": "2Gi"},"requests": {"cpu": "1","memory": "2Gi"}}'
+arender_pdfbox_resources: '{"limits": {"cpu": "1","memory": "1Gi"},"requests": {"cpu": "1","memory": "1Gi"}}'
+arender_jni_resources: '{"limits": {"cpu": "2","memory": "2Gi"},"requests": {"cpu": "2","memory": "2Gi"}}'
+arender_dfs_resources: '{"limits": {"cpu": "1","memory": "512Mb"},"requests": {"cpu": "1","memory": "512Mb"}}'
+

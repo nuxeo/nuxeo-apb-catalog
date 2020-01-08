@@ -14,7 +14,7 @@ spec:
   replicas: 1
   selector:
     app: {{ app_name }}
-    role: rendition
+    role: rendition-converter
   strategy:
     activeDeadlineSeconds: 21600
     resources: {}
@@ -30,7 +30,7 @@ spec:
       creationTimestamp: null
       labels:
         app: {{ app_name }}
-        role: rendition
+        role: rendition-converter
 {% if rendition_podAnnotations is defined and (rendition_podAnnotations | from_yaml) %}
       annotations:
 {{ rendition_podAnnotations | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
@@ -54,7 +54,7 @@ spec:
             periodSeconds: 10
             successThreshold: 1
             timeoutSeconds: 1
-          resources: {{ rendition_resources }}
+          resources: {{ arender_converter_resources }}
       volumes:
         - emptyDir: {}
           name: home
