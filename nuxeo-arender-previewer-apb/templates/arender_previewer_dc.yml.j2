@@ -1,0 +1,74 @@
+---
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  name: {{ arender_previewer_dc_name }}
+  namespace: {{ namespace }}
+  labels:
+    apb_name: '{{ apb_name }}'
+    apb_plan_id: '{{ _apb_plan_id }}'
+    apb_service_class_id: '{{ _apb_service_class_id }}'
+    apb_service_instance_id: '{{ _apb_service_instance_id }}'
+    app: {{ app_name }}
+spec:
+  replicas: 1
+  selector:
+    app: {{ app_name }}
+    role: arender-previewer
+  strategy:
+    activeDeadlineSeconds: 21600
+    resources: {}
+    rollingParams:
+      intervalSeconds: 1
+      maxSurge: 25%
+      maxUnavailable: 25%
+      timeoutSeconds: 600
+      updatePeriodSeconds: 1
+    type: Rolling
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: {{ app_name }}
+        role: arender-previewer
+{% if previewer_podAnnotations is defined and (previewer_podAnnotations | from_yaml) %}
+      annotations:
+{{ previewer_podAnnotations | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
+{% endif %}
+    spec:
+{% if previewer_securityContext is defined and (previewer_securityContext | from_yaml) %}
+      previewer_securityContext:
+{{ previewer_securityContext | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
+{% endif %}
+      containers:
+        - image: {{ arender_previewer_image }}:{{ arender_image_version }}
+          imagePullPolicy: {{ previewer_image_pullPolicy }}
+          name: arender-previewer
+          readinessProbe:
+            failureThreshold: 4
+            httpGet:
+              path: /capabilities
+              port: 8761
+              scheme: HTTP
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources: {{ previewer_resources }}
+          env:
+            - name: ARENDERSRV_ARENDER_SERVER_RENDITION_HOSTS
+              value: http://template-arender-rendition-broker:8761 #figure out value for this TODO
+      volumeMounts:
+        - name: temporary
+          mountPath: /tmp
+      initContainers:
+        - name: init-rendition-broker
+          image: busybox
+          command: ['sh', '-c', 'until nc -w1 nuxeo-arender-broker 8761; do echo "waiting for rendition"; sleep 5; done;']
+      securityContext:
+        - fsGroup: 1000
+      volumes:
+        - emptyDir: {}
+          name: home
+  triggers:
+    - type: ConfigChange
