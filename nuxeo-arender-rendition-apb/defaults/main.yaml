@@ -20,7 +20,13 @@ arender_converter_image: docker-arender.packages.nuxeo.com/arender-converter
 arender_dfs_image: docker-arender.packages.nuxeo.com/arender-dfs
 arender_jni_image: docker-arender.packages.nuxeo.com/arender-jni
 arender_pdfbox_image: docker-arender.packages.nuxeo.com/arender-pdfbox
+
 arender_image_version: "1.0.1"
+arender_broker_image_version: "1.0.1"
+arender_converter_image_version: "1.0.1"
+arender_dfs_image_version: "1.0.1"
+arender_jni_image_version: "1.0.1"
+arender_pdfbox_image_version: "1.0.1"
 
 rendition_image_pullPolicy: IfNotPresent
 arender_broker_image_pullPolicy: IfNotPresent
@@ -28,6 +34,12 @@ arender_converter_image_pullPolicy: IfNotPresent
 arender_dfs_image_pullPolicy: IfNotPresent
 arender_jni_image_pullPolicy: IfNotPresent
 arender_pdfbox_image_pullPolicy: IfNotPresent
+
+broker_image_pull_secret: ""
+converter_image_pull_secret: ""
+dfs_image_pull_secret: ""
+jni_image_pull_secret: ""
+pdfbox_image_pull_secret: ""
 
 rendition_podAnnotations: '{}'
 rendition_securityContext: '{}'

@@ -15,16 +15,6 @@ spec:
   selector:
     app: {{ app_name }}
     role: rendition-converter
-  strategy:
-    activeDeadlineSeconds: 21600
-    resources: {}
-    rollingParams:
-      intervalSeconds: 1
-      maxSurge: 25%
-      maxUnavailable: 25%
-      timeoutSeconds: 600
-      updatePeriodSeconds: 1
-    type: Rolling
   template:
     metadata:
       creationTimestamp: null
@@ -40,21 +30,43 @@ spec:
       rendition_securityContext:
 {{ rendition_securityContext | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
 {% endif %}
+{% if converter_image_pull_secret is defined and (converter_image_pull_secret | from_yaml) %}
+      imagePullSecrets:
+      - name: {{ converter_image_pull_secret }}
+{{ converter_image_pull_secret | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
+{% endif %}
       containers:
-        - image: {{ arender_converter_image }}:{{ arender_image_version }}
+        - image: {{ arender_converter_image }}:{{ arender_converter_image_version }}
           imagePullPolicy: {{ arender_converter_image_pullPolicy }}
           name: arender-converter
           readinessProbe:
             failureThreshold: 4
             httpGet:
-              path: /capabilities
-              port: 8761
+              path: {{ arender_converter_readiness_probe_path }}
+              port: {{ arender_converter_internal_port }}
               scheme: HTTP
-            initialDelaySeconds: 60
-            periodSeconds: 10
-            successThreshold: 1
-            timeoutSeconds: 1
+            initialDelaySeconds: {{ arender_converter_readiness_probe_initial_delay_secs }}
+            periodSeconds: {{ arender_converter_readiness_probe_period_seconds }}
+            successThreshold: {{ arender_converter_readiness_probe_success_threshold }}
+            timeoutSeconds: {{ arender_converter_readiness_probe_timeout_seconds }}
+          livenessProbe:
+            httpGet:
+              path: {{ arender_converter_liveness_probe_path }}
+              port: {{ arender_converter_internal_port }}
+            initialDelaySeconds: {{ arender_converter_liveness_probe_initial_delay_secs }}
+            periodSeconds: {{ arender_converter_liveness_probe_period_seconds }}
+            successThreshold: {{ arender_converter_liveness_probe_success_threshold }}
+            timeoutSeconds: {{ arender_converter_liveness_probe_timeout_seconds }}
           resources: {{ arender_converter_resources }}
+          env:
+          - name: TKC_BROKER_HOSTNAME
+            value: {{ arender_broker_service_name }}
+          #- name: TKC_BROKER_PORT
+          #  value: {{ arender_broker_internal_port }}
+          - name: TKC_BROKER_HOSTNAME
+            value: {{ arender_converter_service_name }}
+          securityContext:
+              fsGroup: 1000
       volumes:
         - emptyDir: {}
           name: home

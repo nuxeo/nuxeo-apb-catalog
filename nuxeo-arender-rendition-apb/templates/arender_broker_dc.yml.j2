@@ -14,17 +14,7 @@ spec:
   replicas: 1
   selector:
     app: {{ app_name }}
-    role: rendition-broker
-  strategy:
-    activeDeadlineSeconds: 21600
-    resources: {}
-    rollingParams:
-      intervalSeconds: 1
-      maxSurge: 25%
-      maxUnavailable: 25%
-      timeoutSeconds: 600
-      updatePeriodSeconds: 1
-    type: Rolling
+    role: rendition-broker 
   template:
     metadata:
       creationTimestamp: null
@@ -40,21 +30,47 @@ spec:
       rendition_securityContext:
 {{ rendition_securityContext | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
 {% endif %}
+{% if broker_image_pull_secret is defined and (broker_image_pull_secret | from_yaml) %}
+      imagePullSecrets:
+      - name: {{ broker_image_pull_secret }}
+{{ broker_image_pull_secret | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
+{% endif %}
       containers:
-        - image: {{ arender_broker_image }}:{{ arender_image_version }}
+        - name: arender-broker
+          image: {{ arender_broker_image }}:{{ arender_broker_image_version }}
           imagePullPolicy: {{ arender_broker_image_pullPolicy }}
-          name: arender-broker
+          ports:
+          - containerPort: {{ arender_broker_internal_port }}
           readinessProbe:
             failureThreshold: 4
             httpGet:
-              path: /capabilities
-              port: 8761
+              path: {{ arender_broker_readiness_probe_path }}
+              port: {{ arender_broker_internal_port }}
               scheme: HTTP
-            initialDelaySeconds: 60
-            periodSeconds: 10
-            successThreshold: 1
-            timeoutSeconds: 1
+            initialDelaySeconds: {{ arender_broker_readiness_probe_initial_delay_secs }}
+            periodSeconds: {{ arender_broker_readiness_probe_period_seconds }}
+            successThreshold: {{ arender_broker_readiness_probe_success_threshold }}
+            timeoutSeconds: {{ arender_broker_readiness_probe_timeout_seconds }}
+          livenessProbe:
+            httpGet:
+              path: {{ arender_broker_liveness_probe_path }}
+              port: {{ arender_broker_internal_port }}
+            initialDelaySeconds: {{ arender_broker_liveness_probe_initial_delay_secs }}
+            periodSeconds: {{ arender_broker_liveness_probe_period_seconds }}
+            successThreshold: {{ arender_broker_liveness_probe_success_threshold }}
+            timeoutSeconds: {{ arender_broker_liveness_probe_timeout_seconds }}
           resources: {{ arender_broker_resources }}
+          env:
+          - name: BRK_CONVERSION_HOSTNAME
+            value: {{ arender_broker_service_name }}
+          - name: BRK_DFS_HOSTNAME
+            value: {{ arender_dfs_service_name }}
+          - name: BRK_JNI_HOSTNAME
+            value: {{ arender_jni_service_name }}
+          - name: BRK_PDFBOX_HOSTNAME
+            value: {{ arender_pdfbox_service_name }}
+          securityContext:
+              fsGroup: 1000
       volumes:
         - emptyDir: {}
           name: home
