@@ -40,6 +40,11 @@ spec:
       rendition_securityContext:
 {{ rendition_securityContext | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
 {% endif %}
+{% if jni_image_pull_secret is defined and (jni_image_pull_secret | from_yaml) %}
+      imagePullSecrets:
+      - name: {{ jni_image_pull_secret }}
+{{ jni_image_pull_secret | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
+{% endif %}
       containers:
         - image: {{ arender_jni_image }}:{{ arender_image_version }}
           imagePullPolicy: {{ arender_jni_image_pullPolicy }}
@@ -47,13 +52,28 @@ spec:
           readinessProbe:
             failureThreshold: 4
             httpGet:
-              path: /capabilities
-              port: 8761
+              path: {{ arender_jni_readiness_probe_path }}
+              port: {{ arender_jni_internal_port }}
               scheme: HTTP
-            initialDelaySeconds: 60
-            periodSeconds: 10
-            successThreshold: 1
-            timeoutSeconds: 1
+            initialDelaySeconds: {{ arender_jni_readiness_probe_initial_delay_secs }}
+            periodSeconds: {{ arender_jni_readiness_probe_period_seconds }}
+            successThreshold: {{ arender_jni_readiness_probe_success_threshold }}
+            timeoutSeconds: {{ arender_jni_readiness_probe_timeout_seconds }}
+          livenessProbe:
+            httpGet:
+              path: {{ arender_jni_liveness_probe_path }}
+              port: {{ arender_jni_internal_port }}
+            initialDelaySeconds: {{ arender_jni_liveness_probe_initial_delay_secs }}
+            periodSeconds: {{ arender_jni_liveness_probe_period_seconds }}
+            successThreshold: {{ arender_jni_liveness_probe_success_threshold }}
+            timeoutSeconds: {{ arender_jni_liveness_probe_timeout_seconds }}
+          env:
+          - name: TKC_BROKER_HOSTNAME
+            value: {{ arender_broker_service_name }}
+          #- name: TKC_BROKER_PORT
+          #  value: {{ arender_broker_internal_port }}
+          - name: TKC_BROKER_HOSTNAME
+            value: {{ arender_converter_service_name }}
           resources: {{ arender_jni_resources }}
       volumes:
         - emptyDir: {}

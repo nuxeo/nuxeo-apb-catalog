@@ -14,10 +14,10 @@ spec:
   type: ClusterIP
   clusterIP: None
   ports:
-    - name: 8761-tcp
-      port: 8761
+    - name: http
+      port: {{ arender_pdfbox_internal_port }}
       protocol: TCP
-      targetPort: 8761
+      targetPort: {{ arender_pdfbox_external_port }}
   selector:
     app: {{ app_name }}
     role: rendition-pdfbox

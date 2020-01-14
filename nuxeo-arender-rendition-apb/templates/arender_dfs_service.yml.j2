@@ -14,10 +14,10 @@ spec:
   type: ClusterIP
   clusterIP: None
   ports:
-    - name: 8761-tcp
-      port: 8761
+    - name: http
+      port: {{ arender_dfs_external_port }}
       protocol: TCP
-      targetPort: 8761
+      targetPort: {{ arender_dfs_internal_port }}
   selector:
     app: {{ app_name }}
     role: rendition-dfs
