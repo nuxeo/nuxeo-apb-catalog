@@ -70,8 +70,8 @@ spec:
           env:
           - name: TKC_BROKER_HOSTNAME
             value: {{ arender_broker_service_name }}
-          #- name: TKC_BROKER_PORT
-          #  value: {{ arender_broker_internal_port }}
+          - name: TKC_BROKER_PORT
+            value: "{{ arender_broker_internal_port }}"
           - name: TKC_BROKER_HOSTNAME
             value: {{ arender_converter_service_name }}
           resources: {{ arender_pdfbox_resources }}
