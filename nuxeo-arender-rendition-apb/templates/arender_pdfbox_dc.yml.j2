@@ -1,0 +1,82 @@
+---
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  name: {{ arender_pdfbox_dc_name }}
+  namespace: {{ namespace }}
+  labels:
+    apb_name: '{{ apb_name }}'
+    apb_plan_id: '{{ _apb_plan_id }}'
+    apb_service_class_id: '{{ _apb_service_class_id }}'
+    apb_service_instance_id: '{{ _apb_service_instance_id }}'
+    app: {{ app_name }}
+spec:
+  replicas: 1
+  selector:
+    app: {{ app_name }}
+    role: rendition-pdfbox
+  strategy:
+    activeDeadlineSeconds: 21600
+    resources: {}
+    rollingParams:
+      intervalSeconds: 1
+      maxSurge: 25%
+      maxUnavailable: 25%
+      timeoutSeconds: 600
+      updatePeriodSeconds: 1
+    type: Rolling
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: {{ app_name }}
+        role: rendition-pdfbox
+{% if rendition_podAnnotations is defined and (rendition_podAnnotations | from_yaml) %}
+      annotations:
+{{ rendition_podAnnotations | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
+{% endif %}
+    spec:
+{% if rendition_securityContext is defined and (rendition_securityContext | from_yaml) %}
+      rendition_securityContext:
+{{ rendition_securityContext | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
+{% endif %}
+{% if pdfbox_image_pull_secret is defined and (pdfbox_image_pull_secret | from_yaml) %}
+      imagePullSecrets:
+      - name: {{ pdfbox_image_pull_secret }}
+{{ pdfbox_image_pull_secret | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
+{% endif %}
+      containers:
+        - image: {{ arender_pdfbox_image }}:{{ arender_image_version }}
+          imagePullPolicy: {{ arender_pdfbox_image_pullPolicy }}
+          name: arender-pdfbox
+          readinessProbe:
+            failureThreshold: 4
+            httpGet:
+              path: {{ arender_pdfbox_readiness_probe_path }}
+              port: {{ arender_pdfbox_internal_port }}
+              scheme: HTTP
+            initialDelaySeconds: {{ arender_pdfbox_readiness_probe_initial_delay_secs }}
+            periodSeconds: {{ arender_pdfbox_readiness_probe_period_seconds }}
+            successThreshold: {{ arender_pdfbox_readiness_probe_success_threshold }}
+            timeoutSeconds: {{ arender_pdfbox_readiness_probe_timeout_seconds }}
+          livenessProbe:
+            httpGet:
+              path: {{ arender_pdfbox_liveness_probe_path }}
+              port: {{ arender_pdfbox_internal_port }}
+            initialDelaySeconds: {{ arender_pdfbox_liveness_probe_initial_delay_secs }}
+            periodSeconds: {{ arender_pdfbox_liveness_probe_period_seconds }}
+            successThreshold: {{ arender_pdfbox_liveness_probe_success_threshold }}
+            timeoutSeconds: {{ arender_pdfbox_liveness_probe_timeout_seconds }}
+          env:
+          - name: TKC_BROKER_HOSTNAME
+            value: {{ arender_broker_service_name }}
+          - name: TKC_BROKER_PORT
+            value: "{{ arender_broker_internal_port }}"
+          - name: TKC_BROKER_HOSTNAME
+            value: {{ arender_converter_service_name }}
+          resources: {{ arender_pdfbox_resources }}
+      volumes:
+        - emptyDir: {}
+          name: home
+  triggers:
+    - type: ConfigChange

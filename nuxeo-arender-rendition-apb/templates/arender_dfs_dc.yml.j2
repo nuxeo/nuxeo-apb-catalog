@@ -1,0 +1,74 @@
+---
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  name: {{ arender_dfs_dc_name }}
+  namespace: {{ namespace }}
+  labels:
+    apb_name: '{{ apb_name }}'
+    apb_plan_id: '{{ _apb_plan_id }}'
+    apb_service_class_id: '{{ _apb_service_class_id }}'
+    apb_service_instance_id: '{{ _apb_service_instance_id }}'
+    app: {{ app_name }}
+spec:
+  replicas: 1
+  selector:
+    app: {{ app_name }}
+    role: rendition-dfs
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: {{ app_name }}
+        role: rendition-dfs
+{% if rendition_podAnnotations is defined and (rendition_podAnnotations | from_yaml) %}
+      annotations:
+{{ rendition_podAnnotations | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
+{% endif %}
+    spec:
+{% if rendition_securityContext is defined and (rendition_securityContext | from_yaml) %}
+      rendition_securityContext:
+{{ rendition_securityContext | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
+{% endif %}
+{% if dfs_image_pull_secret is defined and (dfs_image_pull_secret | from_yaml) %}
+      imagePullSecrets:
+      - name: {{ dfs_image_pull_secret }}
+{{ dfs_image_pull_secret | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
+{% endif %}
+      containers:
+        - image: {{ arender_dfs_image }}:{{ arender_image_version }}
+          imagePullPolicy: {{ arender_dfs_image_pullPolicy }}
+          name: arender-dfs
+          readinessProbe:
+            failureThreshold: 4
+            httpGet:
+              path: {{ arender_dfs_readiness_probe_path }}
+              port: {{ arender_dfs_internal_port }}
+              scheme: HTTP
+            initialDelaySeconds: {{ arender_dfs_readiness_probe_initial_delay_secs }}
+            periodSeconds: {{ arender_dfs_readiness_probe_period_seconds }}
+            successThreshold: {{ arender_dfs_readiness_probe_success_threshold }}
+            timeoutSeconds: {{ arender_dfs_readiness_probe_timeout_seconds }}
+          livenessProbe:
+            httpGet:
+              path: {{ arender_dfs_liveness_probe_path }}
+              port: {{ arender_dfs_internal_port }}
+            initialDelaySeconds: {{ arender_dfs_liveness_probe_initial_delay_secs }}
+            periodSeconds: {{ arender_dfs_liveness_probe_period_seconds }}
+            successThreshold: {{ arender_dfs_liveness_probe_success_threshold }}
+            timeoutSeconds: {{ arender_dfs_liveness_probe_timeout_seconds }}
+          resources: {{ arender_dfs_resources }}
+          env:
+          - name: TKC_BROKER_HOSTNAME
+            value: {{ arender_broker_service_name }}
+          - name: TKC_BROKER_PORT
+            value: "{{ arender_broker_internal_port }}"
+          - name: TKC_BROKER_HOSTNAME
+            value: {{ arender_converter_service_name }}
+          securityContext:
+              fsGroup: 1000
+      volumes:
+        - emptyDir: {}
+          name: home
+  triggers:
+    - type: ConfigChange
