@@ -14,10 +14,10 @@ app_image: docker.io/nuxeoapbcatalog/nuxeo-arender-previewer-apb
 namespace: "{{ lookup('env','NAMESPACE') | default('hello-world', true) }}"
 
 testing: false
-arender_previewer_image: docker-registry.default.svc:5000/common-infra/arender-previewer
-arender_image_version: "1.0.1"
+arender_previewer_image: docker-arender.packages.nuxeo.com/nuxeo/arender-previewer
+arender_image_version: "10.1.0-SNAPSHOT"
 
-previewer_image_pullPolicy: IfNotPresent
+previewer_image_pullPolicy: Always
 previewer_podAnnotations: '{"fabric8.io/expose":"true", "fabric8.io/ingress.annotations":"kubernetes.io/ingress.class: nginx"}'
 previewer_securityContext: '{"fsgroup":"1000"}'
 previewer_resources: '{"limits": {"cpu": "1","memory": "2Gi"},"requests": {"cpu": ".5","memory": "1Gi"}}'

@@ -36,7 +36,7 @@ spec:
 {{ dfs_image_pull_secret | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
 {% endif %}
       containers:
-        - image: {{ arender_dfs_image }}:{{ arender_image_version }}
+        - image: {{ arender_dfs_image }}:{{ arender_dfs_image_version }}
           imagePullPolicy: {{ arender_dfs_image_pullPolicy }}
           name: arender-dfs
           readinessProbe:

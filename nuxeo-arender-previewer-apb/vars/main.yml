@@ -17,10 +17,7 @@ arender_previewer_route_lookup: "{{ lookup('openshift', kind='Route', namespace=
 ready_replicas_query: "[spec.replicas, status.readyReplicas]"
 arender_previewer_dc_query: "{{ arender_previewer_dc_lookup | json_query(ready_replicas_query) | unique | count == 1 }}"
 
-
 app_name: "{{ name }}"
-
-
 
 arender_previewer_service_name: "{{ name }}-previewer"
 arender_previewer_route_name: "{{ name }}-previewer"
