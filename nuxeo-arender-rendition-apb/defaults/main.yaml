@@ -14,26 +14,26 @@ app_image: docker.io/nuxeoapbcatalog/nuxeo-arender-rendition-apb
 namespace: "{{ lookup('env','NAMESPACE') | default('hello-world', true) }}"
 
 testing: false
-arender_rendition_image: docker-registry.default.svc:5000/common-infra/arender-rendition
-arender_broker_image: docker-arender.packages.nuxeo.com/arender-rendition-broker
-arender_converter_image: docker-arender.packages.nuxeo.com/arender-converter
-arender_dfs_image: docker-arender.packages.nuxeo.com/arender-dfs
-arender_jni_image: docker-arender.packages.nuxeo.com/arender-jni
-arender_pdfbox_image: docker-arender.packages.nuxeo.com/arender-pdfbox
+arender_docker_registry: "docker-private-arondor-group.packages.nuxeo.com"
+arender_broker_image: "{{ arender_docker_registry }}/arender-rendition-broker"
+arender_converter_image: "{{ arender_docker_registry }}/arender-converter"
+arender_dfs_image: "{{ arender_docker_registry }}/arender-dfs"
+arender_jni_image: "{{ arender_docker_registry }}/arender-jni-engine"
+arender_pdfbox_image: "{{ arender_docker_registry }}/arender-pdfbox"
 
 arender_image_version: "1.0.1"
-arender_broker_image_version: "1.0.1"
-arender_converter_image_version: "1.0.1"
-arender_dfs_image_version: "1.0.1"
-arender_jni_image_version: "1.0.1"
-arender_pdfbox_image_version: "1.0.1"
+arender_broker_image_version: "4.0.6.NX1.0"
+arender_converter_image_version: "4.0.6.NX1.0"
+arender_dfs_image_version: "4.0.6.NX1.0"
+arender_jni_image_version: "4.0.6.NX1.0"
+arender_pdfbox_image_version: "4.0.6.NX1.0"
 
-rendition_image_pullPolicy: IfNotPresent
-arender_broker_image_pullPolicy: IfNotPresent
-arender_converter_image_pullPolicy: IfNotPresent
-arender_dfs_image_pullPolicy: IfNotPresent
-arender_jni_image_pullPolicy: IfNotPresent
-arender_pdfbox_image_pullPolicy: IfNotPresent
+rendition_image_pullPolicy: Always
+arender_broker_image_pullPolicy: Always
+arender_converter_image_pullPolicy: Always
+arender_dfs_image_pullPolicy: Always
+arender_jni_image_pullPolicy: Always
+arender_pdfbox_image_pullPolicy: Always
 
 broker_image_pull_secret: ""
 converter_image_pull_secret: ""

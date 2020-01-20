@@ -46,7 +46,7 @@ spec:
 {{ jni_image_pull_secret | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
 {% endif %}
       containers:
-        - image: {{ arender_jni_image }}:{{ arender_image_version }}
+        - image: {{ arender_jni_image }}:{{ arender_jni_image_version }}
           imagePullPolicy: {{ arender_jni_image_pullPolicy }}
           name: arender-jni
           readinessProbe:

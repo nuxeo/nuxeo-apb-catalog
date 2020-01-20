@@ -57,7 +57,7 @@ spec:
           resources: {{ previewer_resources }}
           env:
             - name: ARENDERSRV_ARENDER_SERVER_RENDITION_HOSTS
-              value: http://template-arender-rendition-broker:8761 #figure out value for this TODO
+              value: http://{{arender_broker_service_name}}:8761 #figure out value for this TODO
       volumeMounts:
         - name: temporary
           mountPath: /tmp
