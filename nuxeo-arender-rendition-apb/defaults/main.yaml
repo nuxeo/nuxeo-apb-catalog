@@ -35,11 +35,11 @@ arender_dfs_image_pullPolicy: Always
 arender_jni_image_pullPolicy: Always
 arender_pdfbox_image_pullPolicy: Always
 
-broker_image_pull_secret: ""
-converter_image_pull_secret: ""
-dfs_image_pull_secret: ""
-jni_image_pull_secret: ""
-pdfbox_image_pull_secret: ""
+# broker_image_pull_secret: "docker-private-nuxeo"
+# converter_image_pull_secret: "docker-private-nuxeo"
+# dfs_image_pull_secret: "docker-private-nuxeo"
+# jni_image_pull_secret: "docker-private-nuxeo"
+# pdfbox_image_pull_secret: "docker-private-nuxeo"
 
 rendition_podAnnotations: '{}'
 rendition_securityContext: '{}'

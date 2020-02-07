@@ -68,13 +68,12 @@ spec:
             successThreshold: {{ arender_jni_liveness_probe_success_threshold }}
             timeoutSeconds: {{ arender_jni_liveness_probe_timeout_seconds }}
           env:
-          - name: TKC_BROKER_HOSTNAME
+          - name: JNI_BROKER_HOSTNAME
             value: {{ arender_broker_service_name }}
-          - name: TKC_BROKER_PORT
+          - name: JNI_BROKER_PORT
             value: "{{ arender_broker_internal_port }}"
-          - name: TKC_BROKER_HOSTNAME
-            value: {{ arender_converter_service_name }}
-          resources: {{ arender_jni_resources }}
+          - name: JNI_HOSTNAME
+            value: {{ arender_jni_service_name }}
       volumes:
         - emptyDir: {}
           name: home

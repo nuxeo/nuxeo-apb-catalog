@@ -68,13 +68,12 @@ spec:
             successThreshold: {{ arender_pdfbox_liveness_probe_success_threshold }}
             timeoutSeconds: {{ arender_pdfbox_liveness_probe_timeout_seconds }}
           env:
-          - name: TKC_BROKER_HOSTNAME
+          - name: PBX_BROKER_HOSTNAME
             value: {{ arender_broker_service_name }}
-          - name: TKC_BROKER_PORT
+          - name: PBX_BROKER_PORT
             value: "{{ arender_broker_internal_port }}"
-          - name: TKC_BROKER_HOSTNAME
-            value: {{ arender_converter_service_name }}
-          resources: {{ arender_pdfbox_resources }}
+          - name: PBX_HOSTNAME
+            value: {{ arender_pdfbox_service_name }}
       volumes:
         - emptyDir: {}
           name: home
