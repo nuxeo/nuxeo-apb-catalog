@@ -24,17 +24,62 @@ plans:
       title: Project Name
       default: arender
       display_group: Project properties
+
+    - name: previewer_nuxeo_url
+      default: 'https://nuxeo.url/nuxeo'
+      type: string
+      title: Url of the Nuxeo client
+      display_group: Client Nuxeo
+    - name: previewer_nuxeo_oauth_secret
+      default: 'OAUTH2_SECRET'
+      type: string
+      title: Shared secret for OAuth2 exchange
+      display_group: Client Nuxeo
+
+    - name: arender_broker_service_name
+      default: nuxeo-arender-0-rendition-broker.int-arender-test.svc
+      type: string
+      title: URL of ARender rendition broker
+      display_group: ARender Rendition
+
     - name: arender_previewer_image
       type: string
       title: ARender previewer image
-      default: docker-registry.default.svc:5000/common-infra/arender-previewer
-      display_group: Project properties
+      default: docker-private-arondor-group.packages.nuxeo.com/arender-hmi
+      display_group: Container Image
+    - name: arender_previewer_image_version
+      type: string
+      title: ARender previewer image
+      default: "4.0.6.NX2.0"
+      display_group: Container Image
+
+    - name: arender_previewer_image_pull_existing_secret
+      type: string
+      title: Name of secret to use to pull image (Leave empty if yout want to use user/password)
+      default: docker-private-nuxeo
+      display_group: Container Image
+    - name: arender_previewer_image_pull_host
+      type: string
+      title: Docker repository to use for secret
+      default: docker-private-arondor-group.packages.nuxeo.com
+      display_group: Container Image
+    - name: arender_previewer_image_pull_username
+      type: string
+      title: Username to use to pull the Docker image
+      default: nuxeo
+      display_group: Container Image
+    - name: arender_previewer_image_pull_password
+      type: password
+      title: Password to use to pull the Docker image
+      display_group: Container Image
+
     - name: previewer_image_pullPolicy
       default: 'IfNotPresent'
       type: enum
       enum: ['IfNotPresent', 'Always', 'Never']
       title: ARender Previewer image pull policy
       display_group: Container Specs
+
     - name: previewer_podAnnotations
       default: '{}'
       type: string

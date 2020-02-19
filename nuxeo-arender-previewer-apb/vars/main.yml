@@ -24,7 +24,7 @@ arender_previewer_route_name: "{{ name }}-previewer"
 arender_previewer_config_name: "{{ name }}-previewer"
 arender_previewer_dc_name: "{{ name }}-previewer"
 
-arender_rendition_service_name: "{{ name }}-rendition"
-arender_rendition_dc_name: "{{ name }}-rendition"
+arender_previewer_image_pull_secret: "{{ name + '-previewer-pull-secret' if arender_previewer_image_pull_existing_secret is undefined else arender_previewer_image_pull_existing_secret }}"
 
-arender_broker_service_name: "{{ name }}-rendition-broker"
+
+arender_rendition_broker_url: http://{{ arender_broker_service_name }}:8761

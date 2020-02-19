@@ -11,9 +11,13 @@
     definition: "{{ lookup('template', item.name) | from_yaml }}"
   when: item.apply | default(True)
   loop:
+    - name: arender_previewer_pull_secret.yml.j2
+      apply: "{{ arender_previewer_image_pull_existing_secret is undefined }}"
     - name: arender_previewer_dc.yml.j2
     - name: arender_previewer_service.yml.j2
     - name: arender_previewer_config.yml.j2
+    - name: arender_previewer_route.yml.j2
+
 
 - name: "Wait for Previewer Deployment to become ready"
   debug:
