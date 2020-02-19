@@ -1,13 +1,13 @@
 version: 1.0
 name: nuxeo-arender-previewer-apb
-description: ARender previewer deployment in Openshift for Nuxeo
+description: ARender Previewer deployment in Openshift for Nuxeo
 bindable: True
 async: optional
 tags:
   - nuxeo
   - arender
 metadata:
-  displayName: ARender environment for Nuxeo
+  displayName: ARender Previewer environment for Nuxeo
   imageUrl: "https://www.nuxeo.com/assets/imgs/logo340x60.png"
   longDescription:
     This Deploys an ARender previewer environment that can be used with Nuxeo
@@ -69,8 +69,9 @@ plans:
       default: nuxeo
       display_group: Container Image
     - name: arender_previewer_image_pull_password
-      type: password
+      type: string
       title: Password to use to pull the Docker image
+      display_type: password
       display_group: Container Image
 
     - name: previewer_image_pullPolicy

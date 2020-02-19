@@ -47,8 +47,9 @@ plans:
       default: nuxeo
       display_group: Container Image
     - name: arender_rendition_image_pull_password
-      type: password
+      type: string
       title: Password to use to pull the Docker image
+      display_type: password
       display_group: Container Image
 
     - name: arender_broker_resources
