@@ -31,15 +31,7 @@ spec:
       labels:
         app: {{ app_name }}
         role: rendition-pdfbox
-{% if rendition_podAnnotations is defined and (rendition_podAnnotations | from_yaml) %}
-      annotations:
-{{ rendition_podAnnotations | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
-{% endif %}
     spec:
-{% if rendition_securityContext is defined and (rendition_securityContext | from_yaml) %}
-      rendition_securityContext:
-{{ rendition_securityContext | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
-{% endif %}
       imagePullSecrets:
       - name: {{ arender_rendition_image_pull_secret }}
       containers:
@@ -71,6 +63,10 @@ spec:
             value: "{{ arender_broker_internal_port }}"
           - name: PBX_EUREKA_INSTANCE_METADATA.MAP_HOST.NAME
             value: {{ arender_pdfbox_service_name }}
+          resources:
+{% if arender_pdfbox_resources is defined and (arender_pdfbox_resources | from_yaml) %}
+{{ arender_pdfbox_resources | from_yaml | to_nice_yaml(indent=2) | indent(12, true) }}
+{% endif %}
       volumes:
         - emptyDir: {}
           name: home

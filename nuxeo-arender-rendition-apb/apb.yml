@@ -1,3 +1,4 @@
+---
 version: 1.0
 name: nuxeo-arender-rendition-apb
 description: ARender Rendition deployment in Openshift for Nuxeo
@@ -35,14 +36,6 @@ plans:
       title: ARender rendition image
       default: "4.0.6.NX2.0"
       display_group: Container Image
-
-    - name: arender_rendition_image_converter
-      type: string
-      title: ARender rendition image
-      default: arender-converter
-      display_group: Container Image
-
-
     - name: arender_rendition_image_pull_existing_secret
       type: string
       title: Name of secret to use to pull image (Leave empty if yout want to use user/password)
@@ -57,3 +50,34 @@ plans:
       type: password
       title: Password to use to pull the Docker image
       display_group: Container Image
+
+    - name: arender_broker_resources
+      default: '{"limits": {"cpu": "1","memory": "1Gi"},"requests": {"cpu": "1","memory": "1Gi"}}'
+      type: string
+      title: Broker Pod resource requests and limits
+      display_type: textarea
+      display_group: Container Specs
+    - name: arender_converter_resources
+      default: '{"limits": {"cpu": "1","memory": "2Gi"},"requests": {"cpu": "1","memory": "2Gi"}}'
+      type: string
+      title: Converter Pod resource requests and limits
+      display_type: textarea
+      display_group: Container Specs
+    - name: arender_pdfbox_resources
+      default: '{"limits": {"cpu": "1","memory": "1Gi"},"requests": {"cpu": "1","memory": "1Gi"}}'
+      type: string
+      title: PDFBox Pod resource requests and limits
+      display_type: textarea
+      display_group: Container Specs
+    - name: arender_jni_resources
+      default: '{"limits": {"cpu": "2","memory": "2Gi"},"requests": {"cpu": "2","memory": "2Gi"}}'
+      type: string
+      title: JNI Pod resource requests and limits
+      display_type: textarea
+      display_group: Container Specs
+    - name: arender_dfs_resources
+      default: '{"limits": {"cpu": "1","memory": "512M"},"requests": {"cpu": "1","memory": "512M"}}'
+      type: string
+      title: DFS Pod resource requests and limits
+      display_type: textarea
+      display_group: Container Specs

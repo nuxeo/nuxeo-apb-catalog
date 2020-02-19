@@ -6,6 +6,14 @@
   when: in_cluster
 
 
+- debug:
+    msg: "{{ lookup('template', 'arender_converter_dc.yml.j2') | from_yaml }}"
+
+- debug:
+    msg: "{{ arender_converter_resources }}"
+- debug:
+    msg: "{{ (arender_converter_resources | from_yaml) }}"
+
 - name: "Set ARender objects state={{ state }}"
   k8s:
     state: "{{ state }}"

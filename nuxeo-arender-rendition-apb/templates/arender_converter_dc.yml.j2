@@ -62,6 +62,10 @@ spec:
             value: "{{ arender_broker_internal_port }}"
           - name: TKC_EUREKA_INSTANCE_METADATA.MAP_HOST.NAME
             value: {{ arender_converter_service_name }}
+          resources:
+{% if arender_converter_resources is defined and (arender_converter_resources | from_yaml) %}
+{{ arender_converter_resources | from_yaml | to_nice_yaml(indent=2) | indent(12, true) }}
+{% endif %}
       volumes:
         - emptyDir: {}
           name: home
