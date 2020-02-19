@@ -64,6 +64,10 @@ spec:
             value: {{ arender_dfs_service_name }}
           - name: DFS_EUREKA_INSTANCE_METADATA.MAP_SOURCE.D.F.S
             value: http://{{ arender_dfs_service_name }}:{{ arender_dfs_internal_port }}
+          resources:
+{% if arender_dfs_resources is defined and (arender_dfs_resources | from_yaml) %}
+{{ arender_dfs_resources | from_yaml | to_nice_yaml(indent=2) | indent(12, true) }}
+{% endif %}
       volumes:
         - emptyDir: {}
           name: home

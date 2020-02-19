@@ -63,7 +63,6 @@ spec:
             periodSeconds: 10
             successThreshold: 1
             timeoutSeconds: 5
-          resources: {{ previewer_resources }}
           env:
             - name: ARENDERSRV_ARENDER_SERVER_RENDITION_HOSTS
               value: {{ arender_rendition_broker_url }}
@@ -71,6 +70,10 @@ spec:
               value: {{ previewer_nuxeo_url }}
             - name: nuxeoArenderSecretEnv
               value: {{ previewer_nuxeo_oauth_secret }}
+          resources:
+{% if previewer_resources is defined and (previewer_resources | from_yaml) %}
+{{ previewer_resources | from_yaml | to_nice_yaml(indent=2) | indent(12, true) }}
+{% endif %}
       imagePullSecrets:
         - name: {{ arender_previewer_image_pull_secret }}
       volumeMounts:

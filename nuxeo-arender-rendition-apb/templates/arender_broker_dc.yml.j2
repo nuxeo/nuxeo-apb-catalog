@@ -68,7 +68,10 @@ spec:
             value: "{{ arender_jni_internal_port }}"
           - name: BRK_KUBEPROVIDER_KUBE.HOSTS_{{ arender_pdfbox_service_name }}
             value: "{{ arender_pdfbox_internal_port }}"
-
+          resources:
+{% if arender_broker_resources is defined and (arender_broker_resources | from_yaml) %}
+{{ arender_broker_resources | from_yaml | to_nice_yaml(indent=2) | indent(12, true) }}
+{% endif %}
           securityContext:
               fsGroup: 1000
       volumes:

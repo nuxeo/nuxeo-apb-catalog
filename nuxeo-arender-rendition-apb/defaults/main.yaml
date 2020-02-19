@@ -23,8 +23,6 @@ arender_rendition_image_dfs: arender-dfs
 arender_rendition_image_jni: arender-jni-engine
 arender_rendition_image_pdfbox: arender-pdfbox
 
-
-
 arender_docker_registry: "docker-private-arondor-group.packages.nuxeo.com"
 
 rendition_image_pullPolicy: IfNotPresent
@@ -34,19 +32,8 @@ arender_dfs_image_pullPolicy: IfNotPresent
 arender_jni_image_pullPolicy: IfNotPresent
 arender_pdfbox_image_pullPolicy: IfNotPresent
 
-# broker_image_pull_secret: "docker-private-nuxeo"
-# converter_image_pull_secret: "docker-private-nuxeo"
-# dfs_image_pull_secret: "docker-private-nuxeo"
-# jni_image_pull_secret: "docker-private-nuxeo"
-# pdfbox_image_pull_secret: "docker-private-nuxeo"
-
-rendition_podAnnotations: '{}'
-rendition_securityContext: '{}'
-
-#rendition_resources: '{"limits": {"cpu": "2","memory": "2Gi"},"requests": {"cpu": "1","memory": "1Gi"}}'
 arender_broker_resources: '{"limits": {"cpu": "1","memory": "1Gi"},"requests": {"cpu": "1","memory": "1Gi"}}'
 arender_converter_resources: '{"limits": {"cpu": "1","memory": "2Gi"},"requests": {"cpu": "1","memory": "2Gi"}}'
 arender_pdfbox_resources: '{"limits": {"cpu": "1","memory": "1Gi"},"requests": {"cpu": "1","memory": "1Gi"}}'
 arender_jni_resources: '{"limits": {"cpu": "2","memory": "2Gi"},"requests": {"cpu": "2","memory": "2Gi"}}'
 arender_dfs_resources: '{"limits": {"cpu": "1","memory": "512M"},"requests": {"cpu": "1","memory": "512M"}}'
-
