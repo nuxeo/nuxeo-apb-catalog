@@ -30,13 +30,10 @@ spec:
       rendition_securityContext:
 {{ rendition_securityContext | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
 {% endif %}
-{% if dfs_image_pull_secret is defined and (dfs_image_pull_secret | from_yaml) %}
       imagePullSecrets:
-      - name: {{ dfs_image_pull_secret }}
-{{ dfs_image_pull_secret | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
-{% endif %}
+      - name: {{ arender_rendition_image_pull_secret }}
       containers:
-        - image: {{ arender_dfs_image }}:{{ arender_dfs_image_version }}
+        - image: {{ arender_dfs_image }}
           imagePullPolicy: {{ arender_dfs_image_pullPolicy }}
           name: arender-dfs
           readinessProbe:
@@ -59,14 +56,14 @@ spec:
             timeoutSeconds: {{ arender_dfs_liveness_probe_timeout_seconds }}
           resources: {{ arender_dfs_resources }}
           env:
-          - name: DFS_BROKER_HOSTNAME
+          - name: DFS_EUREKA_INSTANCE_HOSTNAME
             value: {{ arender_broker_service_name }}
-          - name: DFS_BROKER_PORT
+          - name: DFS_EUREKA_SERVER_PORT
             value: "{{ arender_broker_internal_port }}"
-          - name: DFS_HOSTNAME
+          - name: DFS_EUREKA_INSTANCE_METADATA.MAP_HOST.NAME
             value: {{ arender_dfs_service_name }}
-          securityContext:
-              fsGroup: 1000
+          - name: DFS_EUREKA_INSTANCE_METADATA.MAP_SOURCE.D.F.S
+            value: http://{{ arender_dfs_service_name }}:{{ arender_dfs_internal_port }}
       volumes:
         - emptyDir: {}
           name: home

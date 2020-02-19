@@ -40,13 +40,10 @@ spec:
       rendition_securityContext:
 {{ rendition_securityContext | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
 {% endif %}
-{% if jni_image_pull_secret is defined and (jni_image_pull_secret | from_yaml) %}
       imagePullSecrets:
-      - name: {{ jni_image_pull_secret }}
-{{ jni_image_pull_secret | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
-{% endif %}
+      - name: {{ arender_rendition_image_pull_secret }}
       containers:
-        - image: {{ arender_jni_image }}:{{ arender_jni_image_version }}
+        - image: {{ arender_jni_image }}
           imagePullPolicy: {{ arender_jni_image_pullPolicy }}
           name: arender-jni
           readinessProbe:
@@ -68,11 +65,11 @@ spec:
             successThreshold: {{ arender_jni_liveness_probe_success_threshold }}
             timeoutSeconds: {{ arender_jni_liveness_probe_timeout_seconds }}
           env:
-          - name: JNI_BROKER_HOSTNAME
+          - name: JNI_EUREKA_INSTANCE_HOSTNAME
             value: {{ arender_broker_service_name }}
-          - name: JNI_BROKER_PORT
+          - name: JNI_EUREKA_SERVER_PORT
             value: "{{ arender_broker_internal_port }}"
-          - name: JNI_HOSTNAME
+          - name: JNI_EUREKA_INSTANCE_METADATA.MAP_HOST.NAME
             value: {{ arender_jni_service_name }}
       volumes:
         - emptyDir: {}
