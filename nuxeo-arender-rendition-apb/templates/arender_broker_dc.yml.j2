@@ -14,7 +14,7 @@ spec:
   replicas: 1
   selector:
     app: {{ app_name }}
-    role: rendition-broker 
+    role: rendition-broker
   template:
     metadata:
       creationTimestamp: null
@@ -30,14 +30,11 @@ spec:
       rendition_securityContext:
 {{ rendition_securityContext | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
 {% endif %}
-{% if broker_image_pull_secret is defined and (broker_image_pull_secret | from_yaml) %}
       imagePullSecrets:
-      - name: {{ broker_image_pull_secret }}
-{{ broker_image_pull_secret | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
-{% endif %}
+      - name: {{ arender_rendition_image_pull_secret }}
       containers:
         - name: arender-broker
-          image: {{ arender_broker_image }}:{{ arender_broker_image_version }}
+          image: {{ arender_broker_image }}
           imagePullPolicy: {{ arender_broker_image_pullPolicy }}
           ports:
           - containerPort: {{ arender_broker_internal_port }}
@@ -63,12 +60,15 @@ spec:
           env:
           - name: BRK_CONVERSION_HOSTNAME
             value: {{ arender_broker_service_name }}
-          - name: BRK_DFS_HOSTNAME
-            value: {{ arender_dfs_service_name }}
-          - name: BRK_JNI_HOSTNAME
-            value: {{ arender_jni_service_name }}
-          - name: BRK_PDFBOX_HOSTNAME
-            value: {{ arender_pdfbox_service_name }}
+          - name: BRK_KUBEPROVIDER_KUBE.HOSTS_{{ arender_converter_service_name }}
+            value: "{{ arender_converter_internal_port }}"
+          - name: BRK_KUBEPROVIDER_KUBE.HOSTS_{{ arender_dfs_service_name }}
+            value: "{{ arender_dfs_internal_port }}"
+          - name: BRK_KUBEPROVIDER_KUBE.HOSTS_{{ arender_jni_service_name }}
+            value: "{{ arender_jni_internal_port }}"
+          - name: BRK_KUBEPROVIDER_KUBE.HOSTS_{{ arender_pdfbox_service_name }}
+            value: "{{ arender_pdfbox_internal_port }}"
+
           securityContext:
               fsGroup: 1000
       volumes:

@@ -40,13 +40,10 @@ spec:
       rendition_securityContext:
 {{ rendition_securityContext | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
 {% endif %}
-{% if pdfbox_image_pull_secret is defined and (pdfbox_image_pull_secret | from_yaml) %}
       imagePullSecrets:
-      - name: {{ pdfbox_image_pull_secret }}
-{{ pdfbox_image_pull_secret | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
-{% endif %}
+      - name: {{ arender_rendition_image_pull_secret }}
       containers:
-        - image: {{ arender_pdfbox_image }}:{{ arender_pdfbox_image_version }}
+        - image: {{ arender_pdfbox_image }}
           imagePullPolicy: {{ arender_pdfbox_image_pullPolicy }}
           name: arender-pdfbox
           readinessProbe:
@@ -68,11 +65,11 @@ spec:
             successThreshold: {{ arender_pdfbox_liveness_probe_success_threshold }}
             timeoutSeconds: {{ arender_pdfbox_liveness_probe_timeout_seconds }}
           env:
-          - name: PBX_BROKER_HOSTNAME
+          - name: PBX_EUREKA_INSTANCE_HOSTNAME
             value: {{ arender_broker_service_name }}
-          - name: PBX_BROKER_PORT
+          - name: PBX_EUREKA_SERVER_PORT
             value: "{{ arender_broker_internal_port }}"
-          - name: PBX_HOSTNAME
+          - name: PBX_EUREKA_INSTANCE_METADATA.MAP_HOST.NAME
             value: {{ arender_pdfbox_service_name }}
       volumes:
         - emptyDir: {}

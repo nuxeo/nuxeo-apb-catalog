@@ -23,7 +23,7 @@ previewer_resources: '{"limits": {"cpu": "1","memory": "2Gi"},"requests": {"cpu"
 previewer_nuxeo_url: 'https://nuxeo.url/nuxeo'
 previewer_nuxeo_oauth_secret: 'OAUTH2_SECRET'
 
-arender_broker_service_name: nuxeo-arender-0-rendition-broker.int-arender-test.svc
+arender_broker_service_name: nuxeo-arender-0-rendition-broker.{{ namespace }}.svc
 
 
 

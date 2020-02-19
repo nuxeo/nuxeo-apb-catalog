@@ -15,7 +15,7 @@ arender_broker_dc_lookup: "{{ lookup('openshift', kind='DeploymentConfig', names
 arender_converter_dc_lookup: "{{ lookup('openshift', kind='DeploymentConfig', namespace=namespace, resource_name=arender_converter_dc_name) }}"
 arender_dfs_dc_lookup: "{{ lookup('openshift', kind='DeploymentConfig', namespace=namespace, resource_name=arender_dfs_dc_name) }}"
 arender_jni_dc_lookup: "{{ lookup('openshift', kind='DeploymentConfig', namespace=namespace, resource_name=arender_jni_dc_name) }}"
-arender_pdfbox_dc_lookup: "{{ lookup('openshift', kind='DeploymentConfig', namespace=namespace, resource_name=arender_pdfbox_dc_jni_name) }}"
+arender_pdfbox_dc_lookup: "{{ lookup('openshift', kind='DeploymentConfig', namespace=namespace, resource_name=arender_pdfbox_dc_name) }}"
 
 # Variables to hold queries
 ready_replicas_query: "[spec.replicas, status.readyReplicas]"
@@ -26,6 +26,14 @@ arender_jni_dc_query: "{{ arender_jni_dc_lookup | json_query(ready_replicas_quer
 arender_pdfbox_dc_query: "{{ arender_pdfbox_dc_lookup | json_query(ready_replicas_query) | unique | count == 1 }}"
 
 
+arender_broker_image: "{{ arender_docker_registry }}/{{ arender_rendition_image_broker}}:{{ arender_rendition_image_version }}"
+arender_converter_image: "{{ arender_docker_registry }}/{{ arender_rendition_image_converter}}:{{ arender_rendition_image_version }}"
+arender_dfs_image: "{{ arender_docker_registry }}/{{ arender_rendition_image_dfs}}:{{ arender_rendition_image_version }}"
+arender_jni_image: "{{ arender_docker_registry }}/{{ arender_rendition_image_jni}}:{{ arender_rendition_image_version }}"
+arender_pdfbox_image: "{{ arender_docker_registry }}/{{ arender_rendition_image_pdfbox}}:{{ arender_rendition_image_version }}"
+
+arender_rendition_image_pull_secret: "{{ name + '-rendition-pull-secret' if arender_rendition_image_pull_existing_secret is undefined else arender_rendition_image_pull_existing_secret }}"
+
 app_name: "{{ name }}"
 
 arender_broker_service_name: "{{ name }}-rendition-broker"
@@ -33,6 +41,7 @@ arender_broker_dc_name: "{{ name }}-rendition-broker"
 
 arender_converter_service_name: "{{ name }}-converter"
 arender_converter_dc_name: "{{ name }}-converter"
+arender_converter_as_name: "{{ name }}-autoscaling"
 
 arender_dfs_service_name: "{{ name }}-dfs"
 arender_dfs_dc_name: "{{ name }}-dfs"

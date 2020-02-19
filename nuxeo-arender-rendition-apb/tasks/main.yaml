@@ -12,8 +12,8 @@
     definition: "{{ lookup('template', item.name) | from_yaml }}"
   when: item.apply | default(True)
   loop:
-    - name: arender_broker_dc.yml.j2
-    - name: arender_broker_service.yml.j2
+    - name: arender_rendition_pull_secret.yml.j2
+      apply: "{{ arender_rendition_image_pull_existing_secret is undefined }}"
     - name: arender_converter_dc.yml.j2
     - name: arender_converter_service.yml.j2
     - name: arender_dfs_dc.yml.j2
@@ -22,6 +22,8 @@
     - name: arender_jni_service.yml.j2
     - name: arender_pdfbox_dc.yml.j2
     - name: arender_pdfbox_service.yml.j2
+    - name: arender_broker_dc.yml.j2
+    - name: arender_broker_service.yml.j2
 
 - name: "Wait for Rendition Deployment to become ready"
   debug:

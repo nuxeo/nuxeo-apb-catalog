@@ -24,3 +24,36 @@ plans:
       title: Project Name
       default: arender
       display_group: Project properties
+
+    - name: arender_rendition_image_registry
+      type: string
+      title: ARender rendition image
+      default: docker-private-arondor-group.packages.nuxeo.com
+      display_group: Container Image
+    - name: arender_rendition_image_version
+      type: string
+      title: ARender rendition image
+      default: "4.0.6.NX2.0"
+      display_group: Container Image
+
+    - name: arender_rendition_image_converter
+      type: string
+      title: ARender rendition image
+      default: arender-converter
+      display_group: Container Image
+
+
+    - name: arender_rendition_image_pull_existing_secret
+      type: string
+      title: Name of secret to use to pull image (Leave empty if yout want to use user/password)
+      default: docker-private-nuxeo
+      display_group: Container Image
+    - name: arender_rendition_image_pull_username
+      type: string
+      title: Username to use to pull the Docker image
+      default: nuxeo
+      display_group: Container Image
+    - name: arender_rendition_image_pull_password
+      type: password
+      title: Password to use to pull the Docker image
+      display_group: Container Image

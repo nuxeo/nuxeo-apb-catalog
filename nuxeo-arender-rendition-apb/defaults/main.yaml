@@ -14,26 +14,25 @@ app_image: docker.io/nuxeoapbcatalog/nuxeo-arender-rendition-apb
 namespace: "{{ lookup('env','NAMESPACE') | default('hello-world', true) }}"
 
 testing: false
+
+arender_rendition_image_registry: "docker-private-arondor-group.packages.nuxeo.com"
+arender_rendition_image_version: "4.0.6.NX2.0"
+arender_rendition_image_broker: arender-rendition-broker
+arender_rendition_image_converter: arender-converter
+arender_rendition_image_dfs: arender-dfs
+arender_rendition_image_jni: arender-jni-engine
+arender_rendition_image_pdfbox: arender-pdfbox
+
+
+
 arender_docker_registry: "docker-private-arondor-group.packages.nuxeo.com"
-arender_broker_image: "{{ arender_docker_registry }}/arender-rendition-broker"
-arender_converter_image: "{{ arender_docker_registry }}/arender-converter"
-arender_dfs_image: "{{ arender_docker_registry }}/arender-dfs"
-arender_jni_image: "{{ arender_docker_registry }}/arender-jni-engine"
-arender_pdfbox_image: "{{ arender_docker_registry }}/arender-pdfbox"
 
-arender_image_version: "1.0.1"
-arender_broker_image_version: "4.0.6.NX1.0"
-arender_converter_image_version: "4.0.6.NX1.0"
-arender_dfs_image_version: "4.0.6.NX1.0"
-arender_jni_image_version: "4.0.6.NX1.0"
-arender_pdfbox_image_version: "4.0.6.NX1.0"
-
-rendition_image_pullPolicy: Always
-arender_broker_image_pullPolicy: Always
-arender_converter_image_pullPolicy: Always
-arender_dfs_image_pullPolicy: Always
-arender_jni_image_pullPolicy: Always
-arender_pdfbox_image_pullPolicy: Always
+rendition_image_pullPolicy: IfNotPresent
+arender_broker_image_pullPolicy: IfNotPresent
+arender_converter_image_pullPolicy: IfNotPresent
+arender_dfs_image_pullPolicy: IfNotPresent
+arender_jni_image_pullPolicy: IfNotPresent
+arender_pdfbox_image_pullPolicy: IfNotPresent
 
 # broker_image_pull_secret: "docker-private-nuxeo"
 # converter_image_pull_secret: "docker-private-nuxeo"
