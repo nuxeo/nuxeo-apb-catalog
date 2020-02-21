@@ -13,8 +13,8 @@ apb_name: nuxeo-arender-previewer-apb
 namespace: "{{ lookup('env','NAMESPACE') | default('hello-world', true) }}"
 
 testing: false
-arender_previewer_image: docker-private-arondor-group.packages.nuxeo.com/arender-hmi
-arender_previewer_image_version: "4.0.6.NX2.0"
+arender_previewer_image: docker-private-arondor-group.packages.nuxeo.com/nuxeo/arender-previewer
+arender_previewer_image_version: "10.1.0-SNAPSHOT"
 
 previewer_image_pullPolicy: IfNotPresent
 previewer_resources: '{"limits": {"cpu": "1","memory": "2Gi"},"requests": {"cpu": ".5","memory": "1Gi"}}'
@@ -23,7 +23,5 @@ previewer_resources: '{"limits": {"cpu": "1","memory": "2Gi"},"requests": {"cpu"
 previewer_nuxeo_url: 'https://nuxeo.url/nuxeo'
 previewer_nuxeo_oauth_secret: 'OAUTH2_SECRET'
 
-arender_broker_service_name: nuxeo-arender-0-rendition-broker.{{ namespace }}.svc
-
-
+arender_rendition_service_name: arender-pool-1
 

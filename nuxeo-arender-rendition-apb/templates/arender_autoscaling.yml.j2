@@ -1,7 +1,7 @@
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ arender_converter_as_name }}
+  name: {{arender_as_prefix}}-{{ item.name }}
   namespace: {{ namespace }}
   labels:
     apb_name: '{{ apb_name }}'
@@ -10,10 +10,10 @@ metadata:
     apb_service_instance_id: '{{ _apb_service_instance_id }}'
     app: {{ app_name }}
 spec:
-  maxReplicas: 10
-  minReplicas: 2
+  maxReplicas: {{ arender_autoscaling_max }}
+  minReplicas: {{ arender_autoscaling_min }}
   scaleTargetRef:
     apiVersion: v1
     kind: DeploymentConfig
-    name: {{ arender_converter_dc_name }}
-  targetCPUUtilizationPercentage: 80
+    name: {{ item.target_dc }}
+  targetCPUUtilizationPercentage: {{ arender_autoscaling_targetCPU }}

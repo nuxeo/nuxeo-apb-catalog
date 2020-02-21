@@ -65,7 +65,10 @@ spec:
             timeoutSeconds: 5
           env:
             - name: ARENDERSRV_ARENDER_SERVER_RENDITION_HOSTS
-              value: {{ arender_rendition_broker_url }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ arender_binding_secret_name }}
+                  key: broker_service_url
             - name: nuxeoUrlEnv
               value: {{ previewer_nuxeo_url }}
             - name: nuxeoArenderSecretEnv
@@ -82,7 +85,19 @@ spec:
       initContainers:
         - name: init-rendition-broker
           image: busybox
-          command: ['sh', '-c', 'until nc -w1 {{ arender_broker_service_name }} 8761; do echo "waiting for rendition"; sleep 5; done;']
+          env:
+            - name: BROKER_SERVICE_DNS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ arender_binding_secret_name }}
+                  key: broker_service_dns
+            - name: BROKER_SERVICE_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ arender_binding_secret_name }}
+                  key: broker_service_port
+
+          command: ['sh', '-c', 'until nc -w1 $BROKER_SERVICE_DNS $BROKER_SERVICE_PORT; do echo "waiting for rendition"; sleep 5; done;']
       volumes:
         - emptyDir: {}
           name: home

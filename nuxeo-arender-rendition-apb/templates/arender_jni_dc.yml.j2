@@ -36,6 +36,7 @@ spec:
 {{ rendition_podAnnotations | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
 {% endif %}
     spec:
+      serviceAccountName: {{ arender_rendition_serviceaccount_name }}
 {% if rendition_securityContext is defined and (rendition_securityContext | from_yaml) %}
       rendition_securityContext:
 {{ rendition_securityContext | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}

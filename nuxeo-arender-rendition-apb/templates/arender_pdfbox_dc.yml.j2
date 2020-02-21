@@ -32,6 +32,7 @@ spec:
         app: {{ app_name }}
         role: rendition-pdfbox
     spec:
+      serviceAccountName: {{ arender_rendition_serviceaccount_name }}
       imagePullSecrets:
       - name: {{ arender_rendition_image_pull_secret }}
       containers:
