@@ -6,12 +6,18 @@
   when: in_cluster
 
 
+- name: "Creating Stack Service Account"
+  k8s:
+    state: "{{ state }}"
+    definition: "{{ lookup('template', 'arender_rendition_sa.yml.j2') | from_yaml }}"
+
 - name: "Set ARender objects state={{ state }}"
   k8s:
     state: "{{ state }}"
     definition: "{{ lookup('template', item.name) | from_yaml }}"
   when: item.apply | default(True)
   loop:
+    - name: arender_rendition_sa.yml.j2
     - name: arender_rendition_pull_secret.yml.j2
       apply: "{{ arender_rendition_image_pull_existing_secret is undefined }}"
     - name: arender_converter_dc.yml.j2
@@ -24,6 +30,26 @@
     - name: arender_pdfbox_service.yml.j2
     - name: arender_broker_dc.yml.j2
     - name: arender_broker_service.yml.j2
+
+
+- name: "Set Autoscaling objects {{ state }}"
+  k8s:
+    state: "{{ state }}"
+    definition: "{{ lookup('template', 'arender_autoscaling.yml.j2') | from_yaml }}"
+  loop:
+    - name: converter
+      target_dc: "{{ arender_converter_dc_name }}"
+    - name: pdfbox
+      target_dc: "{{ arender_pdfbox_dc_name }}"
+    - name: jni
+      target_dc: "{{ arender_jni_dc_name }}"
+    - name: dfs
+      target_dc: "{{ arender_dfs_dc_name }}"
+    - name: broker
+      target_dc: "{{ arender_broker_dc_name }}"
+
+
+
 
 - name: "Wait for Rendition Deployment to become ready"
   debug:
@@ -43,7 +69,9 @@
   asb_encode_binding:
     fields:
       app_name: "{{ name }}"
-      url: "{{ arender_previewer_route_lookup.spec.host  }}"
+      broker_service_dns: "{{ arender_broker_service_name }}.{{ namespace }}.svc"
+      broker_service_url: "http://{{ arender_broker_service_name }}.{{ namespace }}.svc:{{ arender_broker_internal_port}}/"
+      broker_service_port: "{{ arender_broker_internal_port}}"
   when:
     - state == "present"
     - in_cluster

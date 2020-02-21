@@ -36,12 +36,15 @@ arender_rendition_image_pull_secret: "{{ name + '-rendition-pull-secret' if aren
 
 app_name: "{{ name }}"
 
+arender_rendition_serviceaccount_name: "{{ name }}-service-account"
+
 arender_broker_service_name: "{{ name }}-rendition-broker"
 arender_broker_dc_name: "{{ name }}-rendition-broker"
 
 arender_converter_service_name: "{{ name }}-converter"
 arender_converter_dc_name: "{{ name }}-converter"
-arender_converter_as_name: "{{ name }}-autoscaling"
+
+arender_as_prefix: "{{ name }}-autoscaling"
 
 arender_dfs_service_name: "{{ name }}-dfs"
 arender_dfs_dc_name: "{{ name }}-dfs"

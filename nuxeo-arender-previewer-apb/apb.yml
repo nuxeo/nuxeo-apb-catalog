@@ -36,21 +36,21 @@ plans:
       title: Shared secret for OAuth2 exchange
       display_group: Client Nuxeo
 
-    - name: arender_broker_service_name
-      default: nuxeo-arender-0-rendition-broker.int-arender-test.svc
+    - name: arender_rendition_service_name
+      default: arender-pool-1
       type: string
-      title: URL of ARender rendition broker
-      display_group: ARender Rendition
+      title: Name or the rendition service to use
+      display_group: ARender Rendition Binding
 
     - name: arender_previewer_image
       type: string
       title: ARender previewer image
-      default: docker-private-arondor-group.packages.nuxeo.com/arender-hmi
+      default: docker-private-arondor-group.packages.nuxeo.com/nuxeo/arender-previewer
       display_group: Container Image
     - name: arender_previewer_image_version
       type: string
-      title: ARender previewer image
-      default: "4.0.6.NX2.0"
+      title: ARender previewer image version
+      default: "10.1.0-SNAPSHOT"
       display_group: Container Image
 
     - name: arender_previewer_image_pull_existing_secret

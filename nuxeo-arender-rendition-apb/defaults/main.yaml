@@ -25,6 +25,13 @@ arender_rendition_image_pdfbox: arender-pdfbox
 
 arender_docker_registry: "docker-private-arondor-group.packages.nuxeo.com"
 
+arender_rendition_image_pull_username: nuxeo
+arender_rendition_image_pull_password: password
+
+arender_autoscaling_min: 1
+arender_autoscaling_max: 10
+arender_autoscaling_targetCPU: 80
+
 rendition_image_pullPolicy: IfNotPresent
 arender_broker_image_pullPolicy: IfNotPresent
 arender_converter_image_pullPolicy: IfNotPresent

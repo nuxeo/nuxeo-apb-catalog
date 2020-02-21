@@ -52,6 +52,22 @@ plans:
       display_type: password
       display_group: Container Image
 
+    - name: arender_autoscaling_min
+      default: 1
+      type: number
+      title: Autoscaling Minimum replicas
+      display_group: Autoscaling
+    - name: arender_autoscaling_max
+      default: 10
+      type: number
+      title: Autoscaling Maximum replicas
+      display_group: Autoscaling
+    - name: arender_autoscaling_targetCPU
+      default: 80
+      type: number
+      title: Autoscaling Target CPU Usage percentage
+      display_group: Autoscaling
+
     - name: arender_broker_resources
       default: '{"limits": {"cpu": "1","memory": "1Gi"},"requests": {"cpu": "1","memory": "1Gi"}}'
       type: string
