@@ -77,11 +77,11 @@ spec:
 {% if previewer_resources is defined and (previewer_resources | from_yaml) %}
 {{ previewer_resources | from_yaml | to_nice_yaml(indent=2) | indent(12, true) }}
 {% endif %}
+          volumeMounts:
+          - name: temp
+            mountPath: /tmp
       imagePullSecrets:
         - name: {{ arender_previewer_image_pull_secret }}
-      volumeMounts:
-        - name: temporary
-          mountPath: /tmp
       initContainers:
         - name: init-rendition-broker
           image: busybox
@@ -99,7 +99,8 @@ spec:
 
           command: ['sh', '-c', 'until nc -w1 $BROKER_SERVICE_DNS $BROKER_SERVICE_PORT; do echo "waiting for rendition"; sleep 5; done;']
       volumes:
-        - emptyDir: {}
-          name: home
+        - name: temp
+          persistentVolumeClaim:
+            claimName: {{ arender_previewer_pvc_name }}
   triggers:
     - type: ConfigChange

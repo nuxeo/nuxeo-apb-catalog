@@ -11,6 +11,19 @@
     state: "{{ state }}"
     definition: "{{ lookup('template', 'arender_rendition_sa.yml.j2') | from_yaml }}"
 
+
+- name: "Set PVC {{ state }}"
+  k8s:
+    state: "{{ state }}"
+    definition: "{{ lookup('template', 'arender_pvc.yml.j2') | from_yaml }}"
+  loop:
+    - pvc_name: "{{ arender_rendition_broker_pvc_name }}"
+    - pvc_name: "{{ arender_converter_pvc_name }}"
+    - pvc_name: "{{ arender_pdfbox_pvc_name }}"
+    - pvc_name: "{{ arender_jni_pvc_name }}"
+    - pvc_name: "{{ arender_dfs_pvc_name }}"
+
+
 - name: "Set ARender objects state={{ state }}"
   k8s:
     state: "{{ state }}"
@@ -43,8 +56,6 @@
       target_dc: "{{ arender_pdfbox_dc_name }}"
     - name: jni
       target_dc: "{{ arender_jni_dc_name }}"
-    - name: dfs
-      target_dc: "{{ arender_dfs_dc_name }}"
     - name: broker
       target_dc: "{{ arender_broker_dc_name }}"
 

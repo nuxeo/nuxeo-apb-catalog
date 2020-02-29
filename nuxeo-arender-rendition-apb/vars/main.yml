@@ -55,6 +55,14 @@ arender_jni_dc_name: "{{ name }}-jni"
 arender_pdfbox_service_name: "{{ name }}-pdfbox"
 arender_pdfbox_dc_name: "{{ name }}-pdfbox"
 
+
+arender_rendition_broker_pvc_name: "{{ name }}-tmp-broker"
+arender_converter_pvc_name: "{{ name }}-tmp-converter"
+arender_pdfbox_pvc_name: "{{ name }}-tmp-pdfbox"
+arender_jni_pvc_name: "{{ name }}-tmp-jni"
+arender_dfs_pvc_name: "{{ name }}-tmp-dfs"
+
+
 # BROKER READINESS / LIVENESS
 arender_broker_internal_port: "8761"
 arender_broker_external_port: "8761"

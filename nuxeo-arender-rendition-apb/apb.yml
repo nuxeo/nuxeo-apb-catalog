@@ -98,3 +98,7 @@ plans:
       title: DFS Pod resource requests and limits
       display_type: textarea
       display_group: Container Specs
+    - name: persistentVolume_storageClass
+      default: 'shared'
+      title: Storage classe name (must be capable of RWX)
+      display_group: Container Specs

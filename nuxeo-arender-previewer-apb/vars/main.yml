@@ -23,6 +23,9 @@ arender_previewer_service_name: "{{ name }}-previewer"
 arender_previewer_route_name: "{{ name }}-previewer"
 arender_previewer_config_name: "{{ name }}-previewer"
 arender_previewer_dc_name: "{{ name }}-previewer"
+arender_previewer_autoscaling_name: "{{ name }}-previewer"
+
+arender_previewer_pvc_name: "{{ name }}-previewer"
 
 arender_previewer_service_binding_name: "{{ name }}-rendition-binding"
 arender_binding_secret_name: "{{ name }}-rendition-binding"

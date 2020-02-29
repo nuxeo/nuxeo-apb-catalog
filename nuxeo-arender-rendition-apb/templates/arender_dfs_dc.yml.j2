@@ -69,8 +69,12 @@ spec:
 {% if arender_dfs_resources is defined and (arender_dfs_resources | from_yaml) %}
 {{ arender_dfs_resources | from_yaml | to_nice_yaml(indent=2) | indent(12, true) }}
 {% endif %}
+          volumeMounts:
+          - name: temp
+            mountPath: /arender/tmp
       volumes:
-        - emptyDir: {}
-          name: home
+        - name: temp
+          persistentVolumeClaim:
+            claimName: {{ arender_dfs_pvc_name }}
   triggers:
     - type: ConfigChange

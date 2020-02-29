@@ -76,8 +76,12 @@ spec:
 {% if arender_jni_resources is defined and (arender_jni_resources | from_yaml) %}
 {{ arender_jni_resources | from_yaml | to_nice_yaml(indent=2) | indent(12, true) }}
 {% endif %}
+          volumeMounts:
+          - name: temp
+            mountPath: /arender/tmp
       volumes:
-        - emptyDir: {}
-          name: home
+        - name: temp
+          persistentVolumeClaim:
+            claimName: {{ arender_jni_pvc_name }}
   triggers:
     - type: ConfigChange

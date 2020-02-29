@@ -68,8 +68,12 @@ spec:
 {% if arender_pdfbox_resources is defined and (arender_pdfbox_resources | from_yaml) %}
 {{ arender_pdfbox_resources | from_yaml | to_nice_yaml(indent=2) | indent(12, true) }}
 {% endif %}
+          volumeMounts:
+          - name: temp
+            mountPath: /arender/tmp
       volumes:
-        - emptyDir: {}
-          name: home
+        - name: temp
+          persistentVolumeClaim:
+            claimName: {{ arender_pdfbox_pvc_name }}
   triggers:
     - type: ConfigChange

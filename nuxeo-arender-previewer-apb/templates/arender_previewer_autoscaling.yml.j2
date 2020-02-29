@@ -1,0 +1,19 @@
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ arender_previewer_autoscaling_name }}
+  namespace: {{ namespace }}
+  labels:
+    apb_name: '{{ apb_name }}'
+    apb_plan_id: '{{ _apb_plan_id }}'
+    apb_service_class_id: '{{ _apb_service_class_id }}'
+    apb_service_instance_id: '{{ _apb_service_instance_id }}'
+    app: {{ app_name }}
+spec:
+  maxReplicas: {{ arender_autoscaling_max }}
+  minReplicas: {{ arender_autoscaling_min }}
+  scaleTargetRef:
+    apiVersion: v1
+    kind: DeploymentConfig
+    name: {{ arender_previewer_dc_name }}
+  targetCPUUtilizationPercentage: {{ arender_autoscaling_targetCPU }}
