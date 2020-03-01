@@ -100,5 +100,6 @@ plans:
       display_group: Container Specs
     - name: persistentVolume_storageClass
       default: 'shared'
+      type: string
       title: Storage classe name (must be capable of RWX)
       display_group: Container Specs
