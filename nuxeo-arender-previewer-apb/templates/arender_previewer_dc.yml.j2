@@ -78,8 +78,6 @@ spec:
 {{ previewer_resources | from_yaml | to_nice_yaml(indent=2) | indent(12, true) }}
 {% endif %}
           volumeMounts:
-          - name: temp
-            mountPath: /tmp
           - name: logs
             mountPath: /usr/local/tomcat/logs
           - name: tmp
