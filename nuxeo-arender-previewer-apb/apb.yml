@@ -88,7 +88,7 @@ plans:
       display_group: Container Specs
 
     - name: previewer_resources
-      default: '{"limits": {"cpu": "2","memory": "2Gi"},"requests": {"cpu": "1","memory": "1Gi"}}'
+      default: '{"limits": {"cpu": "2","memory": "3Gi"},"requests": {"cpu": "1","memory": "2Gi"}}'
       type: string
       title: Previewer Pod resource requests and limits
       display_type: textarea

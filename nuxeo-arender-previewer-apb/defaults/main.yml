@@ -17,7 +17,7 @@ arender_previewer_image: docker-private-arondor-group.packages.nuxeo.com/nuxeo/a
 arender_previewer_image_version: "10.1.0-SNAPSHOT"
 
 previewer_image_pullPolicy: IfNotPresent
-previewer_resources: '{"limits": {"cpu": "1","memory": "2Gi"},"requests": {"cpu": ".5","memory": "1Gi"}}'
+previewer_resources: '{"limits": {"cpu": "1","memory": "3Gi"},"requests": {"cpu": ".5","memory": "2Gi"}}'
 
 arender_autoscaling_min: 1
 arender_autoscaling_max: 10

@@ -80,6 +80,12 @@ spec:
           volumeMounts:
           - name: temp
             mountPath: /tmp
+          - name: logs
+            mountPath: /usr/local/tomcat/logs
+          - name: tmp
+            mountPath: /usr/local/tomcat/temp
+          - name: work
+            mountPath: /usr/local/tomcat/work
       imagePullSecrets:
         - name: {{ arender_previewer_image_pull_secret }}
       initContainers:
@@ -99,8 +105,11 @@ spec:
 
           command: ['sh', '-c', 'until nc -w1 $BROKER_SERVICE_DNS $BROKER_SERVICE_PORT; do echo "waiting for rendition"; sleep 5; done;']
       volumes:
-        - name: temp
-          persistentVolumeClaim:
-            claimName: {{ arender_previewer_pvc_name }}
+        - name: logs
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {}
+        - name: work
+          emptyDir: {}
   triggers:
     - type: ConfigChange
