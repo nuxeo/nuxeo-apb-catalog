@@ -109,3 +109,9 @@ plans:
       type: number
       title: Autoscaling Target CPU Usage percentage
       display_group: Autoscaling
+
+    - name: arender_previewer_gw_timeout_in_seconds
+      default: "120s"
+      type: string
+      title: Gateway timeout
+      display_group: Others

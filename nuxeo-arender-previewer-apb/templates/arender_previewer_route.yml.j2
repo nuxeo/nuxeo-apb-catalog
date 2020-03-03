@@ -2,6 +2,8 @@
 apiVersion: v1
 kind: Route
 metadata:
+  annotations:
+    haproxy.router.openshift.io/timeout: {{ arender_previewer_gw_timeout_in_seconds }}
   labels:
     app: {{ app_name }}
     apb_name: '{{ apb_name }}'
