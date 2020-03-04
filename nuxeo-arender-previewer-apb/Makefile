@@ -1,5 +1,5 @@
 NAMESPACE = int-arender-dev
-CONFIG=config.json
+CONFIG=`cat config.json`
 DOCKERHOST = docker.io
 DOCKERORG = nuxeo-arender-previewer-apb
 IMAGENAME = nuxeo-arender-previewer
