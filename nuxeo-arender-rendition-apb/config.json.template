@@ -1,6 +1,6 @@
 {
   "project_name":"arender-pool-1",
-  "arender_debug_pod": false,
+  "arender_debug_pod": true,
   "arender_rendition_image_pull_existing_secret": "docker-private-nuxeo",
   "namespace": "int-arender-dev"
 }
