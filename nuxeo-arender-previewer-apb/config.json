@@ -1,0 +1,10 @@
+{
+  "namespace": "int-arender-dev",
+  "project_name": "dev",
+  "previewer_nuxeo_url":"https://nuxeo.url/nuxeo",
+  "previewer_nuxeo_oauth_secret":"asecret",
+  "arender_rendition_service_name":"arender-pool-1",
+  "arender_previewer_image_version":"10.1.0-SNAPSHOT",
+  "previewer_image_pullPolicy":"Always",
+  "arender_previewer_image_pull_existing_secret":"docker-private-nuxeo"
+}

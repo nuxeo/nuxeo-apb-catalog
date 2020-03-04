@@ -1,20 +1,25 @@
+NAMESPACE = int-arender-dev
+CONFIG=config.json
 DOCKERHOST = docker.io
 DOCKERORG = nuxeo-arender-previewer-apb
 IMAGENAME = nuxeo-arender-previewer
 TAG = latest
 USER=$(shell id -u)
 PWD=$(shell pwd)
-build_and_push: apb_build docker_push apb_push
+build_and_push: build push
 
-.PHONY: apb_build
-apb_build:
-	apb prepare
-	docker build -t $(DOCKERHOST)/$(DOCKERORG)/$(IMAGENAME):$(TAG) .
+.PHONY: build
+build:
+		apb prepare
+		docker build -t $(DOCKERHOST)/$(DOCKERORG)/$(IMAGENAME):$(TAG) .
 
-.PHONY: docker_push
-docker_push:
-	docker push $(DOCKERHOST)/$(DOCKERORG)/$(IMAGENAME):$(TAG)
+.PHONY: push
+push:
+		docker push $(DOCKERHOST)/$(DOCKERORG)/$(IMAGENAME):$(TAG)
 
-.PHONY: apb_push
-apb_push:
-	apb push
+
+provision: build
+	 	docker run -ti --rm --net=host -v ${HOME}/.kube:/opt/apb/.kube:z -u $(USER) $(DOCKERHOST)/$(DOCKERORG)/$(IMAGENAME):$(TAG) provision -e "${CONFIG}"
+
+deprovision: build
+		docker run -ti --rm --net=host -v ${HOME}/.kube:/opt/apb/.kube:z -u $(USER) $(DOCKERHOST)/$(DOCKERORG)/$(IMAGENAME):$(TAG) deprovision -e "${CONFIG}"
