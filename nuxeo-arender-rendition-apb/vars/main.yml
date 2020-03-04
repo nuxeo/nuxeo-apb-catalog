@@ -58,10 +58,7 @@ arender_pdfbox_dc_name: "{{ name }}-pdfbox"
 arender_debug_dc_name: "{{ name }}-debug"
 
 arender_rendition_broker_pvc_name: "{{ name }}-tmp-broker"
-arender_converter_pvc_name: "{{ name }}-tmp-converter"
-arender_pdfbox_pvc_name: "{{ name }}-tmp-pdfbox"
-arender_jni_pvc_name: "{{ name }}-tmp-jni"
-arender_dfs_pvc_name: "{{ name }}-tmp-dfs"
+arender_common_tmp_name: "{{ name }}-tmp-common"
 arender_logs_pvc_name: "{{ name }}-logs"
 
 arender_converter_log_configmap_name: "{{ name }}-converter-log"

@@ -18,10 +18,7 @@
     definition: "{{ lookup('template', 'arender_pvc.yml.j2') | from_yaml }}"
   loop:
     - pvc_name: "{{ arender_rendition_broker_pvc_name }}"
-    - pvc_name: "{{ arender_converter_pvc_name }}"
-    - pvc_name: "{{ arender_pdfbox_pvc_name }}"
-    - pvc_name: "{{ arender_jni_pvc_name }}"
-    - pvc_name: "{{ arender_dfs_pvc_name }}"
+    - pvc_name: "{{ arender_common_tmp_name }}"
     - pvc_name: "{{ arender_logs_pvc_name }}"
 
 - name: "Set Log config {{ state }}"

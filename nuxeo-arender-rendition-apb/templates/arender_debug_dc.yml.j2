@@ -30,34 +30,19 @@ spec:
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
           volumeMounts:
-            - mountPath: /mount/dfs
-              name: dfs
-            - mountPath: /mount/converter
-              name: converter
+            - mountPath: /mount/tmp
+              name: tmp
             - mountPath: /mount/broker
-              name: broker
-            - mountPath: /mount/jni
-              name: jni
-            - mountPath: /mount/pdfbox
-              name: pdfbox
+              name: broker-tmp
             - mountPath: /mount/logs
               name: logs
       volumes:
-        - name: dfs
+        - name: tmp
           persistentVolumeClaim:
-            claimName: "{{ arender_pdfbox_pvc_name }}"
-        - name: converter
-          persistentVolumeClaim:
-            claimName: "{{ arender_converter_pvc_name }}"
+            claimName: "{{ arender_common_tmp_name }}"
         - name: broker
           persistentVolumeClaim:
             claimName: "{{ arender_rendition_broker_pvc_name }}"
-        - name: jni
-          persistentVolumeClaim:
-            claimName: "{{ arender_jni_pvc_name }}"
-        - name: pdfbox
-          persistentVolumeClaim:
-            claimName: "{{ arender_pdfbox_pvc_name }}"
         - name: logs
           persistentVolumeClaim:
             claimName: "{{ arender_logs_pvc_name }}"

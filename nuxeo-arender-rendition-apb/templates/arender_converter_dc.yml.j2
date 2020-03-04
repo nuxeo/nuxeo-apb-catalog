@@ -90,7 +90,7 @@ spec:
       volumes:
         - name: temp
           persistentVolumeClaim:
-            claimName: {{ arender_converter_pvc_name }}
+            claimName: {{ arender_common_tmp_name }}
         - name: config
           configMap:
             name: {{ arender_converter_log_configmap_name }}
