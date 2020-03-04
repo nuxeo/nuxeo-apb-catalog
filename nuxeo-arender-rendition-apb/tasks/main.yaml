@@ -22,6 +22,23 @@
     - pvc_name: "{{ arender_pdfbox_pvc_name }}"
     - pvc_name: "{{ arender_jni_pvc_name }}"
     - pvc_name: "{{ arender_dfs_pvc_name }}"
+    - pvc_name: "{{ arender_logs_pvc_name }}"
+
+- name: "Set Log config {{ state }}"
+  k8s:
+    state: "{{ state }}"
+    definition: "{{ lookup('template', 'arender_log_config.yml.j2') | from_yaml }}"
+  loop:
+    - name: "{{ arender_converter_log_configmap_name }}"
+      file: arender_converter_logback.xml
+    - name: "{{ arender_dfs_log_configmap_name }}"
+      file: arender_dfs_logback.xml
+    - name: "{{ arender_jni_log_configmap_name }}"
+      file: arender_jni_logback.xml
+    - name: "{{ arender_pdfbox_log_configmap_name }}"
+      file: arender_pdfbox_logback.xml
+    - name: "{{ arender_broker_log_configmap_name }}"
+      file: arender_broker_logback.xml
 
 
 - name: "Set ARender objects state={{ state }}"
@@ -43,6 +60,8 @@
     - name: arender_pdfbox_service.yml.j2
     - name: arender_broker_dc.yml.j2
     - name: arender_broker_service.yml.j2
+    - name: arender_debug_dc.yml.j2
+      apply: "{{ arender_debug_pod == true }}"
 
 
 - name: "Set Autoscaling objects {{ state }}"

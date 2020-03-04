@@ -33,6 +33,13 @@ spec:
 {% endif %}
       imagePullSecrets:
       - name: {{ arender_rendition_image_pull_secret }}
+      initContainers:
+        - name: init-create-log-dir
+          image: busybox
+          command: ['mkdir', '-m', '770', '-p', '/logs/arender-dfs']
+          volumeMounts:
+          - name: logs
+            mountPath: /logs
       containers:
         - image: {{ arender_dfs_image }}
           imagePullPolicy: {{ arender_dfs_image_pullPolicy }}
@@ -65,6 +72,12 @@ spec:
             value: {{ arender_dfs_service_name }}
           - name: DFS_EUREKA_INSTANCE_METADATA.MAP_SOURCE.D.F.S
             value: http://{{ arender_dfs_service_name }}:{{ arender_dfs_internal_port }}
+          - name: DFS_LOGGING_CONFIG
+            value: "/arender/modules/dfs-service/config/logback-spring.xml"
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
           resources:
 {% if arender_dfs_resources is defined and (arender_dfs_resources | from_yaml) %}
 {{ arender_dfs_resources | from_yaml | to_nice_yaml(indent=2) | indent(12, true) }}
@@ -72,9 +85,19 @@ spec:
           volumeMounts:
           - name: temp
             mountPath: /arender/tmp
+          - name: config
+            mountPath: /arender/modules/dfs-service/config
+          - name: logs
+            mountPath: /logs
       volumes:
         - name: temp
           persistentVolumeClaim:
             claimName: {{ arender_dfs_pvc_name }}
+        - name: config
+          configMap:
+            name: {{ arender_dfs_log_configmap_name }}
+        - name: logs
+          persistentVolumeClaim:
+            claimName: {{ arender_logs_pvc_name }}
   triggers:
     - type: ConfigChange

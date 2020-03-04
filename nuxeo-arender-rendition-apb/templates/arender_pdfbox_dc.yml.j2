@@ -35,6 +35,13 @@ spec:
       serviceAccountName: {{ arender_rendition_serviceaccount_name }}
       imagePullSecrets:
       - name: {{ arender_rendition_image_pull_secret }}
+      initContainers:
+        - name: init-create-log-dir
+          image: busybox
+          command: ['mkdir', '-m', '770', '-p', '/logs/arender-pdfbox']
+          volumeMounts:
+          - name: logs
+            mountPath: /logs
       containers:
         - image: {{ arender_pdfbox_image }}
           imagePullPolicy: {{ arender_pdfbox_image_pullPolicy }}
@@ -64,6 +71,12 @@ spec:
             value: "{{ arender_broker_internal_port }}"
           - name: PBX_EUREKA_INSTANCE_METADATA.MAP_HOST.NAME
             value: {{ arender_pdfbox_service_name }}
+          - name: PBX_LOGGING_CONFIG
+            value: "/arender/modules/pdfbox-service/config/logback-spring.xml"
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
           resources:
 {% if arender_pdfbox_resources is defined and (arender_pdfbox_resources | from_yaml) %}
 {{ arender_pdfbox_resources | from_yaml | to_nice_yaml(indent=2) | indent(12, true) }}
@@ -71,9 +84,19 @@ spec:
           volumeMounts:
           - name: temp
             mountPath: /arender/tmp
+          - name: config
+            mountPath: /arender/modules/pdfbox-service/config
+          - name: logs
+            mountPath: /logs
       volumes:
         - name: temp
           persistentVolumeClaim:
             claimName: {{ arender_pdfbox_pvc_name }}
+        - name: config
+          configMap:
+            name: {{ arender_pdfbox_log_configmap_name }}
+        - name: logs
+          persistentVolumeClaim:
+            claimName: {{ arender_logs_pvc_name }}
   triggers:
     - type: ConfigChange

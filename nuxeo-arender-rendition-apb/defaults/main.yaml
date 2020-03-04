@@ -45,4 +45,6 @@ arender_pdfbox_resources: '{"limits": {"cpu": "1","memory": "1Gi"},"requests": {
 arender_jni_resources: '{"limits": {"cpu": "2","memory": "2Gi"},"requests": {"cpu": "2","memory": "2Gi"}}'
 arender_dfs_resources: '{"limits": {"cpu": "1","memory": "512M"},"requests": {"cpu": "1","memory": "512M"}}'
 
+arender_debug_pod: false
+
 persistentVolume_storageClass: shared

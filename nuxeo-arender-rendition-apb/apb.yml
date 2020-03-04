@@ -103,3 +103,11 @@ plans:
       type: string
       title: Storage classe name (must be capable of RWX)
       display_group: Container Specs
+
+    - name: arender_debug_pod
+      default: false
+      type: boolean
+      display_type: checkbox
+      title: Deploy a debug pod
+      display_group: Others
+

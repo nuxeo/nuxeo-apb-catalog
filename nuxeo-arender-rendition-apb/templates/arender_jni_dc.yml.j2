@@ -43,6 +43,13 @@ spec:
 {% endif %}
       imagePullSecrets:
       - name: {{ arender_rendition_image_pull_secret }}
+      initContainers:
+        - name: init-create-log-dir
+          image: busybox
+          command: ['mkdir', '-m', '770', '-p', '/logs/arender-jni']
+          volumeMounts:
+          - name: logs
+            mountPath: /logs
       containers:
         - image: {{ arender_jni_image }}
           imagePullPolicy: {{ arender_jni_image_pullPolicy }}
@@ -72,6 +79,12 @@ spec:
             value: "{{ arender_broker_internal_port }}"
           - name: JNI_EUREKA_INSTANCE_METADATA.MAP_HOST.NAME
             value: {{ arender_jni_service_name }}
+          - name: JNI_LOGGING_CONFIG
+            value: "/arender/modules/jni-service/config/logback-spring.xml"
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
           resources:
 {% if arender_jni_resources is defined and (arender_jni_resources | from_yaml) %}
 {{ arender_jni_resources | from_yaml | to_nice_yaml(indent=2) | indent(12, true) }}
@@ -79,9 +92,19 @@ spec:
           volumeMounts:
           - name: temp
             mountPath: /arender/tmp
+          - name: config
+            mountPath: /arender/modules/jni-service/config
+          - name: logs
+            mountPath: /logs
       volumes:
         - name: temp
           persistentVolumeClaim:
             claimName: {{ arender_jni_pvc_name }}
+        - name: config
+          configMap:
+            name: {{ arender_jni_log_configmap_name }}
+        - name: logs
+          persistentVolumeClaim:
+            claimName: {{ arender_logs_pvc_name }}
   triggers:
     - type: ConfigChange

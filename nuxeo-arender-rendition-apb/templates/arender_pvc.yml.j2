@@ -15,7 +15,7 @@ spec:
   - ReadWriteMany
   resources:
     requests:
-      storage: 10Gi
+      storage: 50Gi
 {% if persistentVolume_storageClass is defined and (persistentVolume_storageClass | trim | length) > 0 %}
 {% if '-' == persistentVolume_storageClass %}
   storageClassName: ""
