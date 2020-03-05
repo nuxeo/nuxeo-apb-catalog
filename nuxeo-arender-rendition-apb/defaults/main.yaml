@@ -50,5 +50,5 @@ arender_debug_pod: false
 persistentVolume_storageClass: shared
 
 
-arender_rendition_imagemagick_options: '-quality,100,-density,72x72,-units,PixelsPerInch,-auto-orient,-geometry,1920x1920,+repage'
+arender_rendition_imagemagick_options: '-quality,100,-density,72x72,-units,PixelsPerInch,-auto-orient,+repage'
 arender_rendition_conversion_timeout: 120
