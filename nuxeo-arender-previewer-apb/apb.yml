@@ -30,6 +30,11 @@ plans:
       type: string
       title: Url of the Nuxeo client
       display_group: Client Nuxeo
+    - name: previewer_nuxeo_client_timeout
+      default: 60
+      type: number
+      title: Timeout for the Nuxeo Client
+      display_group: Client Nuxeo
     - name: previewer_nuxeo_oauth_secret
       default: 'OAUTH2_SECRET'
       type: string
@@ -88,7 +93,7 @@ plans:
       display_group: Container Specs
 
     - name: previewer_resources
-      default: '{"limits": {"cpu": "2","memory": "3Gi"},"requests": {"cpu": "1","memory": "2Gi"}}'
+      default: '{"limits": {"cpu": "2","memory": "4Gi"},"requests": {"cpu": "1","memory": "3Gi"}}'
       type: string
       title: Previewer Pod resource requests and limits
       display_type: textarea
