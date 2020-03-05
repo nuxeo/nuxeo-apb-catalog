@@ -17,13 +17,14 @@ arender_previewer_image: docker-private-arondor-group.packages.nuxeo.com/nuxeo/a
 arender_previewer_image_version: "10.1.0-SNAPSHOT"
 
 previewer_image_pullPolicy: IfNotPresent
-previewer_resources: '{"limits": {"cpu": "1","memory": "3Gi"},"requests": {"cpu": ".5","memory": "2Gi"}}'
+previewer_resources: '{"limits": {"cpu": "2","memory": "4Gi"},"requests": {"cpu": "1","memory": "3Gi"}}'
 
 arender_autoscaling_min: 1
 arender_autoscaling_max: 10
 arender_autoscaling_targetCPU: 80
 
 previewer_nuxeo_url: 'https://nuxeo.url/nuxeo'
+previewer_nuxeo_client_timeout: 60
 previewer_nuxeo_oauth_secret: 'OAUTH2_SECRET'
 
 arender_rendition_service_name: arender-pool-1
