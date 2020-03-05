@@ -72,6 +72,13 @@ spec:
             value: {{ arender_converter_service_name }}
           - name: TKC_LOGGING_CONFIG
             value: "/arender/modules/conversion-service/config/logback-spring.xml"
+
+          - name: TKC_TOOLS_IMAGEMAGICK_OPTIONS
+            value: "{{ arender_rendition_imagemagick_options }}"
+
+          - name: TKC_IMAGE_CONVERSION_TIMEOUT
+            value: "{{ arender_rendition_conversion_timeout }}"
+
           - name: POD_NAME
             valueFrom:
               fieldRef:

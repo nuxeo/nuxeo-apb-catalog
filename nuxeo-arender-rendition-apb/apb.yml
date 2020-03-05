@@ -111,3 +111,14 @@ plans:
       title: Deploy a debug pod
       display_group: Others
 
+    - name: arender_rendition_imagemagick_options
+      default: '-quality,100,-density,72x72,-units,PixelsPerInch,-auto-orient,-geometry,1920x1920,+repage'
+      type: string
+      title: Options passed to Image Magick for conversions
+      display_group: ARender configuration
+
+    - name: arender_rendition_conversion_timeout
+      default: 120
+      type: number
+      title: Timeout for conversion
+      display_group: ARender configuration

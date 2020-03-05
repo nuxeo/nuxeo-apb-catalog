@@ -40,7 +40,7 @@ spec:
         - name: tmp
           persistentVolumeClaim:
             claimName: "{{ arender_common_tmp_name }}"
-        - name: broker
+        - name: broker-tmp
           persistentVolumeClaim:
             claimName: "{{ arender_rendition_broker_pvc_name }}"
         - name: logs
