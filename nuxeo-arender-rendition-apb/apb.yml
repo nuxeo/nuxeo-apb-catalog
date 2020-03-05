@@ -75,7 +75,7 @@ plans:
       display_type: textarea
       display_group: Container Specs
     - name: arender_converter_resources
-      default: '{"limits": {"cpu": "1","memory": "2Gi"},"requests": {"cpu": "1","memory": "2Gi"}}'
+      default: '{"limits": {"cpu": "1","memory": "6Gi"},"requests": {"cpu": "500m","memory": "4Gi"}}'
       type: string
       title: Converter Pod resource requests and limits
       display_type: textarea
@@ -112,7 +112,7 @@ plans:
       display_group: Others
 
     - name: arender_rendition_imagemagick_options
-      default: '-quality,100,-density,72x72,-units,PixelsPerInch,-auto-orient,-geometry,1920x1920,+repage'
+      default: '-quality,100,-density,72x72,-units,PixelsPerInch,-auto-orient,+repage'
       type: string
       title: Options passed to Image Magick for conversions
       display_group: ARender configuration
