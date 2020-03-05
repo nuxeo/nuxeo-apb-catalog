@@ -1,8 +1,8 @@
 NAMESPACE = int-arender-dev
 CONFIG=`cat config.json`
 DOCKERHOST = docker.io
-DOCKERORG = nuxeo-arender-previewer-apb
-IMAGENAME = nuxeo-arender-previewer
+DOCKERORG = nuxeoapbcatalog
+IMAGENAME = nuxeo-arender-previewer-apb
 TAG = latest
 USER=$(shell id -u)
 PWD=$(shell pwd)

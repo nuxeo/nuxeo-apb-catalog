@@ -19,7 +19,8 @@
     - name: arender_previewer_service.yml.j2
     - name: arender_previewer_config.yml.j2
     - name: arender_previewer_route.yml.j2
-    - name: arender_previewer_autoscaling.yml.j2
+    # Previewer does not support autoscaling right now
+    # - name: arender_previewer_autoscaling.yml.j2
 
 
 - name: "Wait for Previewer Deployment to become ready"
