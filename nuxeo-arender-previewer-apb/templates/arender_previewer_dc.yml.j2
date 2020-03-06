@@ -72,7 +72,7 @@ spec:
             - name: nuxeoUrlEnv
               value: {{ previewer_nuxeo_url }}
             - name: ARENDERSRV_NUXEO_CLIENT_TIMEOUT
-              value: {{ previewer_nuxeo_client_timeout }}
+              value: "{{ previewer_nuxeo_client_timeout }}"
             - name: nuxeoArenderSecretEnv
               value: {{ previewer_nuxeo_oauth_secret }}
           resources:
