@@ -49,8 +49,8 @@ spec:
         imagePullPolicy: IfNotPresent
         name: {{ app_name }}
         env:
-          - name: "ELASTICSERACH.URL"
-            value: {{ elasticsearch_service_name }} 
+          - name: "ELASTICSEARCH.URL"
+            value: {{ elasticsearch_service_name }}
         resources:
           limits:
             memory: {{ kibana_memory_limit }}
