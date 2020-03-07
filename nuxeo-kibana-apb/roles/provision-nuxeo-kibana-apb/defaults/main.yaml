@@ -21,3 +21,6 @@ kibana_memory_limit: 256Mi
 kibana_pvc_size: 200Mi
 kibana_secure: "true"
 kibana_storage_plan: "ephemeral"
+
+
+elasticsearch_label_selector: component=elasticsearch

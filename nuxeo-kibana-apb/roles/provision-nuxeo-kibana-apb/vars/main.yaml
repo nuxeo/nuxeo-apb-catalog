@@ -13,7 +13,7 @@ name: "{{ project_name if project_name is defined else 'nuxeo-kibana-' + (_apb_s
 
 kibana_dc_name: "{{ name }}-kibana"
 kibana_config_name: "{{ name }}-kibana"
-elasticsearch_service_lookup: "{{ lookup('openshift', kind='Service', namespace=namespace, label_selector='component=elasticsearch' ) }}"
+elasticsearch_service_lookup: "{{ lookup('openshift', kind='Service', namespace=namespace, label_selector=elasticsearch_label_selector ) }}"
 elasticsearch_service_name: "{{ elasticsearch_service_lookup | json_query('metadata.name') }}.{{ namespace }}.svc:9200"
 
 app_name: "{{ name }}"
