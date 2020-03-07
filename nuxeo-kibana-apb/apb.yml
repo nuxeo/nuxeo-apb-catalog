@@ -1,6 +1,6 @@
 version: 1.0
 name: nuxeo-kibana-apb
-description: Kibana is a data visualization plugin for Elasticsearch 
+description: Kibana is a data visualization plugin for Elasticsearch
 bindable: False
 async: optional
 tags:
@@ -40,12 +40,17 @@ plans:
         required: true
         default: 6.3.2
         type: enum
-        enum: ["6.3.2", "5.6.9"]
+        enum: ["7.6.1", 6.3.2", "5.6.9"]
       - name: kibana_storage_plan
         type: string
         title: ephemeral or persistent
         description: Take the default option ephemeral storage or choose persistent
         default: ephemeral
+      - name: elasticsearch_label_selector
+        type: string
+        default: component=elasticsearch
+        title: ES Label selector
+        description: Label selector to use in order to find the Elasticsearch service
       - name: kibana_secure
         type: boolean
         default: true

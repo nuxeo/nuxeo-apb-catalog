@@ -15,4 +15,4 @@ data:
     # Default Kibana configuration from kibana-docker.
     server.name: kibana
     server.host: "0"
-    elasticsearch.url: http://{{ elasticsearch_service_name }}
+    elasticsearch.{% if kibana_image_version == "7.6.1"%}hosts{% else %}url{% endif %}: http://{{ elasticsearch_service_name }}
