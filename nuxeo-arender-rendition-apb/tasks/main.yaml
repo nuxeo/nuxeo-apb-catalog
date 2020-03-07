@@ -81,7 +81,7 @@
 - name: "Wait for Rendition Deployment to become ready"
   debug:
     msg: "DeploymentConfig ready status: {{ arender_converter_dc_query }}"
-  retries: 20
+  retries: 50
   delay: 10
   until:
     - arender_broker_dc_query
