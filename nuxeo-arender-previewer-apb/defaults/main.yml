@@ -20,12 +20,13 @@ previewer_image_pullPolicy: IfNotPresent
 previewer_resources: '{"limits": {"cpu": "2","memory": "4Gi"},"requests": {"cpu": "1","memory": "3Gi"}}'
 
 arender_autoscaling_min: 1
-arender_autoscaling_max: 10
+arender_autoscaling_max: 1
 arender_autoscaling_targetCPU: 80
 
 previewer_nuxeo_url: 'https://nuxeo.url/nuxeo'
 previewer_nuxeo_client_timeout: 60
 previewer_nuxeo_oauth_secret: 'OAUTH2_SECRET'
+previewer_arender_max_tries: 5
 
 arender_rendition_service_name: arender-pool-1
 arender_previewer_gw_timeout_in_seconds: 120s

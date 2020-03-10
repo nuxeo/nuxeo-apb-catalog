@@ -87,7 +87,7 @@ plans:
       display_type: textarea
       display_group: Container Specs
     - name: arender_jni_resources
-      default: '{"limits": {"cpu": "2","memory": "2Gi"},"requests": {"cpu": "2","memory": "2Gi"}}'
+      default: '{"limits": {"cpu": "2","memory": "6Gi"},"requests": {"cpu": "2","memory": "4Gi"}}'
       type: string
       title: JNI Pod resource requests and limits
       display_type: textarea
@@ -118,7 +118,7 @@ plans:
       display_group: ARender configuration
 
     - name: arender_rendition_conversion_timeout
-      default: 120
+      default: 240
       type: number
       title: Timeout for conversion
       display_group: ARender configuration

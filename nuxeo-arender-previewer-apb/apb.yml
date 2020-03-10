@@ -35,6 +35,11 @@ plans:
       type: number
       title: Timeout for the Nuxeo Client
       display_group: Client Nuxeo
+    - name: previewer_arender_max_tries
+      default: 5
+      type: number
+      title: Number of retries for ARender hmi to ask for a rendition call
+      display_group: Client Nuxeo
     - name: previewer_nuxeo_oauth_secret
       default: 'OAUTH2_SECRET'
       type: string
@@ -105,7 +110,7 @@ plans:
       title: Autoscaling Minimum replicas
       display_group: Autoscaling
     - name: arender_autoscaling_max
-      default: 10
+      default: 1
       type: number
       title: Autoscaling Maximum replicas
       display_group: Autoscaling
