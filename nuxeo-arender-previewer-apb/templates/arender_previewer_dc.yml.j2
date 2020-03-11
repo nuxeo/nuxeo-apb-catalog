@@ -88,8 +88,10 @@ spec:
             mountPath: /usr/local/tomcat/temp
           - name: work
             mountPath: /usr/local/tomcat/work
+{% if use_pull_secret %}
       imagePullSecrets:
         - name: {{ arender_previewer_image_pull_secret }}
+{% endif %}
       initContainers:
         - name: init-rendition-broker
           image: busybox

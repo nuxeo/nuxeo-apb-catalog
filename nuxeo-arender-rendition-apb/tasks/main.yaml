@@ -46,7 +46,7 @@
   loop:
     - name: arender_rendition_sa.yml.j2
     - name: arender_rendition_pull_secret.yml.j2
-      apply: "{{ arender_rendition_image_pull_existing_secret is undefined }}"
+      apply: "{{ create_pull_secret }}"
     - name: arender_converter_dc.yml.j2
     - name: arender_converter_service.yml.j2
     - name: arender_dfs_dc.yml.j2

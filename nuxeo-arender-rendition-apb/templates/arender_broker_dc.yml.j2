@@ -31,8 +31,10 @@ spec:
       rendition_securityContext:
 {{ rendition_securityContext | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
 {% endif %}
+{% if use_pull_secret %}
       imagePullSecrets:
-      - name: {{ arender_rendition_image_pull_secret }}
+        - name: {{ arender_rendition_image_pull_secret }}
+{% endif %}
       initContainers:
         - name: init-create-log-dir
           image: busybox

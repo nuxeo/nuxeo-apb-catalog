@@ -13,8 +13,8 @@ apb_name: nuxeo-arender-previewer-apb
 namespace: "{{ lookup('env','NAMESPACE') | default('hello-world', true) }}"
 
 testing: false
-arender_previewer_image: docker-private-arondor-group.packages.nuxeo.com/nuxeo/arender-previewer
-arender_previewer_image_version: "10.1.0-SNAPSHOT"
+arender_previewer_image: docker-registry.default.svc:5000/common-infra/arender-previewer
+arender_previewer_image_version: "10.1.0"
 
 previewer_image_pullPolicy: IfNotPresent
 previewer_resources: '{"limits": {"cpu": "2","memory": "4Gi"},"requests": {"cpu": "1","memory": "3Gi"}}'

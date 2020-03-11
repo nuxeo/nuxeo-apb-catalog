@@ -15,7 +15,7 @@ namespace: "{{ lookup('env','NAMESPACE') | default('hello-world', true) }}"
 
 testing: false
 
-arender_rendition_image_registry: "docker-private-arondor-group.packages.nuxeo.com"
+arender_rendition_image_registry: "docker-registry.default.svc:5000/common-infra"
 arender_rendition_image_version: "4.0.6.NX2.1"
 arender_rendition_image_broker: arender-rendition-broker
 arender_rendition_image_converter: arender-converter
@@ -23,10 +23,8 @@ arender_rendition_image_dfs: arender-dfs
 arender_rendition_image_jni: arender-jni-engine
 arender_rendition_image_pdfbox: arender-pdfbox
 
-arender_docker_registry: "docker-private-arondor-group.packages.nuxeo.com"
 
 arender_rendition_image_pull_username: nuxeo
-arender_rendition_image_pull_password: password
 
 arender_autoscaling_min: 1
 arender_autoscaling_max: 10

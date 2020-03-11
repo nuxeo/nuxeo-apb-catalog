@@ -13,7 +13,7 @@
   loop:
     - name: arender_previewer_sb.yml.j2
     - name: arender_previewer_pull_secret.yml.j2
-      apply: "{{ arender_previewer_image_pull_existing_secret is undefined }}"
+      apply: "{{ create_pull_secret }}"
     - name: arender_previewer_pvc.yml.j2
     - name: arender_previewer_dc.yml.j2
     - name: arender_previewer_service.yml.j2

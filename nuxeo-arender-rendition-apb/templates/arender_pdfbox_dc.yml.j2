@@ -33,8 +33,10 @@ spec:
         role: rendition-pdfbox
     spec:
       serviceAccountName: {{ arender_rendition_serviceaccount_name }}
+{% if use_pull_secret %}
       imagePullSecrets:
-      - name: {{ arender_rendition_image_pull_secret }}
+        - name: {{ arender_rendition_image_pull_secret }}
+{% endif %}
       initContainers:
         - name: init-create-log-dir
           image: busybox

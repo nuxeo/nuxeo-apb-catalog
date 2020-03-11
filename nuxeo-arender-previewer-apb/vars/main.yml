@@ -19,6 +19,11 @@ arender_previewer_dc_query: "{{ arender_previewer_dc_lookup | json_query(ready_r
 
 app_name: "{{ name }}"
 
+
+create_pull_secret: "{{ true if ( arender_previewer_image_pull_existing_secret is undefined and arender_previewer_image_pull_password is defined ) else false }}"
+use_pull_secret: "{{ true if ( arender_previewer_image_pull_existing_secret is defined or arender_previewer_image_pull_password is defined ) else false }}"
+
+
 arender_previewer_service_name: "{{ name }}-previewer"
 arender_previewer_route_name: "{{ name }}-previewer"
 arender_previewer_config_name: "{{ name }}-previewer"

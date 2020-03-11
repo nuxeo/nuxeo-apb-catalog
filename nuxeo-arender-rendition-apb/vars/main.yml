@@ -26,13 +26,16 @@ arender_jni_dc_query: "{{ arender_jni_dc_lookup | json_query(ready_replicas_quer
 arender_pdfbox_dc_query: "{{ arender_pdfbox_dc_lookup | json_query(ready_replicas_query) | unique | count == 1 }}"
 
 
-arender_broker_image: "{{ arender_docker_registry }}/{{ arender_rendition_image_broker}}:{{ arender_rendition_image_version }}"
-arender_converter_image: "{{ arender_docker_registry }}/{{ arender_rendition_image_converter}}:{{ arender_rendition_image_version }}"
-arender_dfs_image: "{{ arender_docker_registry }}/{{ arender_rendition_image_dfs}}:{{ arender_rendition_image_version }}"
-arender_jni_image: "{{ arender_docker_registry }}/{{ arender_rendition_image_jni}}:{{ arender_rendition_image_version }}"
-arender_pdfbox_image: "{{ arender_docker_registry }}/{{ arender_rendition_image_pdfbox}}:{{ arender_rendition_image_version }}"
+arender_broker_image: "{{ arender_rendition_image_registry }}/{{ arender_rendition_image_broker}}:{{ arender_rendition_image_version }}"
+arender_converter_image: "{{ arender_rendition_image_registry }}/{{ arender_rendition_image_converter}}:{{ arender_rendition_image_version }}"
+arender_dfs_image: "{{ arender_rendition_image_registry }}/{{ arender_rendition_image_dfs}}:{{ arender_rendition_image_version }}"
+arender_jni_image: "{{ arender_rendition_image_registry }}/{{ arender_rendition_image_jni}}:{{ arender_rendition_image_version }}"
+arender_pdfbox_image: "{{ arender_rendition_image_registry }}/{{ arender_rendition_image_pdfbox}}:{{ arender_rendition_image_version }}"
 
 arender_rendition_image_pull_secret: "{{ name + '-rendition-pull-secret' if arender_rendition_image_pull_existing_secret is undefined else arender_rendition_image_pull_existing_secret }}"
+
+create_pull_secret: "{{ true if ( arender_rendition_image_pull_existing_secret is undefined and arender_rendition_image_pull_password is defined ) else false }}"
+use_pull_secret: "{{ true if ( arender_rendition_image_pull_existing_secret is defined or arender_rendition_image_pull_password is defined ) else false }}"
 
 app_name: "{{ name }}"
 
