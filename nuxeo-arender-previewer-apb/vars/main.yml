@@ -13,6 +13,9 @@ name: "{{ project_name if project_name is defined else 'nuxeo-arender-' + (_apb_
 arender_previewer_dc_lookup: "{{ lookup('openshift', kind='DeploymentConfig', namespace=namespace, resource_name=arender_previewer_dc_name) }}"
 arender_previewer_route_lookup: "{{ lookup('openshift', kind='Route', namespace=namespace, resource_name=arender_previewer_route_name) }}"
 
+monitoring_binding_secret_lookup: "{{ lookup('k8s', kind='Secret', namespace=namespace, resource_name=monitoring_es_binding_secret_name) }}"
+monitoring_binding_host: "{{ monitoring_binding_secret_lookup | json_query('data.host') | b64decode }}"
+
 # Variables to hold queries
 ready_replicas_query: "[spec.replicas, status.readyReplicas]"
 arender_previewer_dc_query: "{{ arender_previewer_dc_lookup | json_query(ready_replicas_query) | unique | count == 1 }}"
@@ -34,6 +37,10 @@ arender_previewer_pvc_name: "{{ name }}-previewer"
 
 arender_previewer_service_binding_name: "{{ name }}-rendition-binding"
 arender_binding_secret_name: "{{ name }}-rendition-binding"
+
+monitoring_es_binding_name: "{{ name }}-monitor-binding"
+monitoring_es_binding_secret_name:  "{{ name }}-monitor-es-binding"
+monitoring_es_index_name: "{{ name }}-performance"
 
 arender_previewer_image_pull_secret: "{{ name + '-previewer-pull-secret' if arender_previewer_image_pull_existing_secret is undefined else arender_previewer_image_pull_existing_secret }}"
 

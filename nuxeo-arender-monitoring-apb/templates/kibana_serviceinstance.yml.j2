@@ -1,0 +1,23 @@
+---
+apiVersion: servicecatalog.k8s.io/v1beta1
+kind: ServiceInstance
+metadata:
+  labels:
+    app: {{ app_name }}
+    apb_name: '{{ apb_name }}'
+    apb_plan_id: '{{ _apb_plan_id }}'
+    apb_service_class_id: '{{ _apb_service_class_id }}'
+    apb_service_instance_id: '{{ _apb_service_instance_id }}'
+    component: pipeline
+  name: "{{ kibana_service_name }}"
+  namespace: {{ namespace }}
+spec:
+  clusterServiceClassExternalName: nuxeo-nuxeo-kibana-apb
+  parameters:
+    app_name: "{{ app_name }}-kibana"
+    kibana_memory_limit: "256Mi"
+    kibana_image: docker.elastic.co/kibana/kibana-oss
+    kibana_image_version: "7.6.1"
+    kibana_storage_plan: persistent
+    kibana_secure: true
+    elasticsearch_label_selector: "{{ elasticsearch_label_selector }}"

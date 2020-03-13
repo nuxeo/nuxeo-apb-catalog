@@ -120,3 +120,16 @@ plans:
       type: number
       title: Timeout for conversion
       display_group: ARender configuration
+
+    - name: arender_rendition_monitoring_enabled
+      default: true
+      type: boolean
+      display_type: checkbox
+      title: Enable Monitoring stack
+      display_group: Monitoring
+
+    - name: arender_rendition_monitoring_es_service
+      default: arender-monitor-elasticsearch
+      type: string
+      title: Name of the ES service instance
+      display_group: Monitoring

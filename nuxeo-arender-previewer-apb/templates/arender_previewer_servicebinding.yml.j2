@@ -1,0 +1,16 @@
+---
+apiVersion: servicecatalog.k8s.io/v1beta1
+kind: ServiceBinding
+metadata:
+  labels:
+    app: {{ name }}
+    apb_name: '{{ apb_name }}'
+    apb_plan_id: '{{ _apb_plan_id }}'
+    apb_service_class_id: '{{ _apb_service_class_id }}'
+    apb_service_instance_id: '{{ _apb_service_instance_id }}'
+  name: {{ monitoring_es_binding_name }}
+  namespace: {{ namespace }}
+spec:
+  instanceRef:
+    name: {{ arender_previewer_monitoring_es_service }}
+  secretName: {{ monitoring_es_binding_secret_name }}

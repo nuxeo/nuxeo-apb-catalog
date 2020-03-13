@@ -77,6 +77,21 @@ spec:
               value: "{{ previewer_arender_max_tries }}"
             - name: nuxeoArenderSecretEnv
               value: {{ previewer_nuxeo_oauth_secret }}
+{% if arender_previewer_monitoring_enabled %}
+            - name: ARENDERSRV_ARENDER_SERVER_PERF_ES_USE
+              value: 'true'
+            - name: ARENDERSRV_ARENDER_SERVER_PERF_ES_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: {{ monitoring_es_binding_secret_name }}
+                  key: host
+            - name: ARENDERSRV_ARENDER_SERVER_PERF_ES_PORT
+              value: '9200'
+            - name: ARENDERSRV_ARENDER_SERVER_PERF_ES_PROTOCOL
+              value: http
+            - name: ARENDERSRV_ARENDER_SERVER_PERF_ES_INDEX_NAME
+              value: {{ monitoring_es_index_name }}
+{% endif %}
           resources:
 {% if previewer_resources is defined and (previewer_resources | from_yaml) %}
 {{ previewer_resources | from_yaml | to_nice_yaml(indent=2) | indent(12, true) }}

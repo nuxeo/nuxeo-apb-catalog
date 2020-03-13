@@ -84,6 +84,25 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.name
+{% if arender_rendition_monitoring_enabled %}
+          - name: BRK_AOP_ACTIVE
+            value: 'true'
+          - name: BRK_AOP_ACTIVATE.LOGGER
+            value: 'false'
+          - name: BRK_AOP_ACTIVATE.ES
+            value: 'true'
+          - name: BRK_AOP_ES.HOST
+            valueFrom:
+              secretKeyRef:
+                name: {{ monitoring_es_binding_secret_name }}
+                key: host
+          - name: BRK_AOP_ES.PORT
+            value: '9200'
+          - name: BRK_AOP_ES.INDEX.NAME
+            value: {{ monitoring_es_index_name }}
+          - name: BRK_AOP_ES.PROTOCOL
+            value: http
+{% endif %}
           resources:
 {% if arender_broker_resources is defined and (arender_broker_resources | from_yaml) %}
 {{ arender_broker_resources | from_yaml | to_nice_yaml(indent=2) | indent(12, true) }}

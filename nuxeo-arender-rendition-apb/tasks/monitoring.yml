@@ -1,0 +1,31 @@
+---
+- name: "Bind monitoring stack"
+  k8s:
+    state: "{{ state }}"
+    definition: "{{ lookup('template', 'arender_rendition_servicebinding.yml.j2') | from_yaml }}"
+
+- name: "Waiting for Monitoring secret to be available"
+  debug:
+    msg: "Monitoring secret: {{ monitoring_binding_secret_lookup }}"
+  retries: 20
+  delay: 10
+  until:
+    - monitoring_binding_secret_lookup
+  when: state == 'present'
+
+- name: Check If Index Exists
+  uri: url='http://{{ monitoring_binding_host }}:9200/{{ monitoring_es_index_name }}'
+       method=HEAD
+       status_code=200,404
+  register: index_status
+  when: in_cluster
+
+- name: Create Rendition Performance Index with Mapping
+  uri: url='http://{{ monitoring_binding_host }}:9200/{{ monitoring_es_index_name }}'
+       method=POST
+       status_code=200
+       body='{{ lookup('file','monitoring_index_mapping.json') }}'
+       HEADER_Content-Type="application/json"
+  when:
+    - in_cluster
+    - index_status.status == 404

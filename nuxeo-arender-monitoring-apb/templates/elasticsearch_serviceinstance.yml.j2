@@ -1,0 +1,25 @@
+---
+apiVersion: servicecatalog.k8s.io/v1beta1
+kind: ServiceInstance
+metadata:
+  labels:
+    app: {{ app_name }}
+    apb_name: '{{ apb_name }}'
+    apb_plan_id: '{{ _apb_plan_id }}'
+    apb_service_class_id: '{{ _apb_service_class_id }}'
+    apb_service_instance_id: '{{ _apb_service_instance_id }}'
+    component: pipeline
+  name: "{{ elasticsearch_service_name }}"
+  namespace: {{ namespace }}
+spec:
+  clusterServiceClassExternalName: nuxeo-nuxeo-elasticsearch-apb
+  clusterServicePlanExternalName: nonclustered
+  parameters:
+    app_name: "{{ app_name }}-elasticsearch"
+    data_persistence_storage_class_name: "gp2"
+    data_persistence_size: "{{ elasticsearch_storage_size }}"
+    configure_xpack: false
+    image_repository: "docker.elastic.co/elasticsearch/elasticsearch-oss"
+    image_tag: "7.6.1"
+    client_java_opts: "-Djava.net.preferIPv4Stack=true"
+    client_resources: {{ elasticsearch_resources }}

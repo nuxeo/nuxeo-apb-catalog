@@ -6,6 +6,10 @@
   when: in_cluster
 
 
+- name: "Configure monitoring stack"
+  include_tasks: "monitoring.yml"
+  when: arender_rendition_monitoring_enabled
+
 - name: "Creating Stack Service Account"
   k8s:
     state: "{{ state }}"
@@ -20,6 +24,7 @@
     - pvc_name: "{{ arender_rendition_broker_pvc_name }}"
     - pvc_name: "{{ arender_common_tmp_name }}"
     - pvc_name: "{{ arender_logs_pvc_name }}"
+
 
 - name: "Set Log config {{ state }}"
   k8s:

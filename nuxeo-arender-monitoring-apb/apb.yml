@@ -1,0 +1,41 @@
+version: 1.0
+name: nuxeo-arender-monitoring-apb
+description: ARender Monitoring deployment in Openshift for Nuxeo
+bindable: True
+async: optional
+tags:
+  - nuxeo
+  - arender
+metadata:
+  displayName: ARender Monitoring environment for Nuxeo
+  imageUrl: "https://www.nuxeo.com/assets/imgs/logo340x60.png"
+  longDescription:
+    This Deploys an ARender monitoring stack
+  dependencies: []
+  providerDisplayName: "Nuxeo"
+plans:
+  - name: default
+    description: Default ARender Metrics deployment
+    free: true
+    metadata: {}
+    parameters:
+    - name: project_name
+      type: string
+      title: Project Name
+      default: arender-monitoring
+      display_group: Project properties
+    - name: elasticsearch_storage_size
+      type: string
+      title: Elasticsearch Instance Storage Size
+      default: 5Gi
+      display_group: Project properties
+    - name: elasticsearch_resources
+      type: string
+      title: Elasticsearch Resource limits
+      default: '{"limits": {"cpu": "1","memory": "1G"},"requests": {"cpu": "1","memory": "1G"}}'
+      display_group: Project properties
+    - name: kibana_memory_limit
+      default: "256Mi"
+      type: string
+      title: Kibana Memory Limit
+      display_group: Project properties

@@ -1,0 +1,44 @@
+---
+
+- name: "Update last operation"
+  asb_last_operation:
+    description: "0%: Starting"
+  when: in_cluster
+
+- name: "Set ARender Monitoring Elasticsearch Service state={{ state }}"
+  k8s:
+    state: "{{ state }}"
+    definition: "{{ lookup('template', 'elasticsearch_serviceinstance.yml.j2') | from_yaml }}"
+
+- name: "Wait for ES Service to be available"
+  debug:
+    msg: "ES Service status: {{ elasticsearch_service_lookup }}"
+  retries: 20
+  delay: 10
+  until:
+    - elasticsearch_service_lookup
+  when: state == 'present'
+
+
+
+- name: "Set ARender Monitoring Kibana Service state={{ state }}"
+  k8s:
+    state: "{{ state }}"
+    definition: "{{ lookup('template', 'kibana_serviceinstance.yml.j2') | from_yaml }}"
+
+
+
+- name: encode bind credentials
+  asb_encode_binding:
+    fields:
+      app_name: "{{ name }}"
+      elasticsearch_service: "{{ elasticsearch_service_name }}"
+      kibana_service: "{{ kibana_service_name }}"
+  when:
+    - state == "present"
+    - in_cluster
+
+- name: "Update last operation"
+  asb_last_operation:
+    description: "100%: Cluster objects state={{ state }}"
+  when: in_cluster

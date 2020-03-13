@@ -1,0 +1,21 @@
+---
+
+# Defaults for values we could expect from a broker
+
+_apb_plan_id: default
+_apb_service_class_id: 0
+_apb_service_instance_id: 0
+
+default_debug: True
+bootstrap_debug_enabled: False
+
+apb_name: nuxeo-arender-monitoring-apb
+namespace: "{{ lookup('env','NAMESPACE') | default('hello-world', true) }}"
+
+testing: false
+
+
+elasticsearch_storage_size: "5Gi"
+elasticsearch_resources: '{"limits": {"cpu": "1","memory": "1G"},"requests": {"cpu": "1","memory": "1G"}}'
+
+kibana_memory_limit: 256Mi

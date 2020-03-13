@@ -5,6 +5,12 @@
     description: "0%: Starting"
   when: in_cluster
 
+
+- name: "Configure monitoring stack"
+  include_tasks: "monitoring.yml"
+  when: arender_previewer_monitoring_enabled
+
+
 - name: "Set ARender objects state={{ state }}"
   k8s:
     state: "{{ state }}"

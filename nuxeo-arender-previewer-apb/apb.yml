@@ -124,3 +124,16 @@ plans:
       type: string
       title: Gateway timeout
       display_group: Others
+
+    - name: arender_previewer_monitoring_enabled
+      default: false
+      type: boolean
+      display_type: checkbox
+      title: Enable Monitoring stack
+      display_group: Monitoring
+
+    - name: arender_previewer_monitoring_es_service
+      default: arender-monitor-elasticsearch
+      type: string
+      title: Name of the ES service instance
+      display_group: Monitoring
