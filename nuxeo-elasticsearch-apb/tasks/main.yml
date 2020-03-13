@@ -399,6 +399,9 @@
   asb_encode_binding:
     fields:
       uri: "https://{{ service_client_name }}.{{namespace}}.svc.cluster.local:9200"
+      host: "{{ service_client_name }}.{{namespace}}.svc.cluster.local"
+      port: 9200
+      scheme: http
       username: "{{ elastic_user_name }}"
       password: "{{ elastic_password }}"
       clustername: "{{ cluster_name }}"
@@ -412,6 +415,9 @@
   asb_encode_binding:
     fields:
       uri: "http://{{ service_client_name }}.{{namespace}}.svc.cluster.local:9200"
+      host: "{{ service_client_name }}.{{namespace}}.svc.cluster.local"
+      port: 9200
+      scheme: http
       clustername: "{{ cluster_name }}"
   when:
     - in_cluster
