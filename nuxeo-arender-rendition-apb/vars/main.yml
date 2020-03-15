@@ -17,8 +17,10 @@ arender_dfs_dc_lookup: "{{ lookup('openshift', kind='DeploymentConfig', namespac
 arender_jni_dc_lookup: "{{ lookup('openshift', kind='DeploymentConfig', namespace=namespace, resource_name=arender_jni_dc_name) }}"
 arender_pdfbox_dc_lookup: "{{ lookup('openshift', kind='DeploymentConfig', namespace=namespace, resource_name=arender_pdfbox_dc_name) }}"
 
-monitoring_binding_secret_lookup: "{{ lookup('k8s', kind='Secret', namespace=namespace, resource_name=monitoring_es_binding_secret_name) }}"
-monitoring_binding_host: "{{ monitoring_binding_secret_lookup | json_query('data.host') | b64decode }}"
+monitoring_binding_es_secret_lookup: "{{ lookup('k8s', kind='Secret', namespace=namespace, resource_name=monitoring_es_binding_secret_name) }}"
+monitoring_binding_kibana_secret_lookup: "{{ lookup('k8s', kind='Secret', namespace=namespace, resource_name=monitoring_kibana_binding_secret_name) }}"
+monitoring_binding_es_host: "{{ monitoring_binding_es_secret_lookup | json_query('data.host') | b64decode }}"
+monitoring_binding_kibana_host: "{{ monitoring_binding_kibana_secret_lookup | json_query('data.host') | b64decode }}"
 
 # Variables to hold queries
 ready_replicas_query: "[spec.replicas, status.readyReplicas]"
@@ -73,9 +75,16 @@ arender_jni_log_configmap_name: "{{ name }}-jni-log"
 arender_pdfbox_log_configmap_name: "{{ name }}-pdfbox-log"
 arender_broker_log_configmap_name: "{{ name }}-broker-log"
 
-monitoring_es_binding_name: "{{ name }}-monitor-binding"
+monitoring_es_binding_name: "{{ name }}-monitor-es-binding"
 monitoring_es_binding_secret_name:  "{{ name }}-monitor-es-binding"
 monitoring_es_index_name: "{{ name }}-rendition-performance"
+
+monitoring_kibana_binding_name: "{{ name }}-monitor-binding"
+monitoring_kibana_binding_secret_name:  "{{ name }}-monitor-kibana-binding"
+monitoring_kibana_index_pattern_name: "{{ name }}-rendition-performance"
+monitoring_kibana_viz_prefix: "{{ name }}-viz"
+monitoring_kibana_dashboard_name: "{{ name }}-dashboard"
+monitoring_kibana_dashboard_title: "ARender Rendition for {{ name }}"
 
 # BROKER READINESS / LIVENESS
 arender_broker_internal_port: "8761"

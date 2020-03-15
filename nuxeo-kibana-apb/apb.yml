@@ -1,7 +1,7 @@
 version: 1.0
 name: nuxeo-kibana-apb
 description: Kibana is a data visualization plugin for Elasticsearch
-bindable: False
+bindable: True
 async: optional
 tags:
   - nuxeo
@@ -38,7 +38,7 @@ plans:
       - name: kibana_image_version
         title: Version
         required: true
-        default: 6.3.2
+        default: 7.6.1
         type: enum
         enum: ["7.6.1", 6.3.2", "5.6.9"]
       - name: kibana_storage_plan

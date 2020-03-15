@@ -25,6 +25,7 @@ arender_rendition_image_pdfbox: arender-pdfbox
 
 arender_rendition_monitoring_enabled: false
 arender_rendition_monitoring_es_service: arender-monitor-elasticsearch
+arender_rendition_monitoring_kibana_service: arender-monitor-kibana
 
 arender_rendition_image_pull_username: nuxeo
 

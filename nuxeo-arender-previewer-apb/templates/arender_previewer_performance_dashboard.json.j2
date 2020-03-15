@@ -1,0 +1,31 @@
+{
+  "attributes": {
+    "description": "",
+    "hits": 0,
+    "kibanaSavedObjectMeta": {
+      "searchSourceJSON": "{\"query\":{\"language\":\"kuery\",\"query\":\"\"},\"filter\":[]}"
+    },
+    "optionsJSON": "{\"hidePanelTitles\":false,\"useMargins\":true}",
+    "panelsJSON": "[{\"embeddableConfig\":{},\"gridData\":{\"h\":15,\"i\":\"b4c11068-5be7-4f73-972b-02ede785bd7a\",\"w\":24,\"x\":0,\"y\":0},\"panelIndex\":\"b4c11068-5be7-4f73-972b-02ede785bd7a\",\"version\":\"7.6.1\",\"panelRefName\":\"panel_0\"},{\"embeddableConfig\":{},\"gridData\":{\"h\":15,\"i\":\"35dc2219-063c-4b2d-92f4-dc4fabc30bd1\",\"w\":24,\"x\":24,\"y\":0},\"panelIndex\":\"35dc2219-063c-4b2d-92f4-dc4fabc30bd1\",\"version\":\"7.6.1\",\"panelRefName\":\"panel_1\"},{\"embeddableConfig\":{},\"gridData\":{\"h\":15,\"i\":\"35056728-010f-4303-90b1-9da6c673265b\",\"w\":24,\"x\":0,\"y\":15},\"panelIndex\":\"35056728-010f-4303-90b1-9da6c673265b\",\"version\":\"7.6.1\",\"panelRefName\":\"panel_2\"}]",
+    "timeRestore": false,
+    "title": "{{ monitoring_kibana_dashboard_title }}",
+    "version": 1
+  },
+  "references": [
+    {
+      "id": "{{ monitoring_kibana_viz_prefix }}-avg-doc-count-per-hour",
+      "name": "panel_0",
+      "type": "visualization"
+    },
+    {
+      "id": "{{ monitoring_kibana_viz_prefix }}-app-opening-time-percentile",
+      "name": "panel_1",
+      "type": "visualization"
+    },
+    {
+      "id": "{{ monitoring_kibana_viz_prefix }}-avg-duration-doc-opening",
+      "name": "panel_2",
+      "type": "visualization"
+    }
+  ]
+}

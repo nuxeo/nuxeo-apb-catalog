@@ -133,3 +133,10 @@ plans:
       type: string
       title: Name of the ES service instance
       display_group: Monitoring
+
+    - name: arender_rendition_monitoring_kibana_service
+      default: arender-monitor-kibana
+      type: string
+      title: Name of the Kibana service instance
+      display_group: Monitoring
+

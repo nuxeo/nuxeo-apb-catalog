@@ -3,29 +3,88 @@
   k8s:
     state: "{{ state }}"
     definition: "{{ lookup('template', 'arender_previewer_servicebinding.yml.j2') | from_yaml }}"
+  loop:
+    - name: "{{ monitoring_es_binding_name }}"
+      secret_name: "{{ monitoring_es_binding_secret_name }}"
+      target_service: "{{ arender_previewer_monitoring_es_service }}"
+    - name: "{{ monitoring_kibana_binding_name }}"
+      secret_name: "{{ monitoring_kibana_binding_secret_name }}"
+      target_service: "{{ arender_previewer_monitoring_kibana_service }}"
 
 - name: "Waiting for Monitoring secret to be available"
   debug:
-    msg: "Monitoring secret: {{ monitoring_binding_secret_lookup }}"
+    msg: "Monitoring secret"
   retries: 20
   delay: 10
   until:
-    - monitoring_binding_secret_lookup
+    - monitoring_binding_es_secret_lookup
+    - monitoring_binding_kibana_secret_lookup
   when: state == 'present'
 
 - name: Check If Index Exists
-  uri: url='http://{{ monitoring_binding_host }}:9200/{{ monitoring_es_index_name }}'
-       method=HEAD
-       status_code=200,404
+  uri:
+    url: http://{{ monitoring_binding_es_host }}:9200/{{ monitoring_es_index_name }}
+    method: HEAD
+    status_code: [ 200,404 ]
   register: index_status
-  when: in_cluster
-
-- name: Create Rendition Performance Index with Mapping
-  uri: url='http://{{ monitoring_binding_host }}:9200/{{ monitoring_es_index_name }}'
-       method=POST
-       status_code=200
-       body='{{ lookup('file','monitoring_index_mapping.json') }}'
-       HEADER_Content-Type="application/json"
   when:
+    - in_cluster
+
+- name: Create Previewer Performance Index  with Mapping
+  uri:
+    url: http://{{ monitoring_binding_es_host }}:9200/{{ monitoring_es_index_name }}
+    method: PUT
+    status_code: 200
+    body: "{{ lookup('file','monitoring_index_mapping.json') }}"
+    body_format: json
+    headers:
+      'Content-Type': application/json
+  when:
+    - state == 'present'
+    - in_cluster
+    - index_status.status == 404
+
+- name: Create Previewer Performance Index Pattern in Kibana
+  uri:
+    url: http://{{ monitoring_binding_kibana_host }}:5601/api/saved_objects/index-pattern/{{ monitoring_kibana_index_pattern_name }}
+    method: POST
+    status_code: 200
+    body: "{{ lookup('template','arender_previewer_performance_index.json.j2') }}"
+    body_format: json
+    headers:
+      'Content-Type': application/json
+      'kbn-xsrf': kibana
+  when:
+    - state == 'present'
+    - in_cluster
+    - index_status.status == 404
+
+- name: Create Previewer Performance Visualizations in Kibana
+  uri:
+    url: http://{{ monitoring_binding_kibana_host }}:5601/api/saved_objects/_bulk_create
+    method: POST
+    status_code: 200
+    body: "{{ lookup('template','arender_previewer_performance_visualization.json.j2') }}"
+    body_format: json
+    headers:
+      'Content-Type': application/json
+      'kbn-xsrf': kibana
+  when:
+    - state == 'present'
+    - in_cluster
+    - index_status.status == 404
+
+- name: Create Previewer Performance Dashboard in Kibana
+  uri:
+    url: http://{{ monitoring_binding_kibana_host }}:5601/api/saved_objects/dashboard/{{ monitoring_kibana_dashboard_name }}
+    method: POST
+    status_code: 200
+    body: "{{ lookup('template','arender_previewer_performance_dashboard.json.j2') }}"
+    body_format: json
+    headers:
+      'Content-Type': application/json
+      'kbn-xsrf': kibana
+  when:
+    - state == 'present'
     - in_cluster
     - index_status.status == 404

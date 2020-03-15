@@ -56,11 +56,9 @@ spec:
             memory: {{ kibana_memory_limit }}
           requests:
             memory: {{ kibana_memory_limit }}
-{% if not secure %}
         ports:
         - containerPort: 5601
           protocol: TCP
-{% endif %}
         resources: {}
         volumeMounts:
         - mountPath: /usr/share/kibana/config
