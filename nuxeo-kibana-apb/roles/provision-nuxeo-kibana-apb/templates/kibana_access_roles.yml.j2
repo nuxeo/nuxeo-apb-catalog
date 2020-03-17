@@ -1,0 +1,12 @@
+---
+apiVersion: authorization.openshift.io/v1
+kind: Role
+metadata:
+  name: kibana-access
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - services
+  verbs:
+  - get

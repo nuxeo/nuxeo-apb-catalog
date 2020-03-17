@@ -84,6 +84,7 @@
     definition: "{{ lookup('template', item.name) | from_yaml }}"
   when: item.apply | default(True)
   loop:
+    - name: kibana_access_roles.yml.j2
     - name: kibana_configmap.yml.j2
     - name: kibana_dc.yml.j2
 
