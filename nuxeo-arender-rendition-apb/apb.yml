@@ -91,7 +91,7 @@ plans:
       display_type: textarea
       display_group: Container Specs
     - name: arender_dfs_resources
-      default: '{"limits": {"cpu": "1","memory": "512M"},"requests": {"cpu": "1","memory": "512M"}}'
+      default: '{"limits": {"cpu": "1","memory": "1.5Gi"},"requests": {"cpu": "1","memory": "512M"}}'
       type: string
       title: DFS Pod resource requests and limits
       display_type: textarea

@@ -43,7 +43,15 @@ spec:
           - name: logs
             mountPath: /logs
       containers:
-        - image: {{ arender_dfs_image }}
+        - command:
+            - sh
+            - ./entrypoint.sh
+            - java
+            - '-Dsun.net.inetaddr.ttl=0'
+            - '-jar'
+            - '-Xmx1g'
+            - app.jar
+          image: {{ arender_dfs_image }}
           imagePullPolicy: {{ arender_dfs_image_pullPolicy }}
           name: arender-dfs
           readinessProbe:

@@ -44,6 +44,14 @@ spec:
             mountPath: /logs
       containers:
         - name: arender-broker
+          command:
+            - sh
+            - ./entrypoint.sh
+            - java
+            - '-Dsun.net.inetaddr.ttl=0'
+            - '-jar'
+            - '-Xmx1g'
+            - app.jar
           image: {{ arender_broker_image }}
           imagePullPolicy: {{ arender_broker_image_pullPolicy }}
           ports:

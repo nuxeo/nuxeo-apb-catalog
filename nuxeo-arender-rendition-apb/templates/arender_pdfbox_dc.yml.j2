@@ -45,7 +45,15 @@ spec:
           - name: logs
             mountPath: /logs
       containers:
-        - image: {{ arender_pdfbox_image }}
+        - command:
+            - sh
+            - ./entrypoint.sh
+            - java
+            - '-Dsun.net.inetaddr.ttl=0'
+            - '-jar'
+            - '-Xmx1g'
+            - app.jar
+          image: {{ arender_pdfbox_image }}
           imagePullPolicy: {{ arender_pdfbox_image_pullPolicy }}
           name: arender-pdfbox
           readinessProbe:
