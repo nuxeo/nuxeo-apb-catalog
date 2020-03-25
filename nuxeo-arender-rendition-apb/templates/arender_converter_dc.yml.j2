@@ -55,7 +55,7 @@ spec:
           imagePullPolicy: {{ arender_converter_image_pullPolicy }}
           name: arender-converter
           readinessProbe:
-            failureThreshold: 4
+            failureThreshold: {{ arender_converter_readiness_probe_failure_threshold }}
             httpGet:
               path: {{ arender_converter_readiness_probe_path }}
               port: {{ arender_converter_internal_port }}

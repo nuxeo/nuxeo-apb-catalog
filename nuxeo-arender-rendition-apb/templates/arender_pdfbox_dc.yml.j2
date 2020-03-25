@@ -57,7 +57,7 @@ spec:
           imagePullPolicy: {{ arender_pdfbox_image_pullPolicy }}
           name: arender-pdfbox
           readinessProbe:
-            failureThreshold: 4
+            failureThreshold: {{ arender_pdfbox_readiness_probe_failure_threshold }}
             httpGet:
               path: {{ arender_pdfbox_readiness_probe_path }}
               port: {{ arender_pdfbox_internal_port }}

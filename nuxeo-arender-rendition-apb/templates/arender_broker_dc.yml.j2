@@ -57,7 +57,7 @@ spec:
           ports:
           - containerPort: {{ arender_broker_internal_port }}
           readinessProbe:
-            failureThreshold: 4
+            failureThreshold: {{ arender_broker_readiness_probe_failure_threshold }}
             httpGet:
               path: {{ arender_broker_readiness_probe_path }}
               port: {{ arender_broker_internal_port }}
