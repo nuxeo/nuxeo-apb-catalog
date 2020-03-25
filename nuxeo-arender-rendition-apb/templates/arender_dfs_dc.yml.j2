@@ -55,7 +55,7 @@ spec:
           imagePullPolicy: {{ arender_dfs_image_pullPolicy }}
           name: arender-dfs
           readinessProbe:
-            failureThreshold: 4
+            failureThreshold: {{ arender_dfs_readiness_probe_failure_threshold }}
             httpGet:
               path: {{ arender_dfs_readiness_probe_path }}
               port: {{ arender_dfs_internal_port }}

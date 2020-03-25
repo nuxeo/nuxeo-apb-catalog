@@ -65,7 +65,7 @@ spec:
           imagePullPolicy: {{ arender_jni_image_pullPolicy }}
           name: arender-jni
           readinessProbe:
-            failureThreshold: 4
+            failureThreshold: {{ arender_jni_readiness_probe_failure_threshold }}
             httpGet:
               path: {{ arender_jni_readiness_probe_path }}
               port: {{ arender_jni_internal_port }}
