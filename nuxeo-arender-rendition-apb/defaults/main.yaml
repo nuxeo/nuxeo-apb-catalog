@@ -40,11 +40,11 @@ arender_dfs_image_pullPolicy: IfNotPresent
 arender_jni_image_pullPolicy: IfNotPresent
 arender_pdfbox_image_pullPolicy: IfNotPresent
 
-arender_broker_resources: '{"limits": {"cpu": "1","memory": "1Gi"},"requests": {"cpu": "1","memory": "1Gi"}}'
+arender_broker_resources: '{"limits": {"cpu": "1","memory": "1.5Gi"},"requests": {"cpu": "1","memory": "1Gi"}}'
 arender_converter_resources: '{"limits": {"cpu": "1.5","memory": "6Gi"},"requests": {"cpu": "1","memory": "4Gi"}}'
 arender_pdfbox_resources: '{"limits": {"cpu": "1","memory": "1.5Gi"},"requests": {"cpu": "1","memory": "1Gi"}}'
 arender_jni_resources: '{"limits": {"cpu": "2","memory": "6Gi"},"requests": {"cpu": "2","memory": "4Gi"}}'
-arender_dfs_resources: '{"limits": {"cpu": "1","memory": "1.5Gi"},"requests": {"cpu": "1","memory": "512M"}}'
+arender_dfs_resources: '{"limits": {"cpu": "1","memory": "1.5Gi"},"requests": {"cpu": "1","memory": "1Gi"}}'
 
 arender_debug_pod: false
 
