@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-    <property name="logging.file" value="/logs/arender-jnipdf/${POD_NAME}.log" />
+    <property name="logging.file" value="/logs/arender-jni/${POD_NAME}.log" />
     <appender name="SERVER" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${logging.file}</file>
         <encoder>
