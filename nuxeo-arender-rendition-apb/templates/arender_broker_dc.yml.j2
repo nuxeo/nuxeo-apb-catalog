@@ -76,15 +76,13 @@ spec:
             timeoutSeconds: {{ arender_broker_liveness_probe_timeout_seconds }}
           resources: {{ arender_broker_resources }}
           env:
-          - name: BRK_CONVERSION_HOSTNAME
-            value: {{ arender_broker_service_name }}
-          - name: BRK_KUBEPROVIDER_KUBE.HOSTS_{{ arender_converter_service_name }}
+          - name: DSB_KUBEPROVIDER_KUBE.HOSTS_{{ arender_converter_service_name }}
             value: "{{ arender_converter_internal_port }}"
-          - name: BRK_KUBEPROVIDER_KUBE.HOSTS_{{ arender_dfs_service_name }}
+          - name: DSB_KUBEPROVIDER_KUBE.HOSTS_{{ arender_dfs_service_name }}
             value: "{{ arender_dfs_internal_port }}"
-          - name: BRK_KUBEPROVIDER_KUBE.HOSTS_{{ arender_jni_service_name }}
+          - name: DSB_KUBEPROVIDER_KUBE.HOSTS_{{ arender_jni_service_name }}
             value: "{{ arender_jni_internal_port }}"
-          - name: BRK_KUBEPROVIDER_KUBE.HOSTS_{{ arender_pdfbox_service_name }}
+          - name: DSB_KUBEPROVIDER_KUBE.HOSTS_{{ arender_pdfbox_service_name }}
             value: "{{ arender_pdfbox_internal_port }}"
           - name: BRK_LOGGING_CONFIG
             value: "/arender/modules/config/logback-spring.xml"

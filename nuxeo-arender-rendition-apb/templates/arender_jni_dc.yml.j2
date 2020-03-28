@@ -83,13 +83,13 @@ spec:
             successThreshold: {{ arender_jni_liveness_probe_success_threshold }}
             timeoutSeconds: {{ arender_jni_liveness_probe_timeout_seconds }}
           env:
-          - name: JNI_EUREKA_INSTANCE_HOSTNAME
+          - name: DRN_EUREKA_INSTANCE_HOSTNAME
             value: {{ arender_broker_service_name }}
-          - name: JNI_EUREKA_SERVER_PORT
+          - name: DRN_EUREKA_SERVER_PORT
             value: "{{ arender_broker_internal_port }}"
-          - name: JNI_EUREKA_INSTANCE_METADATA.MAP_HOST.NAME
+          - name: DRN_EUREKA_INSTANCE_METADATA.MAP_HOST.NAME
             value: {{ arender_jni_service_name }}
-          - name: JNI_LOGGING_CONFIG
+          - name: DRN_LOGGING_CONFIG
             value: "/arender/modules/jni-service/config/logback-spring.xml"
           - name: POD_NAME
             valueFrom:

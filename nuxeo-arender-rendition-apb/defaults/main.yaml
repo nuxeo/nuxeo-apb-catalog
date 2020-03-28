@@ -16,12 +16,12 @@ namespace: "{{ lookup('env','NAMESPACE') | default('hello-world', true) }}"
 testing: false
 
 arender_rendition_image_registry: "docker-registry.default.svc:5000/common-infra"
-arender_rendition_image_version: "4.0.6.NX2.1"
-arender_rendition_image_broker: arender-rendition-broker
-arender_rendition_image_converter: arender-converter
-arender_rendition_image_dfs: arender-dfs
-arender_rendition_image_jni: arender-jni-engine
-arender_rendition_image_pdfbox: arender-pdfbox
+arender_rendition_image_version: "4.0.8.NX1.0"
+arender_rendition_image_broker: arender-document-service-broker
+arender_rendition_image_converter: arender-document-converter
+arender_rendition_image_dfs: arender-document-file-storage
+arender_rendition_image_jni: arender-document-renderer
+arender_rendition_image_pdfbox: arender-document-text-handler
 
 arender_rendition_monitoring_enabled: false
 arender_rendition_monitoring_es_service: arender-monitor-elasticsearch

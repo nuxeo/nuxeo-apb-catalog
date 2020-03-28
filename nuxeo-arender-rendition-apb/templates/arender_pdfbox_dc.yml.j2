@@ -75,13 +75,13 @@ spec:
             successThreshold: {{ arender_pdfbox_liveness_probe_success_threshold }}
             timeoutSeconds: {{ arender_pdfbox_liveness_probe_timeout_seconds }}
           env:
-          - name: PBX_EUREKA_INSTANCE_HOSTNAME
+          - name: DTH_EUREKA_INSTANCE_HOSTNAME
             value: {{ arender_broker_service_name }}
-          - name: PBX_EUREKA_SERVER_PORT
+          - name: DTH_EUREKA_SERVER_PORT
             value: "{{ arender_broker_internal_port }}"
-          - name: PBX_EUREKA_INSTANCE_METADATA.MAP_HOST.NAME
+          - name: DTH_EUREKA_INSTANCE_METADATA.MAP_HOST.NAME
             value: {{ arender_pdfbox_service_name }}
-          - name: PBX_LOGGING_CONFIG
+          - name: DTH_LOGGING_CONFIG
             value: "/arender/modules/pdfbox-service/config/logback-spring.xml"
           - name: POD_NAME
             valueFrom:

@@ -47,7 +47,7 @@ spec:
           readinessProbe:
             failureThreshold: 4
             httpGet:
-              path: /
+              path: /arendergwt/health/records
               port: 8080
               scheme: HTTP
             initialDelaySeconds: 60
@@ -57,7 +57,7 @@ spec:
           livenessProbe:
             failureThreshold: 4
             httpGet:
-              path: /
+              path:/arendergwt/health/records
               port: 8080
               scheme: HTTP
             periodSeconds: 10
@@ -69,13 +69,13 @@ spec:
                 secretKeyRef:
                   name: {{ arender_binding_secret_name }}
                   key: broker_service_url
-            - name: nuxeoUrlEnv
+            - name: ARENDERSRV_NUXEO_URL
               value: {{ previewer_nuxeo_url }}
             - name: ARENDERSRV_NUXEO_CLIENT_TIMEOUT
               value: "{{ previewer_nuxeo_client_timeout }}"
             - name: ARENDERSRV_ARENDER_SERVER_RENDITION_MAX_TRIES
               value: "{{ previewer_arender_max_tries }}"
-            - name: nuxeoArenderSecretEnv
+            - name: ARENDERSRV_NUXEO_ARENDER_SECRET
               value: {{ previewer_nuxeo_oauth_secret }}
 {% if arender_previewer_monitoring_enabled %}
             - name: ARENDERSRV_ARENDER_SERVER_PERF_ES_USE
