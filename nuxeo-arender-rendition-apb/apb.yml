@@ -66,34 +66,34 @@ plans:
       title: Autoscaling Target CPU Usage percentage
       display_group: Autoscaling
 
-    - name: arender_broker_resources
+    - name: arender_document_service_broker_resources
       default: '{"limits": {"cpu": "1","memory": "1.5Gi"},"requests": {"cpu": "1","memory": "1Gi"}}'
       type: string
-      title: Broker Pod resource requests and limits
+      title: Document Service Broker Pod resource requests and limits
       display_type: textarea
       display_group: Container Specs
-    - name: arender_converter_resources
+    - name: arender_document_converter_resources
       default: '{"limits": {"cpu": "1.5","memory": "6Gi"},"requests": {"cpu": "1","memory": "4Gi"}}'
       type: string
-      title: Converter Pod resource requests and limits
+      title: Document Converter Pod resource requests and limits
       display_type: textarea
       display_group: Container Specs
-    - name: arender_pdfbox_resources
+    - name: arender_document_text_handler_resources
       default: '{"limits": {"cpu": "1","memory": "1.5Gi"},"requests": {"cpu": "1","memory": "1Gi"}}'
       type: string
-      title: PDFBox Pod resource requests and limits
+      title: Document Text Handler Pod resource requests and limits
       display_type: textarea
       display_group: Container Specs
-    - name: arender_jni_resources
+    - name: arender_document_renderer_resources
       default: '{"limits": {"cpu": "2","memory": "6Gi"},"requests": {"cpu": "2","memory": "4Gi"}}'
       type: string
-      title: JNI Pod resource requests and limits
+      title: Document Renderer Pod resource requests and limits
       display_type: textarea
       display_group: Container Specs
-    - name: arender_dfs_resources
+    - name: arender_document_file_storage_resources
       default: '{"limits": {"cpu": "1","memory": "1.5Gi"},"requests": {"cpu": "1","memory": "1Gi"}}'
       type: string
-      title: DFS Pod resource requests and limits
+      title: Document File Storage Pod resource requests and limits
       display_type: textarea
       display_group: Container Specs
     - name: persistentVolume_storageClass

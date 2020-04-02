@@ -2,7 +2,7 @@
 apiVersion: apps.openshift.io/v1
 kind: DeploymentConfig
 metadata:
-  name: {{ arender_jni_dc_name }}
+  name: {{ arender_document_renderer_dc_name }}
   namespace: {{ namespace }}
   labels:
     apb_name: '{{ apb_name }}'
@@ -14,7 +14,7 @@ spec:
   replicas: 1
   selector:
     app: {{ app_name }}
-    role: rendition-jni
+    role: rendition-document-renderer
   strategy:
     activeDeadlineSeconds: 21600
     resources: {}
@@ -30,7 +30,7 @@ spec:
       creationTimestamp: null
       labels:
         app: {{ app_name }}
-        role: rendition-jni
+        role: rendition-document-renderer
 {% if rendition_podAnnotations is defined and (rendition_podAnnotations | from_yaml) %}
       annotations:
 {{ rendition_podAnnotations | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
@@ -48,7 +48,7 @@ spec:
       initContainers:
         - name: init-create-log-dir
           image: busybox
-          command: ['mkdir', '-m', '770', '-p', '/logs/arender-jni']
+          command: ['mkdir', '-m', '770', '-p', '/logs/arender-document-renderer']
           volumeMounts:
           - name: logs
             mountPath: /logs
@@ -61,49 +61,49 @@ spec:
             - '-jar'
             - '-Xmx1g'
             - app.jar
-          image: {{ arender_jni_image }}
-          imagePullPolicy: {{ arender_jni_image_pullPolicy }}
-          name: arender-jni
+          image: {{ arender_document_renderer_image }}
+          imagePullPolicy: {{ arender_document_renderer_image_pullPolicy }}
+          name: arender-document-renderer
           readinessProbe:
-            failureThreshold: {{ arender_jni_readiness_probe_failure_threshold }}
+            failureThreshold: {{ arender_document_renderer_readiness_probe_failure_threshold }}
             httpGet:
-              path: {{ arender_jni_readiness_probe_path }}
-              port: {{ arender_jni_internal_port }}
+              path: {{ arender_document_renderer_readiness_probe_path }}
+              port: {{ arender_document_renderer_internal_port }}
               scheme: HTTP
-            initialDelaySeconds: {{ arender_jni_readiness_probe_initial_delay_secs }}
-            periodSeconds: {{ arender_jni_readiness_probe_period_seconds }}
-            successThreshold: {{ arender_jni_readiness_probe_success_threshold }}
-            timeoutSeconds: {{ arender_jni_readiness_probe_timeout_seconds }}
+            initialDelaySeconds: {{ arender_document_renderer_readiness_probe_initial_delay_secs }}
+            periodSeconds: {{ arender_document_renderer_readiness_probe_period_seconds }}
+            successThreshold: {{ arender_document_renderer_readiness_probe_success_threshold }}
+            timeoutSeconds: {{ arender_document_renderer_readiness_probe_timeout_seconds }}
           livenessProbe:
             httpGet:
-              path: {{ arender_jni_liveness_probe_path }}
-              port: {{ arender_jni_internal_port }}
-            initialDelaySeconds: {{ arender_jni_liveness_probe_initial_delay_secs }}
-            periodSeconds: {{ arender_jni_liveness_probe_period_seconds }}
-            successThreshold: {{ arender_jni_liveness_probe_success_threshold }}
-            timeoutSeconds: {{ arender_jni_liveness_probe_timeout_seconds }}
+              path: {{ arender_document_renderer_liveness_probe_path }}
+              port: {{ arender_document_renderer_internal_port }}
+            initialDelaySeconds: {{ arender_document_renderer_liveness_probe_initial_delay_secs }}
+            periodSeconds: {{ arender_document_renderer_liveness_probe_period_seconds }}
+            successThreshold: {{ arender_document_renderer_liveness_probe_success_threshold }}
+            timeoutSeconds: {{ arender_document_renderer_liveness_probe_timeout_seconds }}
           env:
           - name: DRN_EUREKA_INSTANCE_HOSTNAME
-            value: {{ arender_broker_service_name }}
+            value: {{ arender_document_service_broker_service_name }}
           - name: DRN_EUREKA_SERVER_PORT
-            value: "{{ arender_broker_internal_port }}"
+            value: "{{ arender_document_service_broker_internal_port }}"
           - name: DRN_EUREKA_INSTANCE_METADATA.MAP_HOST.NAME
-            value: {{ arender_jni_service_name }}
+            value: {{ arender_document_renderer_service_name }}
           - name: DRN_LOGGING_CONFIG
-            value: "/arender/modules/jni-service/config/logback-spring.xml"
+            value: "/arender/modules/document-renderer/config/logback-spring.xml"
           - name: POD_NAME
             valueFrom:
               fieldRef:
                 fieldPath: metadata.name
           resources:
-{% if arender_jni_resources is defined and (arender_jni_resources | from_yaml) %}
-{{ arender_jni_resources | from_yaml | to_nice_yaml(indent=2) | indent(12, true) }}
+{% if arender_document_renderer_resources is defined and (arender_document_renderer_resources | from_yaml) %}
+{{ arender_document_renderer_resources | from_yaml | to_nice_yaml(indent=2) | indent(12, true) }}
 {% endif %}
           volumeMounts:
           - name: temp
             mountPath: /arender/tmp
           - name: config
-            mountPath: /arender/modules/jni-service/config
+            mountPath: /arender/modules/document-renderer/config
           - name: logs
             mountPath: /logs
       volumes:
@@ -112,7 +112,7 @@ spec:
             claimName: {{ arender_common_tmp_name }}
         - name: config
           configMap:
-            name: {{ arender_jni_log_configmap_name }}
+            name: {{ arender_document_renderer_log_configmap_name }}
         - name: logs
           persistentVolumeClaim:
             claimName: {{ arender_logs_pvc_name }}

@@ -17,11 +17,11 @@ testing: false
 
 arender_rendition_image_registry: "docker-registry.default.svc:5000/common-infra"
 arender_rendition_image_version: "4.0.8.NX1.0"
-arender_rendition_image_broker: arender-document-service-broker
-arender_rendition_image_converter: arender-document-converter
-arender_rendition_image_dfs: arender-document-file-storage
-arender_rendition_image_jni: arender-document-renderer
-arender_rendition_image_pdfbox: arender-document-text-handler
+arender_rendition_image_document_service_broker: arender-document-service-broker
+arender_rendition_image_document_converter: arender-document-converter
+arender_rendition_image_document_file_storage: arender-document-file-storage
+arender_rendition_image_document_renderer: arender-document-renderer
+arender_rendition_image_document_text_handler: arender-document-text-handler
 
 arender_rendition_monitoring_enabled: false
 arender_rendition_monitoring_es_service: arender-monitor-elasticsearch
@@ -33,18 +33,17 @@ arender_autoscaling_min: 1
 arender_autoscaling_max: 10
 arender_autoscaling_targetCPU: 80
 
-rendition_image_pullPolicy: IfNotPresent
-arender_broker_image_pullPolicy: IfNotPresent
-arender_converter_image_pullPolicy: IfNotPresent
-arender_dfs_image_pullPolicy: IfNotPresent
-arender_jni_image_pullPolicy: IfNotPresent
-arender_pdfbox_image_pullPolicy: IfNotPresent
+arender_document_service_broker_image_pullPolicy: IfNotPresent
+arender_document_converter_image_pullPolicy: IfNotPresent
+arender_document_file_storage_image_pullPolicyy: IfNotPresent
+arender_document_renderer_image_pullPolicy: IfNotPresent
+arender_document_text_handler_image_pullPolicy: IfNotPresent
 
-arender_broker_resources: '{"limits": {"cpu": "1","memory": "1.5Gi"},"requests": {"cpu": "1","memory": "1Gi"}}'
-arender_converter_resources: '{"limits": {"cpu": "1.5","memory": "6Gi"},"requests": {"cpu": "1","memory": "4Gi"}}'
-arender_pdfbox_resources: '{"limits": {"cpu": "1","memory": "1.5Gi"},"requests": {"cpu": "1","memory": "1Gi"}}'
-arender_jni_resources: '{"limits": {"cpu": "2","memory": "6Gi"},"requests": {"cpu": "2","memory": "4Gi"}}'
-arender_dfs_resources: '{"limits": {"cpu": "1","memory": "1.5Gi"},"requests": {"cpu": "1","memory": "1Gi"}}'
+arender_document_service_broker_resources: '{"limits": {"cpu": "1","memory": "1.5Gi"},"requests": {"cpu": "1","memory": "1Gi"}}'
+arender_document_converter_resources: '{"limits": {"cpu": "1.5","memory": "6Gi"},"requests": {"cpu": "1","memory": "4Gi"}}'
+arender_document_text_handler_resources: '{"limits": {"cpu": "1","memory": "1.5Gi"},"requests": {"cpu": "1","memory": "1Gi"}}'
+arender_document_renderer_resources: '{"limits": {"cpu": "2","memory": "6Gi"},"requests": {"cpu": "2","memory": "4Gi"}}'
+arender_document_file_storage_resources: '{"limits": {"cpu": "1","memory": "1.5Gi"},"requests": {"cpu": "1","memory": "1Gi"}}'
 
 arender_debug_pod: false
 

@@ -8,17 +8,17 @@ metadata:
     apb_plan_id: '{{ _apb_plan_id }}'
     apb_service_class_id: '{{ _apb_service_class_id }}'
     apb_service_instance_id: '{{ _apb_service_instance_id }}'
-  name: {{ arender_jni_service_name }}
+  name: {{ arender_document_file_storage_service_name }}
   namespace: {{ namespace }}
 spec:
   type: ClusterIP
   clusterIP: None
   ports:
     - name: http
-      port: {{ arender_jni_internal_port }}
+      port: {{ arender_document_file_storage_external_port }}
       protocol: TCP
-      targetPort: {{ arender_jni_external_port }}
+      targetPort: {{ arender_document_file_storage_internal_port }}
   selector:
     app: {{ app_name }}
-    role: rendition-jni
+    role: rendition-document-file-storage
   sessionAffinity: None

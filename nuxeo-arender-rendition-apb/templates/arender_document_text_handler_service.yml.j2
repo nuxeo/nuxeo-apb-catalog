@@ -8,17 +8,17 @@ metadata:
     apb_plan_id: '{{ _apb_plan_id }}'
     apb_service_class_id: '{{ _apb_service_class_id }}'
     apb_service_instance_id: '{{ _apb_service_instance_id }}'
-  name: {{ arender_dfs_service_name }}
+  name: {{ arender_document_text_handler_service_name }}
   namespace: {{ namespace }}
 spec:
   type: ClusterIP
   clusterIP: None
   ports:
     - name: http
-      port: {{ arender_dfs_external_port }}
+      port: {{ arender_document_text_handler_internal_port }}
       protocol: TCP
-      targetPort: {{ arender_dfs_internal_port }}
+      targetPort: {{ arender_document_text_handler_external_port }}
   selector:
     app: {{ app_name }}
-    role: rendition-dfs
+    role: rendition-document-text-handler
   sessionAffinity: None

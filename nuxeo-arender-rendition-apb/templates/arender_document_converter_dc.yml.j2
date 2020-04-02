@@ -2,7 +2,7 @@
 apiVersion: apps.openshift.io/v1
 kind: DeploymentConfig
 metadata:
-  name: {{ arender_converter_dc_name }}
+  name: {{ arender_document_converter_dc_name }}
   namespace: {{ namespace }}
   labels:
     apb_name: '{{ apb_name }}'
@@ -14,13 +14,13 @@ spec:
   replicas: 1
   selector:
     app: {{ app_name }}
-    role: rendition-converter
+    role: rendition-document-converter
   template:
     metadata:
       creationTimestamp: null
       labels:
         app: {{ app_name }}
-        role: rendition-converter
+        role: rendition-document-converter
 {% if rendition_podAnnotations is defined and (rendition_podAnnotations | from_yaml) %}
       annotations:
 {{ rendition_podAnnotations | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
@@ -38,7 +38,7 @@ spec:
       initContainers:
         - name: init-create-log-dir
           image: busybox
-          command: ['mkdir', '-m', '770', '-p', '/logs/arender-taskconversion']
+          command: ['mkdir', '-m', '770', '-p', '/logs/arender-document-converter']
           volumeMounts:
           - name: logs
             mountPath: /logs
@@ -51,37 +51,37 @@ spec:
             - '-jar'
             - '-Xmx1g'
             - app.jar
-          image: {{ arender_converter_image }}
-          imagePullPolicy: {{ arender_converter_image_pullPolicy }}
-          name: arender-converter
+          image: {{ arender_document_converter_image }}
+          imagePullPolicy: {{ arender_document_converter_image_pullPolicy }}
+          name: arender-document-converter
           readinessProbe:
-            failureThreshold: {{ arender_converter_readiness_probe_failure_threshold }}
+            failureThreshold: {{ arender_document_converter_readiness_probe_failure_threshold }}
             httpGet:
-              path: {{ arender_converter_readiness_probe_path }}
-              port: {{ arender_converter_internal_port }}
+              path: {{ arender_document_converter_readiness_probe_path }}
+              port: {{ arender_document_converter_internal_port }}
               scheme: HTTP
-            initialDelaySeconds: {{ arender_converter_readiness_probe_initial_delay_secs }}
-            periodSeconds: {{ arender_converter_readiness_probe_period_seconds }}
-            successThreshold: {{ arender_converter_readiness_probe_success_threshold }}
-            timeoutSeconds: {{ arender_converter_readiness_probe_timeout_seconds }}
+            initialDelaySeconds: {{ arender_document_converter_readiness_probe_initial_delay_secs }}
+            periodSeconds: {{ arender_document_converter_readiness_probe_period_seconds }}
+            successThreshold: {{ arender_document_converter_readiness_probe_success_threshold }}
+            timeoutSeconds: {{ arender_document_converter_readiness_probe_timeout_seconds }}
           livenessProbe:
             httpGet:
-              path: {{ arender_converter_liveness_probe_path }}
-              port: {{ arender_converter_internal_port }}
-            initialDelaySeconds: {{ arender_converter_liveness_probe_initial_delay_secs }}
-            periodSeconds: {{ arender_converter_liveness_probe_period_seconds }}
-            successThreshold: {{ arender_converter_liveness_probe_success_threshold }}
-            timeoutSeconds: {{ arender_converter_liveness_probe_timeout_seconds }}
-          resources: {{ arender_converter_resources }}
+              path: {{ arender_document_converter_liveness_probe_path }}
+              port: {{ arender_document_converter_internal_port }}
+            initialDelaySeconds: {{ arender_document_converter_liveness_probe_initial_delay_secs }}
+            periodSeconds: {{ arender_document_converter_liveness_probe_period_seconds }}
+            successThreshold: {{ arender_document_converter_liveness_probe_success_threshold }}
+            timeoutSeconds: {{ arender_document_converter_liveness_probe_timeout_seconds }}
+          resources: {{ arender_document_converter_resources }}
           env:
           - name: DCV_APP_EUREKA_HOSTNAME
-            value: {{ arender_broker_service_name }}
+            value: {{ arender_document_service_broker_service_name }}
           - name: DCV_APP_EUREKA_SERVER_PORT
-            value: "{{ arender_broker_internal_port }}"
+            value: "{{ arender_document_service_broker_internal_port }}"
           - name: DCV_EUREKA_INSTANCE_METADATA.MAP_HOST.NAME
-            value: {{ arender_converter_service_name }}
+            value: {{ arender_document_converter_service_name }}
           - name: DCV_LOGGING_CONFIG
-            value: "/arender/modules/conversion-service/config/logback-spring.xml"
+            value: "/arender/modules/document-converter/config/logback-spring.xml"
 
           - name: DCV_TOOLS_IMAGEMAGICK_OPTIONS
             value: "{{ arender_rendition_imagemagick_options }}"
@@ -94,14 +94,14 @@ spec:
               fieldRef:
                 fieldPath: metadata.name
           resources:
-{% if arender_converter_resources is defined and (arender_converter_resources | from_yaml) %}
-{{ arender_converter_resources | from_yaml | to_nice_yaml(indent=2) | indent(12, true) }}
+{% if arender_document_converter_resources is defined and (arender_document_converter_resources | from_yaml) %}
+{{ arender_document_converter_resources | from_yaml | to_nice_yaml(indent=2) | indent(12, true) }}
 {% endif %}
           volumeMounts:
           - name: temp
             mountPath: /arender/tmp
           - name: config
-            mountPath: /arender/modules/conversion-service/config
+            mountPath: /arender/modules/document-converter/config
           - name: logs
             mountPath: /logs
       volumes:
@@ -110,7 +110,7 @@ spec:
             claimName: {{ arender_common_tmp_name }}
         - name: config
           configMap:
-            name: {{ arender_converter_log_configmap_name }}
+            name: {{ arender_document_converter_log_configmap_name }}
         - name: logs
           persistentVolumeClaim:
             claimName: "{{ arender_logs_pvc_name }}"

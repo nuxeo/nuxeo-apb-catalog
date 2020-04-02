@@ -2,7 +2,7 @@
 apiVersion: apps.openshift.io/v1
 kind: DeploymentConfig
 metadata:
-  name: {{ arender_broker_dc_name }}
+  name: {{ arender_document_service_broker_dc_name }}
   namespace: {{ namespace }}
   labels:
     apb_name: '{{ apb_name }}'
@@ -14,13 +14,13 @@ spec:
   replicas: 1
   selector:
     app: {{ app_name }}
-    role: rendition-broker
+    role: rendition-document-service-broker
   template:
     metadata:
       creationTimestamp: null
       labels:
         app: {{ app_name }}
-        role: rendition-broker
+        role: rendition-document-service-broker
 {% if rendition_podAnnotations is defined and (rendition_podAnnotations | from_yaml) %}
       annotations:
 {{ rendition_podAnnotations | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
@@ -38,7 +38,7 @@ spec:
       initContainers:
         - name: init-create-log-dir
           image: busybox
-          command: ['mkdir', '-m', '770', '-p', '/logs/arender-broker']
+          command: ['mkdir', '-m', '770', '-p', '/logs/arender-document-service-broker']
           volumeMounts:
           - name: logs
             mountPath: /logs
@@ -52,39 +52,39 @@ spec:
             - '-jar'
             - '-Xmx1g'
             - app.jar
-          image: {{ arender_broker_image }}
-          imagePullPolicy: {{ arender_broker_image_pullPolicy }}
+          image: {{ arender_document_service_broker_image }}
+          imagePullPolicy: {{ arender_document_service_broker_image_pullPolicy }}
           ports:
-          - containerPort: {{ arender_broker_internal_port }}
+          - containerPort: {{ arender_document_service_broker_internal_port }}
           readinessProbe:
-            failureThreshold: {{ arender_broker_readiness_probe_failure_threshold }}
+            failureThreshold: {{ arender_document_service_broker_readiness_probe_failure_threshold }}
             httpGet:
-              path: {{ arender_broker_readiness_probe_path }}
-              port: {{ arender_broker_internal_port }}
+              path: {{ arender_document_service_broker_readiness_probe_path }}
+              port: {{ arender_document_service_broker_internal_port }}
               scheme: HTTP
-            initialDelaySeconds: {{ arender_broker_readiness_probe_initial_delay_secs }}
-            periodSeconds: {{ arender_broker_readiness_probe_period_seconds }}
-            successThreshold: {{ arender_broker_readiness_probe_success_threshold }}
-            timeoutSeconds: {{ arender_broker_readiness_probe_timeout_seconds }}
+            initialDelaySeconds: {{ arender_document_service_broker_readiness_probe_initial_delay_secs }}
+            periodSeconds: {{ arender_document_service_broker_readiness_probe_period_seconds }}
+            successThreshold: {{ arender_document_service_broker_readiness_probe_success_threshold }}
+            timeoutSeconds: {{ arender_document_service_broker_readiness_probe_timeout_seconds }}
           livenessProbe:
             httpGet:
-              path: {{ arender_broker_liveness_probe_path }}
-              port: {{ arender_broker_internal_port }}
-            initialDelaySeconds: {{ arender_broker_liveness_probe_initial_delay_secs }}
-            periodSeconds: {{ arender_broker_liveness_probe_period_seconds }}
-            successThreshold: {{ arender_broker_liveness_probe_success_threshold }}
-            timeoutSeconds: {{ arender_broker_liveness_probe_timeout_seconds }}
-          resources: {{ arender_broker_resources }}
+              path: {{ arender_document_service_broker_liveness_probe_path }}
+              port: {{ arender_document_service_broker_internal_port }}
+            initialDelaySeconds: {{ arender_document_service_broker_liveness_probe_initial_delay_secs }}
+            periodSeconds: {{ arender_document_service_broker_liveness_probe_period_seconds }}
+            successThreshold: {{ arender_document_service_broker_liveness_probe_success_threshold }}
+            timeoutSeconds: {{ arender_document_service_broker_liveness_probe_timeout_seconds }}
+          resources: {{ arender_document_service_broker_resources }}
           env:
-          - name: DSB_KUBEPROVIDER_KUBE.HOSTS_{{ arender_converter_service_name }}
-            value: "{{ arender_converter_internal_port }}"
-          - name: DSB_KUBEPROVIDER_KUBE.HOSTS_{{ arender_dfs_service_name }}
-            value: "{{ arender_dfs_internal_port }}"
-          - name: DSB_KUBEPROVIDER_KUBE.HOSTS_{{ arender_jni_service_name }}
-            value: "{{ arender_jni_internal_port }}"
-          - name: DSB_KUBEPROVIDER_KUBE.HOSTS_{{ arender_pdfbox_service_name }}
-            value: "{{ arender_pdfbox_internal_port }}"
-          - name: BRK_LOGGING_CONFIG
+          - name: DSB_KUBEPROVIDER_KUBE.HOSTS_{{ arender_document_converter_service_name }}
+            value: "{{ arender_document_converter_internal_port }}"
+          - name: DSB_KUBEPROVIDER_KUBE.HOSTS_{{ arender_document_file_storage_service_name }}
+            value: "{{ arender_document_file_storage_internal_port }}"
+          - name: DSB_KUBEPROVIDER_KUBE.HOSTS_{{ arender_document_renderer_service_name }}
+            value: "{{ arender_document_renderer_internal_port }}"
+          - name: DSB_KUBEPROVIDER_KUBE.HOSTS_{{ arender_document_text_handler_service_name }}
+            value: "{{ arender_document_text_handler_internal_port }}"
+          - name: DSB_LOGGING_CONFIG
             value: "/arender/modules/config/logback-spring.xml"
           - name: POD_NAME
             valueFrom:
@@ -110,8 +110,8 @@ spec:
             value: http
 {% endif %}
           resources:
-{% if arender_broker_resources is defined and (arender_broker_resources | from_yaml) %}
-{{ arender_broker_resources | from_yaml | to_nice_yaml(indent=2) | indent(12, true) }}
+{% if arender_document_service_broker_resources is defined and (arender_document_service_broker_resources | from_yaml) %}
+{{ arender_document_service_broker_resources | from_yaml | to_nice_yaml(indent=2) | indent(12, true) }}
 {% endif %}
           volumeMounts:
           - name: temp
@@ -126,7 +126,7 @@ spec:
             claimName: {{ arender_rendition_broker_pvc_name }}
         - name: config
           configMap:
-            name: {{ arender_broker_log_configmap_name }}
+            name: {{ arender_document_service_broker_log_configmap_name }}
         - name: logs
           persistentVolumeClaim:
             claimName: "{{ arender_logs_pvc_name }}"
