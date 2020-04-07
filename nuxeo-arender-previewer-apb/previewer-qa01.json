@@ -1,0 +1,9 @@
+{
+  "namespace": "int-arender-qa",
+  "project_name": "qa01",
+  "previewer_nuxeo_url":"https://nxdev-qa01.beta.nuxeocloud.com/nuxeo",
+  "previewer_nuxeo_oauth_secret":"58ftsbyytg2Dydrw",
+  "arender_rendition_service_name":"arender-pool-1",
+  "arender_previewer_image_version":"10.2.2",
+  "arender_previewer_monitoring_enabled": true
+}

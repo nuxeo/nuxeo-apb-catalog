@@ -1,0 +1,7 @@
+{
+  "namespace": "int-arender-qa",
+  "project_name": "arender-pool-1",
+  "arender_rendition_image_version":"4.0.8.NX1.1",
+  "arender_rendition_monitoring_enabled": true,
+  "arender_autoscaling_min": "2"
+}

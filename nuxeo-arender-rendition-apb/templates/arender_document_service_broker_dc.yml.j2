@@ -91,22 +91,22 @@ spec:
               fieldRef:
                 fieldPath: metadata.name
 {% if arender_rendition_monitoring_enabled %}
-          - name: BRK_AOP_ACTIVE
+          - name: DSB_AOP_ACTIVE
             value: 'true'
-          - name: BRK_AOP_ACTIVATE.LOGGER
+          - name: DSB_AOP_ACTIVATE.LOGGER
             value: 'false'
-          - name: BRK_AOP_ACTIVATE.ES
+          - name: DSB_AOP_ACTIVATE.ES
             value: 'true'
-          - name: BRK_AOP_ES.HOST
+          - name: DSB_AOP_ES.HOST
             valueFrom:
               secretKeyRef:
                 name: {{ monitoring_es_binding_secret_name }}
                 key: host
-          - name: BRK_AOP_ES.PORT
+          - name: DSB_AOP_ES.PORT
             value: '9200'
-          - name: BRK_AOP_ES.INDEX.NAME
+          - name: DSB_AOP_ES.INDEX.NAME
             value: {{ monitoring_es_index_name }}
-          - name: BRK_AOP_ES.PROTOCOL
+          - name: DSB_AOP_ES.PROTOCOL
             value: http
 {% endif %}
           resources:

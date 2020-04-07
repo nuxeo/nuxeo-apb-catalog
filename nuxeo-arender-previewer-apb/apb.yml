@@ -60,7 +60,7 @@ plans:
     - name: arender_previewer_image_version
       type: string
       title: ARender previewer image version
-      default: "10.1.1"
+      default: "10.2.2"
       display_group: Container Image
 
     - name: arender_previewer_image_pull_existing_secret
