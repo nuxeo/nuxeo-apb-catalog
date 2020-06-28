@@ -1,0 +1,12 @@
+---
+
+- name: encode bind credentials
+  asb_encode_binding:
+    fields:
+      app_name: "{{ name }}"
+      broker_service_dns: "{{ broker_service_dns}}"
+      broker_service_url: "http://{{ broker_service_dns }}:{{ broker_service_port }}/"
+      broker_service_port: "{{ broker_service_port}}"
+  when:
+    - state == "present"
+    - in_cluster

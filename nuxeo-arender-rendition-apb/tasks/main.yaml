@@ -5,109 +5,13 @@
     description: "0%: Starting"
   when: in_cluster
 
+- name: "Deploy ARender rendition pool"
+  include_tasks: "default.yml"
+  when: _apb_plan_id == "default"
 
-- name: "Configure monitoring stack"
-  include_tasks: "monitoring.yml"
-  when: arender_rendition_monitoring_enabled
-
-- name: "Creating Stack Service Account"
-  k8s:
-    state: "{{ state }}"
-    definition: "{{ lookup('template', 'arender_rendition_sa.yml.j2') | from_yaml }}"
-
-
-- name: "Set PVC {{ state }}"
-  k8s:
-    state: "{{ state }}"
-    definition: "{{ lookup('template', 'arender_pvc.yml.j2') | from_yaml }}"
-  loop:
-    - pvc_name: "{{ arender_rendition_broker_pvc_name }}"
-    - pvc_name: "{{ arender_common_tmp_name }}"
-    - pvc_name: "{{ arender_logs_pvc_name }}"
-
-
-- name: "Set Log config {{ state }}"
-  k8s:
-    state: "{{ state }}"
-    definition: "{{ lookup('template', 'arender_log_config.yml.j2') | from_yaml }}"
-  loop:
-    - name: "{{ arender_document_converter_log_configmap_name }}"
-      file: arender_document_converter_logback.xml
-    - name: "{{ arender_document_file_storage_log_configmap_name }}"
-      file: arender_document_file_storage_logback.xml
-    - name: "{{ arender_document_renderer_log_configmap_name }}"
-      file: arender_document_renderer_logback.xml
-    - name: "{{ arender_document_text_handler_log_configmap_name }}"
-      file: arender_document_text_handler_logback.xml
-    - name: "{{ arender_document_service_broker_log_configmap_name }}"
-      file: arender_document_service_broker_logback.xml
-
-
-- name: "Set ARender objects state={{ state }}"
-  k8s:
-    state: "{{ state }}"
-    definition: "{{ lookup('template', item.name) | from_yaml }}"
-  when: item.apply | default(True)
-  loop:
-    - name: arender_rendition_sa.yml.j2
-    - name: arender_rendition_pull_secret.yml.j2
-      apply: "{{ create_pull_secret }}"
-    - name: arender_document_converter_dc.yml.j2
-    - name: arender_document_converter_service.yml.j2
-    - name: arender_document_file_storage_dc.yml.j2
-    - name: arender_document_file_storage_service.yml.j2
-    - name: arender_document_renderer_dc.yml.j2
-    - name: arender_document_renderer_service.yml.j2
-    - name: arender_document_text_handler_dc.yml.j2
-    - name: arender_document_text_handler_service.yml.j2
-    - name: arender_document_service_broker_dc.yml.j2
-    - name: arender_document_service_broker_service.yml.j2
-    - name: arender_debug_dc.yml.j2
-      apply: "{{ arender_debug_pod == true }}"
-
-
-- name: "Set Autoscaling objects {{ state }}"
-  k8s:
-    state: "{{ state }}"
-    definition: "{{ lookup('template', 'arender_autoscaling.yml.j2') | from_yaml }}"
-  loop:
-    - name: document-converter
-      target_dc: "{{ arender_document_converter_dc_name }}"
-    - name: document-text-handler
-      target_dc: "{{ arender_document_text_handler_dc_name }}"
-    - name: document-renderer
-      target_dc: "{{ arender_document_renderer_dc_name }}"
-    - name: document-service-broker
-      target_dc: "{{ arender_document_service_broker_dc_name }}"
-
-
-
-
-- name: "Wait for Rendition Deployment to become ready"
-  debug:
-    msg: "DeploymentConfig ready status: {{ arender_document_converter_dc_query }}"
-  retries: 50
-  delay: 10
-  until:
-    - arender_document_service_broker_dc_query
-    - arender_document_converter_dc_query
-    - arender_document_file_storage_dc_query
-    - arender_document_renderer_dc_query
-    - arender_document_text_handler_dc_query
-  when: state == 'present'
-
-
-- name: encode bind credentials
-  asb_encode_binding:
-    fields:
-      app_name: "{{ name }}"
-      broker_service_dns: "{{ arender_document_service_broker_service_name }}.{{ namespace }}.svc"
-      broker_service_url: "http://{{ arender_document_service_broker_service_name }}.{{ namespace }}.svc:{{ arender_document_service_broker_internal_port}}/"
-      broker_service_port: "{{ arender_document_service_broker_internal_port}}"
-  when:
-    - state == "present"
-    - in_cluster
-
+- name: "Deploy Bridge to rendition pool"
+  include_tasks: "bridge.yml"
+  when: _apb_plan_id == "bridge"
 
 - name: "Update last operation"
   asb_last_operation:

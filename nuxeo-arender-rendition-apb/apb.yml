@@ -15,6 +15,27 @@ metadata:
   dependencies: []
   providerDisplayName: "Nuxeo"
 plans:
+  - name: bridge
+    description: Bridge to another deployed broker
+    free: true
+    metadata: {}
+    parameters:
+    - name: project_name
+      type: string
+      title: Project Name
+      default: arender
+      display_group: Project properties
+    - name: broker_service_dns
+      type: string
+      title: Remote broker DNS
+      default: arender-pool-1-rendition-broker.int-arender-preprod.svc
+      display_group: Remote broker
+    - name: broker_service_port
+      type: string
+      title: Remote broker port
+      default: "8761"
+      display_group: Remote broker
+
   - name: default
     description: Default ARender Rendition deployment
     free: true
