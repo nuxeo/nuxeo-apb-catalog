@@ -149,6 +149,8 @@ spec:
         - name: transientstore
           mountPath: /var/lib/nuxeo/transientstore
 {% endif %}
+        - name: logs
+          mountPath: /var/log/nuxeo
         - name: data
           mountPath: /var/lib/nuxeo/data
         - name: nuxeotmp
@@ -182,6 +184,8 @@ spec:
         persistentVolumeClaim:
           claimName: {{ transientstore_pvc_name }}
 {% endif %}
+      - name: logs
+        emptyDir: {}
       - name: data
 {% if data_persistentVolume_enabled %}
         persistentVolumeClaim:
