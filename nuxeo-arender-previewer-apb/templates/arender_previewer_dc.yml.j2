@@ -103,6 +103,8 @@ spec:
             mountPath: /usr/local/tomcat/temp
           - name: work
             mountPath: /usr/local/tomcat/work
+          - name: config-volume
+            mountPath: /docker-entrypoint-init.d
 {% if use_pull_secret %}
       imagePullSecrets:
         - name: {{ arender_previewer_image_pull_secret }}
@@ -130,5 +132,8 @@ spec:
           emptyDir: {}
         - name: work
           emptyDir: {}
+        - name: {{ arender_previewer_config_name }}
+            defaultMode: 420
+           name: config-volume
   triggers:
     - type: ConfigChange
