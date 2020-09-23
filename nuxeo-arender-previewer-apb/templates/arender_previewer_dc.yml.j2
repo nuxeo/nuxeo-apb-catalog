@@ -133,7 +133,7 @@ spec:
         - name: work
           emptyDir: {}
         - name: config-volume
-                  configMap:
-                    name: {{ arender_previewer_config_name }}
+          configMap:
+            name: {{ arender_previewer_config_name }}
   triggers:
     - type: ConfigChange
