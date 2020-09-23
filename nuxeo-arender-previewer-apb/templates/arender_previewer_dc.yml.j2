@@ -132,8 +132,8 @@ spec:
           emptyDir: {}
         - name: work
           emptyDir: {}
-        - name: {{ arender_previewer_config_name }}
-            defaultMode: 420
-           name: config-volume
+        - name: config-volume
+                  configMap:
+                    name: {{ arender_previewer_config_name }}
   triggers:
     - type: ConfigChange
