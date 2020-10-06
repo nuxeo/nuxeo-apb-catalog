@@ -117,7 +117,7 @@ spec:
 {% endif %}
           volumeMounts:
           - name: temp
-            mountPath: /arender/tmp
+            mountPath: /tmp
           - name: config
             mountPath: /arender/modules/config
           - name: logs
@@ -125,7 +125,7 @@ spec:
       volumes:
         - name: temp
           persistentVolumeClaim:
-            claimName: {{ arender_rendition_broker_pvc_name }}
+            claimName: {{ arender_common_tmp_name }}
         - name: config
           configMap:
             name: {{ arender_broker_log_configmap_name }}

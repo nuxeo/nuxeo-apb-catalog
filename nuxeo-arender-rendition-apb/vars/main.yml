@@ -65,7 +65,6 @@ arender_pdfbox_dc_name: "{{ name }}-pdfbox"
 
 arender_debug_dc_name: "{{ name }}-debug"
 
-arender_rendition_broker_pvc_name: "{{ name }}-tmp-broker"
 arender_common_tmp_name: "{{ name }}-tmp-common"
 arender_logs_pvc_name: "{{ name }}-logs"
 
