@@ -55,7 +55,7 @@ plans:
     - name: arender_rendition_image_version
       type: string
       title: ARender rendition image
-      default: "4.0.6.NX2.0"
+      default: "4.0.8.NX1.6"
       display_group: Container Image
     - name: arender_rendition_image_pull_existing_secret
       type: string
