@@ -1,3 +1,4 @@
+---
 
 - name: "Configure monitoring stack"
   include_tasks: "monitoring.yml"
@@ -23,16 +24,16 @@
     state: "{{ state }}"
     definition: "{{ lookup('template', 'arender_log_config.yml.j2') | from_yaml }}"
   loop:
-    - name: "{{ arender_converter_log_configmap_name }}"
-      file: arender_converter_logback.xml
-    - name: "{{ arender_dfs_log_configmap_name }}"
-      file: arender_dfs_logback.xml
-    - name: "{{ arender_jni_log_configmap_name }}"
-      file: arender_jni_logback.xml
-    - name: "{{ arender_pdfbox_log_configmap_name }}"
-      file: arender_pdfbox_logback.xml
-    - name: "{{ arender_broker_log_configmap_name }}"
-      file: arender_broker_logback.xml
+    - name: "{{ arender_document_converter_log_configmap_name }}"
+      file: arender_document_converter_logback.xml
+    - name: "{{ arender_document_file_storage_log_configmap_name }}"
+      file: arender_document_file_storage_logback.xml
+    - name: "{{ arender_document_renderer_log_configmap_name }}"
+      file: arender_document_renderer_logback.xml
+    - name: "{{ arender_document_text_handler_log_configmap_name }}"
+      file: arender_document_text_handler_logback.xml
+    - name: "{{ arender_document_service_broker_log_configmap_name }}"
+      file: arender_document_service_broker_logback.xml
 
 
 - name: "Set ARender objects state={{ state }}"
@@ -44,16 +45,16 @@
     - name: arender_rendition_sa.yml.j2
     - name: arender_rendition_pull_secret.yml.j2
       apply: "{{ create_pull_secret }}"
-    - name: arender_converter_dc.yml.j2
-    - name: arender_converter_service.yml.j2
-    - name: arender_dfs_dc.yml.j2
-    - name: arender_dfs_service.yml.j2
-    - name: arender_jni_dc.yml.j2
-    - name: arender_jni_service.yml.j2
-    - name: arender_pdfbox_dc.yml.j2
-    - name: arender_pdfbox_service.yml.j2
-    - name: arender_broker_dc.yml.j2
-    - name: arender_broker_service.yml.j2
+    - name: arender_document_converter_dc.yml.j2
+    - name: arender_document_converter_service.yml.j2
+    - name: arender_document_file_storage_dc.yml.j2
+    - name: arender_document_file_storage_service.yml.j2
+    - name: arender_document_renderer_dc.yml.j2
+    - name: arender_document_renderer_service.yml.j2
+    - name: arender_document_text_handler_dc.yml.j2
+    - name: arender_document_text_handler_service.yml.j2
+    - name: arender_document_service_broker_dc.yml.j2
+    - name: arender_document_service_broker_service.yml.j2
     - name: arender_debug_dc.yml.j2
       apply: "{{ arender_debug_pod == true }}"
 
@@ -63,29 +64,29 @@
     state: "{{ state }}"
     definition: "{{ lookup('template', 'arender_autoscaling.yml.j2') | from_yaml }}"
   loop:
-    - name: converter
-      target_dc: "{{ arender_converter_dc_name }}"
-    - name: pdfbox
-      target_dc: "{{ arender_pdfbox_dc_name }}"
-    - name: jni
-      target_dc: "{{ arender_jni_dc_name }}"
-    - name: broker
-      target_dc: "{{ arender_broker_dc_name }}"
+    - name: document-converter
+      target_dc: "{{ arender_document_converter_dc_name }}"
+    - name: document-text-handler
+      target_dc: "{{ arender_document_text_handler_dc_name }}"
+    - name: document-renderer
+      target_dc: "{{ arender_document_renderer_dc_name }}"
+    - name: document-service-broker
+      target_dc: "{{ arender_document_service_broker_dc_name }}"
 
 
 
 
 - name: "Wait for Rendition Deployment to become ready"
   debug:
-    msg: "DeploymentConfig ready status: {{ arender_converter_dc_query }}"
+    msg: "DeploymentConfig ready status: {{ arender_document_converter_dc_query }}"
   retries: 50
   delay: 10
   until:
-    - arender_broker_dc_query
-    - arender_converter_dc_query
-    - arender_dfs_dc_query
-    - arender_jni_dc_query
-    - arender_pdfbox_dc_query
+    - arender_document_service_broker_dc_query
+    - arender_document_converter_dc_query
+    - arender_document_file_storage_dc_query
+    - arender_document_renderer_dc_query
+    - arender_document_text_handler_dc_query
   when: state == 'present'
 
 
@@ -93,9 +94,9 @@
   asb_encode_binding:
     fields:
       app_name: "{{ name }}"
-      broker_service_dns: "{{ arender_broker_service_name }}.{{ namespace }}.svc"
-      broker_service_url: "http://{{ arender_broker_service_name }}.{{ namespace }}.svc:{{ arender_broker_internal_port}}/"
-      broker_service_port: "{{ arender_broker_internal_port}}"
+      broker_service_dns: "{{ arender_document_service_broker_service_name }}.{{ namespace }}.svc"
+      broker_service_url: "http://{{ arender_document_service_broker_service_name }}.{{ namespace }}.svc:{{ arender_document_service_broker_internal_port}}/"
+      broker_service_port: "{{ arender_document_service_broker_internal_port}}"
   when:
     - state == "present"
     - in_cluster

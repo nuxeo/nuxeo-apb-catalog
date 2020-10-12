@@ -16,7 +16,7 @@ namespace: "{{ lookup('env','NAMESPACE') | default('hello-world', true) }}"
 testing: false
 
 arender_rendition_image_registry: "docker-registry.default.svc:5000/common-infra"
-arender_rendition_image_version: "4.0.8.NX1.6"
+arender_rendition_image_version: "4.0.9.NX1.0"
 arender_rendition_image_document_service_broker: arender-document-service-broker
 arender_rendition_image_document_converter: arender-document-converter
 arender_rendition_image_document_file_storage: arender-document-file-storage
