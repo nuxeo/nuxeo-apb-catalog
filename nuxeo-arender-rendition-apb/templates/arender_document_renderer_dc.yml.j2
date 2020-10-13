@@ -58,6 +58,7 @@ spec:
             - ./entrypoint.sh
             - java
             - '-Dsun.net.inetaddr.ttl=0'
+            - '-Djava.library.path=/lib/'
             - '-jar'
             - '-Xmx1g'
             - app.jar
