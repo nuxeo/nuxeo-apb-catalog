@@ -14,7 +14,7 @@ namespace: "{{ lookup('env','NAMESPACE') | default('hello-world', true) }}"
 
 testing: false
 arender_previewer_image: docker-registry.default.svc:5000/common-infra/arender-previewer
-arender_previewer_image_version: "10.3.4"
+arender_previewer_image_version: "10.3.5"
 
 arender_previewer_monitoring_enabled: false
 arender_previewer_monitoring_es_service: arender-monitor-elasticsearch
