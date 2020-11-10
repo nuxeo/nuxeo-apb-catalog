@@ -10,7 +10,7 @@ metadata:
   displayName: S3 environment for Nuxeo
   imageUrl: "https://www.nuxeo.com/assets/imgs/logo340x60.png"
   longDescription:
-    This Deploys an S3 environment that can be used with Nuxeo
+    This Deploys an S3 compatible environment that can be used with Nuxeo
   dependencies: []
   providerDisplayName: "Nuxeo"
 plans:
