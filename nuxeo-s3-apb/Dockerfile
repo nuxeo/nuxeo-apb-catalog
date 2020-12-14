@@ -42,14 +42,18 @@ CiAgICAtIG5hbWU6IHJlc291cmNlcwogICAgICBkZWZhdWx0OiAneyJsaW1pdHMiOiB7ImNwdSI6\
 ICIxIiwibWVtb3J5IjogIjUxMk1pIn0sInJlcXVlc3RzIjogeyJjcHUiOiAiMC41IiwibWVtb3J5\
 IjogIjI1Nk1pIn19JwogICAgICB0eXBlOiBzdHJpbmcKICAgICAgdGl0bGU6IFBvZCByZXNvdXJj\
 ZSByZXF1ZXN0cyBhbmQgbGltaXRzCiAgICAgIGRpc3BsYXlfdHlwZTogdGV4dGFyZWEKICAgICAg\
-ZGlzcGxheV9ncm91cDogQ29udGFpbmVyIFNwZWNzCgo="
+ZGlzcGxheV9ncm91cDogQ29udGFpbmVyIFNwZWNzCiAgICBiaW5kX3BhcmFtZXRlcnM6CiAgICAg\
+IC0gbmFtZTogYnVja2V0X25hbWUKICAgICAgICBkZWZhdWx0OiAnbnV4ZW8nCiAgICAgICAgdHlw\
+ZTogc3RyaW5nCiAgICAgICAgdGl0bGU6IE5hbWUgb2YgdGhlIGJ1Y2tldCB0byBjcmVhdGUK"
 
 
 ADD playbooks /opt/apb/actions
 
 # Add our role into the ansible roles dir
-ADD . /opt/ansible/roles/nuxeo-s3-apb/
+ADD roles /opt/ansible/roles
 
 RUN chmod -R g=u /opt/{ansible,apb}
+
+### INSTALL THE REQUIRED PACKAGES
 
 USER apb

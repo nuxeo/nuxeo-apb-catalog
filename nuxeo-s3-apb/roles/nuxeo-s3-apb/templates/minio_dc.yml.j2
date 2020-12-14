@@ -13,21 +13,19 @@ spec:
   replicas: 1
   selector:
     app: {{ app_name }}
+    component: minio
   strategy:
     activeDeadlineSeconds: 21600
-    resources: {}
-    rollingParams:
-      intervalSeconds: 1
-      maxSurge: 25%
-      maxUnavailable: 25%
+    recreateParams:
       timeoutSeconds: 600
-      updatePeriodSeconds: 1
-    type: Rolling
+    resources: {}
+    type: Recreate
   template:
     metadata:
       creationTimestamp: null
       labels:
         app: {{ app_name }}
+        component: minio
 {% if podAnnotations is defined and (podAnnotations | from_yaml) %}
       annotations:
 {{ podAnnotations | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}

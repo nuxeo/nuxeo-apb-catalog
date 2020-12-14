@@ -1,0 +1,7 @@
+---
+
+pod_name: "{{ lookup('env', 'POD_NAME') }}"
+pod_namespace: "{{ lookup('env', 'POD_NAMESPACE') }}"
+in_cluster: "{{ True if (pod_name and pod_namespace) else False }}"
+
+app_name: "{{ _apb_provision_creds.app_name }}"

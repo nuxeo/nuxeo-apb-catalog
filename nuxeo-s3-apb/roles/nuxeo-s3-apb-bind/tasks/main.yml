@@ -1,0 +1,44 @@
+---
+
+- name: "Update last operation"
+  asb_last_operation:
+    description: "0%: Starting"
+  when: in_cluster
+
+
+- name: "Get first Minio pod name"
+  shell: |
+    kubectl get pods --selector=app={{ app_name }},component=minio --output=jsonpath={.items[0].metadata.name} -n {{ namespace }}
+  register: first_minio_pod
+
+- name: "Create bucket"
+  shell: |
+    kubectl exec {{ first_minio_pod.stdout }} -n {{ namespace }} -- mkdir -p /storage/{{bucket_name}}
+  register: result
+  when:
+    - apb_action == "bind"
+    - bucket_name != ""
+
+- name: "Delete bucket"
+  shell: |
+    kubectl exec {{ first_minio_pod.stdout }} -n {{ namespace }} -- rm -rf /storage/{{bucket_name}}
+  register: result
+  when:
+    - apb_action == "unbind"
+    - bucket_name != ""
+
+
+- name: encode bind credentials
+  asb_encode_binding:
+    fields:
+      access: "{{_apb_provision_creds.access}}"
+      secret: "{{_apb_provision_creds.secret}}"
+      bucket: "{{ bucket_name }}"
+      endpoint: "{{_apb_provision_creds.url}}"
+      region: us-east-1
+  when: apb_action == "bind"
+
+- name: "Update last operation"
+  asb_last_operation:
+    description: "100%: Cluster objects"
+  when: in_cluster

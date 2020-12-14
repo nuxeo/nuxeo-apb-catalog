@@ -1,0 +1,6 @@
+{
+  "project_name": "nuxeo11-sandbox-minio",
+  "minio_nodes": 1,
+  "minio_storage_class": "gp2encrypted",
+  "minio_size": 10
+}

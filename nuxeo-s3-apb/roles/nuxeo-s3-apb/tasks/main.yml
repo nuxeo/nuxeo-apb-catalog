@@ -39,9 +39,10 @@
 - name: encode bind credentials
   asb_encode_binding:
     fields:
+      app_name: "{{ name }}"
       url: "{{ minio_service_name}}.{{ namespace }}.svc"
       access: "{{ minio_access }}"
-      secret: "{{ minio_secret }}"
+      secret: "{{ minio_access }}"
   when:
     - state == "present"
     - in_cluster

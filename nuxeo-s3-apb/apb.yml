@@ -79,4 +79,8 @@ plans:
       title: Pod resource requests and limits
       display_type: textarea
       display_group: Container Specs
-
+    bind_parameters:
+      - name: bucket_name
+        default: 'nuxeo'
+        type: string
+        title: Name of the bucket to create

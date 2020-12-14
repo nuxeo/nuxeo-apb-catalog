@@ -3,4 +3,8 @@
   hosts: localhost
   gather_facts: false
   connection: local
-  tasks: []
+  roles:
+  - role: ansibleplaybookbundle.asb-modules
+  - role: nuxeo-s3-apb-bind
+  vars:
+    apb_action: unbind
