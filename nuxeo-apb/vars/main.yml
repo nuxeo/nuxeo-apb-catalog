@@ -36,6 +36,11 @@ pod_name: "{{ lookup('env', 'POD_NAME') }}"
 pod_namespace: "{{ lookup('env', 'POD_NAMESPACE') }}"
 in_cluster: "{{ True if (pod_name and pod_namespace) else False }}"
 
+
+
+nuxeo_version_post_11: "{{ nuxeoVersion is match('[1-9][1-9]\\..*') }}"
+nuxeo_deployment_template: "{{ 'nuxeo_dc' if nuxeo_version_post_11 else 'nuxeo_dc_pre11' }}"
+
 # Variables to hold resource names
 admin_secret_name: "{{ name + '-admin' if auth_existingAdminSecret is undefined else auth_existingAdminSecret }}"
 connect_secret_name: "{{ name + '-connect' if connectExistingSecret is undefined else connectExistingSecret }}"
@@ -56,6 +61,9 @@ elasticsearch_servicebinding_name: "{{ name + '-elasticsearch-service-binding'}}
 elasticsearch_credentials_name: "{{ name + '-elasticsearch-credentials'}}"
 kafka_servicebinding_name: "{{ name + '-kafka-service-binding'}}"
 kafka_credentials_name: "{{ name + '-kafka-credentials'}}"
+minio_servicebinding_name: "{{ name + '-minio-service-binding'}}"
+minio_credentials_name: "{{ name + '-minio-credentials'}}"
+bucket_name: "{{ name }}"
 binaries_persistentVolume_accessMode: "ReadWriteMany"
 transientstore_persistentVolume_accessMode: "ReadWriteMany"
 data_persistentVolume_accessMode: "ReadWriteOnce"

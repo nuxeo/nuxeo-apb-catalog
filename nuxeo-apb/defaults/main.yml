@@ -20,6 +20,10 @@ namespace: "{{ lookup('env','NAMESPACE') | default('nuxeo', true) }}"
 component: nuxeo
 pod_type: interactive
 
+nuxeoVersion: "11.4"
+nuxeoClid: ""
+nuxeoProfiles: ""
+nuxeoEnvironment: prod
 
 interactive_replicas: 3
 worker_replicas: 0

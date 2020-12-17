@@ -12,7 +12,7 @@ metadata:
     apb_plan_id: '{{ _apb_plan_id }}'
     apb_service_class_id: '{{ _apb_service_class_id }}'
     apb_service_instance_id: '{{ _apb_service_instance_id }}'
-    component: {{ component }}  
+    component: {{ component }}
   name: {{ service_name }}
   namespace: {{ namespace }}
 spec:
@@ -21,8 +21,8 @@ spec:
 {% endif %}
   selector:
     app: {{ name }}
-    component: {{ component }}  
-    nuxeo_type: interactive
+    component: {{ component }}
+    nuxeo_type: portal
   ports:
   - name: 8080-tcp
     port: 8080

@@ -41,51 +41,22 @@ spec:
 {% endif %}
 
     spec:
-      initContainers:
-      - image: 'nuxeo/nuxeo-init-container:latest'
-        imagePullPolicy: Always
-        name: bind
-        resources: {}
-        terminationMessagePath: /dev/termination-log
-        terminationMessagePolicy: File
-        volumeMounts:
-        - mountPath: /etc/nuxeo/conf.d
-          name: nuxeoconfd
-{% if useExternalMongoDB %}
-        - name: mongodb-credentials
-          mountPath: /opt/nuxeo/bindings/mongodb
-{% endif %}
-{% if useExternalElasticsearch %}
-        - name: elasticsearch-credentials
-          mountPath: /opt/nuxeo/bindings/elasticsearch
-{% endif %}
-{% if useKafkaForStream %}
-        - name: kafka-credentials
-          mountPath: /opt/nuxeo/bindings/kafka
-{% endif %}
-{% if useMinioForBinaries %}
-        - name: minio-credentials
-          mountPath: /opt/nuxeo/bindings/s3
-{% endif %}
-        env:
-        - name: e
-          value: {{ name }}
       containers:
 {% if use_front_ssl_proxy and item.nuxeo_type == "portal" %}
       - name: nginx
         # TODO Bake a nuxeo image and allow parametrization
         image: nginx
         volumeMounts:
-        - name: nginx-cert
-          readOnly: true
-          mountPath: "/etc/secrets/"
-        - name: nginx-conf
-          readOnly: true
-          mountPath: "/etc/nginx/"
-        - name: nginx-cache
-          mountPath: "/var/cache/nginx"
-        - name: nginx-tmp
-          mountPath: "/var/tmp"
+          - name: nginx-cert
+            readOnly: true
+            mountPath: "/etc/secrets/"
+          - name: nginx-conf
+            readOnly: true
+            mountPath: "/etc/nginx/"
+          - name: nginx-cache
+            mountPath: "/var/cache/nginx"
+          - name: nginx-tmp
+            mountPath: "/var/tmp"
         ports:
         - containerPort: 8443
           protocol: TCP
@@ -114,26 +85,24 @@ spec:
           successThreshold: {{ readinessProbe_successThreshold }}
         name: nuxeo
         env:
-        - name: NUXEO_URL
-          value: {{ applicationUrl }}
-{% if connect_enabled %}
-        - name: NUXEO_CLID
-          valueFrom:
-            secretKeyRef:
-              key: 'instance.clid'
-              name: {{ connect_secret_name }}
-{% endif %}
-{% if item.nuxeoEnvironment is defined and item.nuxeoEnvironment != "" %}
-        - name: NUXEO_ENVIRONMENT
-          value: {{ item.nuxeoEnvironment }}
-{% endif %}
-{% if item.nuxeoProfiles is defined and item.nuxeoProfiles != "" %}
-        - name: NUXEO_PROFILES
-          value: {{ item.nuxeoProfiles }}
+{% if item.nuxeo_type == "worker" %}
+        - name: IS_WORKER
+          value: "1"
 {% endif %}
 {% if nuxeoJavaOpts is defined and nuxeoJavaOpts != "" %}
         - name: JAVA_OPTS
           value: "{{ nuxeoJavaOpts }}"
+{% endif %}
+{% if (nuxeoJavaOpts is not defined or nuxeoJavaOpts != "") and resources is defined %}
+        # Limit the JVM to the CGroup limits.
+        - name: JAVA_OPTS
+          value: "-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=1 -Djavax.net.ssl.trustStore=/var/lib/nuxeo/data/cacerts -Djavax.net.ssl.trustStorePassword=changeit -Djavax.net.ssl.keyStoreType=jks"
+{% endif %}
+        - name: NUXEO_TEMPLATES
+          value: "default{% if useExternalMongoDB %},mongodb{% endif %}{% if nuxeoTemplates is defined and nuxeoTemplates != ""%},{{nuxeoTemplates}}{% endif %}"
+{% if nuxeoPackages is defined %}
+        - name: NUXEO_PACKAGES
+          value: {{ nuxeoPackages }}
 {% endif %}
 {% if binaries_persistentVolume_enabled %}
         - name: NUXEO_BINARY_STORE
@@ -143,6 +112,16 @@ spec:
         - name: NUXEO_TRANSIENT_STORE
           value: /var/lib/nuxeo/transientstore
 {% endif %}
+        - name: NUXEO_URL
+          value: {{ applicationUrl }}
+        - name: NUXEO_ENVIRONMENT
+          value: {{ item.nuxeoEnvironment}}
+        - name: NUXEO_PROFILES
+          value: {{ item.nuxeoProfiles}}
+        - name: NUXEO_ENV_NAME
+          value: {{ name }}
+        - name: NUXEO_INSTALL_HOTFIX
+          value: "{{ connectInstallHotfix }}"
 {% if extraVars is defined and (extraVars | from_yaml) %}
 {{ extraVars | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
 {% endif %}
@@ -155,14 +134,6 @@ spec:
 {{ resources | from_yaml | to_nice_yaml(indent=2) | indent(10, true) }}
 {% endif %}
         volumeMounts:
-        - name: logs
-          mountPath: /var/log/nuxeo
-        - name: data
-          mountPath: /var/lib/nuxeo/data
-        - name: nuxeotmp
-          mountPath: /opt/nuxeo/server/tmp
-        - name: nuxeoconfd
-          mountPath: /etc/nuxeo/conf.d
 {% if binaries_persistentVolume_enabled %}
         - name: binaries
           mountPath: /var/lib/nuxeo/binaries
@@ -171,20 +142,31 @@ spec:
         - name: transientstore
           mountPath: /var/lib/nuxeo/transientstore
 {% endif %}
-      volumes:
-      - name: nuxeoconfd
-        emptyDir: {}
-      - name: nuxeotmp
-        emptyDir: {}
-      - name: logs
-        emptyDir: {}
-      - name: data
-{% if data_persistentVolume_enabled %}
-        persistentVolumeClaim:
-          claimName: {{ data_pvc_name }}
-{% else %}
-        emptyDir: {}
+        - name: logs
+          mountPath: /var/log/nuxeo
+        - name: data
+          mountPath: /var/lib/nuxeo/data
+        - name: nuxeotmp
+          mountPath: /opt/nuxeo/server/tmp
+        - name: nuxeoconf
+          mountPath: /docker-entrypoint-initnuxeo.d
+{% if connect_enabled %}
+        - name: connect-secret
+          mountPath: /opt/nuxeo/connect
 {% endif %}
+{% if useExternalMongoDB %}
+        - name: mongodb-credentials
+          mountPath: /opt/nuxeo/bindings/mongodb
+{% endif %}
+{% if useExternalElasticsearch %}
+        - name: elasticsearch-credentials
+          mountPath: /opt/nuxeo/bindings/elasticsearch
+{% endif %}
+{% if useKafkaForStream %}
+        - name: kafka-credentials
+          mountPath: /opt/nuxeo/bindings/kafka
+{% endif %}
+      volumes:
 {% if binaries_persistentVolume_enabled %}
       - name: binaries
         persistentVolumeClaim:
@@ -194,6 +176,25 @@ spec:
       - name: transientstore
         persistentVolumeClaim:
           claimName: {{ transientstore_pvc_name }}
+{% endif %}
+      - name: logs
+        emptyDir: {}
+      - name: data
+{% if data_persistentVolume_enabled %}
+        persistentVolumeClaim:
+          claimName: {{ data_pvc_name }}
+{% else %}
+        emptyDir: {}
+{% endif %}
+      - name: nuxeotmp
+        emptyDir: {}
+      - name: nuxeoconf
+        configMap:
+          name: {{ init_configmap_name }}
+{% if connect_enabled %}
+      - name: connect-secret
+        secret:
+          secretName: {{ connect_secret_name }}
 {% endif %}
 {% if useExternalMongoDB %}
       - name: mongodb-credentials
@@ -209,11 +210,6 @@ spec:
       - name: kafka-credentials
         secret:
           secretName: {{ kafka_credentials_name }}
-{% endif %}
-{% if useMinioForBinaries %}
-      - name: minio-credentials
-        secret:
-          secretName: {{ minio_credentials_name }}
 {% endif %}
 {% if use_front_ssl_proxy and item.nuxeo_type == "portal" %}
       - name: nginx-conf

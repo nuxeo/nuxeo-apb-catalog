@@ -9,13 +9,13 @@ metadata:
     apb_service_class_id: '{{ _apb_service_class_id }}'
     apb_service_instance_id: '{{ _apb_service_instance_id }}'
     component: {{ component }}
-  name: {{ service_binding_name }}
+  name: {{ item.service_binding_name }}
   namespace: {{ namespace }}
 spec:
   instanceRef:
-    name: {{ service_to_bind }}
-  secretName: {{ secret_name }}
-{% if binding_parameters is defined %}
+    name: {{ item.service_to_bind }}
+  secretName: {{ item.secret_name }}
+{% if item.binding_parameters is defined %}
   parameters:
-{{ binding_parameters | from_yaml | to_nice_yaml(indent=2) | indent(4, true) }}
+{{ item.binding_parameters | from_yaml | to_nice_yaml(indent=2) | indent(4, true) }}
 {% endif %}

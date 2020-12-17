@@ -21,7 +21,3 @@ data:
 {% else %}
     {{ lookup('file', '../files/log4j.xml') | indent(4) }}
 {% endif %}
-  interactive-queues-config.xml: |
-    {{ lookup('file', interactive_queues_config_path ) | indent(4) }}
-  worker-queues-config.xml: |
-    {{ lookup('file', worker_queues_config_path ) | indent(4) }}
