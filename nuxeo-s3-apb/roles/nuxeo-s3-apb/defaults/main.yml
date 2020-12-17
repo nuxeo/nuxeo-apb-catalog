@@ -18,7 +18,7 @@ testing: false
 
 project_name: minio
 minio_image: minio/minio
-minio_image_version: RELEASE.2019-02-26T19-51-46Z
+minio_image_version: latest
 minio_mode: Standalone
 minio_nodes: 4
 minio_size: 5

@@ -1,3 +1,4 @@
 ---
 
 namespace: "{{ lookup('env','NAMESPACE') | default('nuxeo', true) }}"
+bucket_name: ""

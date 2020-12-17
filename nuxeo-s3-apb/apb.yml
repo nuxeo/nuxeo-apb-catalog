@@ -32,7 +32,7 @@ plans:
     - name: minio_image_version
       type: string
       title: Image version
-      default: "RELEASE.2019-02-26T19-51-46Z"
+      default: "latest"
       display_group: Project properties
     - name: minio_mode
       title: Mode

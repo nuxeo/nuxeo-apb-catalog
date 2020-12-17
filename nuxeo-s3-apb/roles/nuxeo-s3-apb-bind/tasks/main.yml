@@ -27,6 +27,10 @@
     - apb_action == "unbind"
     - bucket_name != ""
 
+- name: "Get Minio external URL"
+  shell: |
+    kubectl get route --selector=app={{ app_name }} --output=jsonpath={.items[0].spec.host} -n {{ namespace }}
+  register: minio_url
 
 - name: encode bind credentials
   asb_encode_binding:
@@ -34,7 +38,7 @@
       access: "{{_apb_provision_creds.access}}"
       secret: "{{_apb_provision_creds.secret}}"
       bucket: "{{ bucket_name }}"
-      endpoint: "{{_apb_provision_creds.url}}"
+      endpoint: "https://{{minio_url.stdout}}"
       region: us-east-1
   when: apb_action == "bind"
 
