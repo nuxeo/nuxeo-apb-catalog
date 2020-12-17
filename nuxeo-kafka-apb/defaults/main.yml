@@ -19,7 +19,6 @@ cluster: kubernetes
 namespace: "{{ lookup('env','NAMESPACE') | default('nuxeo', true) }}"
 component: kafka
 
-zookeeper_name: "{{ 'nuxeo-zookeeper-' + (_apb_service_instance_id | string) |truncate(5, True, '') }}"
 zookeeper_component: zookeeper
 
 
@@ -40,7 +39,7 @@ logSubPath: ""
 persistentVolume_accessMode: ReadWriteOnce
 persistentVolume_size: 3Gi
 affinity:
-external_enabled: true
+external_enabled: false
 external_prop_to_advertise: status.hostIP
 external_servicePort: 9093
 external_firstListenerPort: 31090

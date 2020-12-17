@@ -27,6 +27,8 @@ pod_namespace: "{{ lookup('env', 'POD_NAMESPACE') }}"
 in_cluster: "{{ True if (pod_name and pod_namespace) else False }}"
 
 name: "{{ app_name if app_name is defined else 'nuxeo-kafka-' + (_apb_service_instance_id | string |truncate(5, True, '') ) }}"
+zookeeper_name: "{{ ( app_name | replace('kafka','zookeeper')) if app_name is defined else 'nuxeo-zookeeper-' + (_apb_service_instance_id | string |truncate(5, True, '') ) }}"
+
 
 # Variables to hold resource names
 users_secret_name: "{{ name + '-user' if auth_existingUserSecret is undefined else auth_existingUserSecret }}"

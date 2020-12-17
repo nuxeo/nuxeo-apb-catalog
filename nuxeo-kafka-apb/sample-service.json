@@ -1,0 +1,10 @@
+{
+  "app_name": "nuxeo11-sandbox-kafka",
+  "replicas": 1,
+  "external_enabled": false,
+  "persistentVolume_size": "5Gi",
+  "persistentVolume_storageClass": "gp2encrypted",
+  "zookeeper_replicas": 1,
+  "zookeeper_persistentVolume_size": "5Gi",
+  "zookeeper_persistentVolume_storageClass": "gp2encrypted"
+}
