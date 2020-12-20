@@ -67,9 +67,16 @@ spec:
         - name: minio-credentials
           mountPath: /opt/nuxeo/bindings/s3
 {% endif %}
+{% if nuxeo_clustering_enabled %}
         env:
-        - name: e
-          value: {{ name }}
+        - name: NUXEO_CLUSTERING
+          value: 'true'
+        - name: NUXEO_NODE_ID
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.name
+{% endif %}
       containers:
 {% if use_front_ssl_proxy and item.nuxeo_type == "portal" %}
       - name: nginx

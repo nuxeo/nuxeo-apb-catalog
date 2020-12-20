@@ -37,7 +37,8 @@ pod_namespace: "{{ lookup('env', 'POD_NAMESPACE') }}"
 in_cluster: "{{ True if (pod_name and pod_namespace) else False }}"
 
 
-
+total_number_of_nodes: "{{interactive_replicas + worker_replicas }}"
+nuxeo_clustering_enabled:  "{{ total_number_of_nodes > 1 }}"
 nuxeo_version_post_11: "{{ nuxeoVersion is match('[1-9][1-9]\\..*') }}"
 nuxeo_deployment_template: "{{ 'nuxeo_dc' if nuxeo_version_post_11 else 'nuxeo_dc_pre11' }}"
 
