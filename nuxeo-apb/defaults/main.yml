@@ -58,9 +58,13 @@ useExternalLoadBalancer:
 connect_enabled: false
 connectInstallHotfix: true
 useExternalMongoDB: false
+mongoServiceName: nuxeo-mongodb
 useExternalElasticsearch: false
+elasticsearchServiceName: nuxeo-elasticsearch
 useKafkaForStream: false
+kafkaServiceName: nuxeo-kafka
 auth_adminUser: Administrator
+minioServiceName: nuxeo-minio
 
 interactiveNodesDisabledQueues:
   - pictureViewsGeneration
