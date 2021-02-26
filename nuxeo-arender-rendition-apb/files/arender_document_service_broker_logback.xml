@@ -7,7 +7,7 @@
             <pattern>%date %level [%thread] %logger{10} [%file:%line] %msg%n</pattern>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-            <fileNamePattern>arender-document-service-broker.%i.log.zip</fileNamePattern>
+            <fileNamePattern>${logging.prefix}-server.log.%i.zip</fileNamePattern>
             <minIndex>1</minIndex>
             <maxIndex>100</maxIndex>
         </rollingPolicy>
@@ -22,7 +22,7 @@
             <pattern>%msg%n</pattern>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-            <fileNamePattern>arender-perf.%i.log.zip</fileNamePattern>
+            <fileNamePattern>${logging.prefix}-perf.log.%i.zip</fileNamePattern>
             <minIndex>1</minIndex>
             <maxIndex>100</maxIndex>
         </rollingPolicy>
@@ -37,7 +37,7 @@
             <pattern>%date %level [%thread] %logger{10} [%file:%line] %msg%n</pattern>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-            <fileNamePattern>arender-health.%i.log.zip</fileNamePattern>
+            <fileNamePattern>${logging.prefix}-health.log.%i.zip</fileNamePattern>
             <minIndex>1</minIndex>
             <maxIndex>100</maxIndex>
         </rollingPolicy>
