@@ -20,7 +20,7 @@ metadata:
   dependencies:
     - "docker.elastic.co/elasticsearch/elasticsearch:5.6.9"
     - "nuxeo/elasticsearch-sg:5.6.9"
-    - "docker.io/busybox"
+    - "public.ecr.aws/e0v6o2x1/busybox"
   providerDisplayName: "Nuxeo"
   documentationUrl: >-
     https://github.com/nuxeo-sandbox/nuxeo-apb-catalog/nuxeo-elasticsearch-apb/

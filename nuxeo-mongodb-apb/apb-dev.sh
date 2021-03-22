@@ -14,7 +14,7 @@ function runAPB {
     # Create stub-asb-binding deployment to facilitate asb credential binding in 'docker run' environment
     local PHRASE=$(head /dev/urandom | tr -dc a-z0-9 | head -c 5 ; echo '')
     local DEPLOYMENT_NAME=stub-asb-binding-$PHRASE
-    kubectl run $DEPLOYMENT_NAME --image=busybox --namespace=$POD_NAMESPACE
+    kubectl run $DEPLOYMENT_NAME --image=public.ecr.aws/e0v6o2x1/busybox --namespace=$POD_NAMESPACE
     local POD_NAME=$(kubectl get po --namespace=$POD_NAMESPACE \
         --selector="run=${DEPLOYMENT_NAME}" --no-headers --output='custom-columns=NAME:.metadata.name')
 
