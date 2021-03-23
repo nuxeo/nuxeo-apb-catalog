@@ -17,7 +17,7 @@ metadata:
     security and a replicaset deployment secured with TLS encryption, X509
     membership authentication, and SCRAM client authentication
   dependencies:
-    - "docker.io/busybox:latest"
+    - "public.ecr.aws/e0v6o2x1/busybox"
     - "k8s.gcr.io/mongodb-install:0.6"
     - "docker.io/mongo"
   providerDisplayName: "Nuxeo"

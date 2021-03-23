@@ -112,7 +112,7 @@ spec:
 {% endif %}
       initContainers:
         - name: init-rendition-broker
-          image: busybox
+          image: public.ecr.aws/e0v6o2x1/busybox
           env:
             - name: BROKER_SERVICE_DNS
               valueFrom:

@@ -37,7 +37,7 @@ spec:
 {% endif %}
       initContainers:
         - name: init-create-log-dir
-          image: busybox
+          image: public.ecr.aws/e0v6o2x1/busybox
           command: ['mkdir', '-m', '770', '-p', '/logs/arender-document-converter']
           volumeMounts:
           - name: logs
