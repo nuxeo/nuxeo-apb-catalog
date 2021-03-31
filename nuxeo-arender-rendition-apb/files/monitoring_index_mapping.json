@@ -2,81 +2,83 @@
   "mappings": {
     "properties": {
       "args": {
+        "type": "text",
         "fields": {
-          "keyword": {
-            "ignore_above": 256,
+          "raw": {
             "type": "keyword"
           }
-        },
-        "type": "text"
+        }
       },
       "documentId": {
+        "type": "text",
         "fields": {
-          "keyword": {
-            "ignore_above": 256,
+          "raw": {
             "type": "keyword"
           }
-        },
-        "type": "text"
+        }
+      },
+      "documentIdParameters": {
+        "type": "object"
+      },
+      "documentLoadingTime": {
+        "type": "long"
       },
       "duration": {
         "type": "long"
       },
       "endTimeStamp": {
-        "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis",
-        "type": "date"
+        "type": "date",
+        "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis"
       },
       "exception": {
+        "type": "text",
         "fields": {
-          "keyword": {
-            "ignore_above": 256,
+          "raw": {
             "type": "keyword"
           }
-        },
-        "type": "text"
+        }
       },
       "methodName": {
+        "type": "text",
         "fields": {
-          "keyword": {
-            "ignore_above": 256,
+          "raw": {
             "type": "keyword"
           }
-        },
-        "type": "text"
+        }
       },
       "mimeType": {
+        "type": "text",
         "fields": {
-          "keyword": {
-            "ignore_above": 256,
+          "raw": {
             "type": "keyword"
           }
-        },
-        "type": "text"
+        }
+      },
+      "moduleLoadingTime": {
+        "type": "long"
       },
       "startTimeStamp": {
-        "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis",
-        "type": "date"
+        "type": "date",
+        "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis"
       },
       "success": {
         "type": "boolean"
       },
       "userAgent": {
+        "type": "text",
         "fields": {
-          "keyword": {
-            "ignore_above": 256,
+          "raw": {
             "type": "keyword"
           }
-        },
-        "type": "text"
+        }
       },
       "username": {
+        "type": "text",
         "fields": {
-          "keyword": {
-            "ignore_above": 256,
+          "raw": {
             "type": "keyword"
           }
-        },
-        "type": "text"
+        }
       }
     }
   },
