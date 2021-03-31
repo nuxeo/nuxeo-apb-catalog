@@ -73,6 +73,8 @@ arender_document_renderer_log_configmap_name: "{{ name }}-document-renderer-log"
 arender_document_text_handler_log_configmap_name: "{{ name }}-document-text-handler-log"
 arender_document_service_broker_log_configmap_name: "{{ name }}-broker-log"
 
+arender_pre_stop_scripts_configmap_name: "{{ name }}-pre-stop-scripts"
+
 monitoring_es_binding_name: "{{ name }}-monitor-es-binding"
 monitoring_es_binding_secret_name:  "{{ name }}-monitor-es-binding"
 monitoring_es_index_name: "{{ name }}-rendition-performance"

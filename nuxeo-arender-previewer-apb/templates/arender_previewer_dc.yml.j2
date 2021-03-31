@@ -43,6 +43,12 @@ spec:
       containers:
         - image: {{ arender_previewer_image }}:{{ arender_previewer_image_version }}
           imagePullPolicy: {{ previewer_image_pullPolicy }}
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                  - /bin/sh
+                  - /scripts/pre-stop.sh
           name: arender-previewer
           readinessProbe:
             failureThreshold: 4
@@ -77,6 +83,10 @@ spec:
               value: "{{ previewer_arender_max_tries }}"
             - name: ARENDERSRV_NUXEO_SERVER_ARENDER_SECRET
               value: {{ previewer_nuxeo_oauth_secret }}
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
 {% if arender_previewer_monitoring_enabled %}
             - name: ARENDERSRV_ARENDER_SERVER_PERF_ES_USE
               value: 'true'
@@ -105,6 +115,8 @@ spec:
             mountPath: /usr/local/tomcat/work
           - name: config-volume
             mountPath: /docker-entrypoint-init.d
+          - name: scripts
+            mountPath: /scripts
 
 {% if use_pull_secret %}
       imagePullSecrets:
@@ -137,5 +149,9 @@ spec:
             defaultMode: 420
             name: {{ arender_previewer_config_name }}
           name: config-volume
+        - name: scripts
+          configMap:
+            defaultMode: 493
+            name: {{ arender_previewer_pre_stop_scripts_configmap_name }}
   triggers:
     - type: ConfigChange

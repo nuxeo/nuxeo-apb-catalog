@@ -21,6 +21,8 @@
     - name: arender_previewer_pull_secret.yml.j2
       apply: "{{ create_pull_secret }}"
     - name: arender_previewer_pvc.yml.j2
+    - name: arender_previewer_pre_stop_scripts_config.yml.j2
+      filename: pre-stop.sh
     - name: arender_previewer_dc.yml.j2
     - name: arender_previewer_service.yml.j2
     - name: arender_previewer_config.yml.j2

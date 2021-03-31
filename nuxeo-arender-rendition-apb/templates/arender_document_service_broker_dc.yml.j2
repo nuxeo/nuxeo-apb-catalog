@@ -54,6 +54,12 @@ spec:
             - app.jar
           image: {{ arender_document_service_broker_image }}
           imagePullPolicy: {{ arender_document_service_broker_image_pullPolicy }}
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                  - /bin/sh
+                  - /scripts/pre-stop.sh
           ports:
           - containerPort: {{ arender_document_service_broker_internal_port }}
           readinessProbe:
@@ -120,6 +126,8 @@ spec:
             mountPath: /arender/modules/config
           - name: logs
             mountPath: /logs/
+          - name: scripts
+            mountPath: /scripts
       volumes:
         - name: temp
           persistentVolumeClaim:
@@ -130,5 +138,9 @@ spec:
         - name: logs
           persistentVolumeClaim:
             claimName: "{{ arender_logs_pvc_name }}"
+        - name: scripts
+          configMap:
+            defaultMode: 493
+            name: {{ arender_pre_stop_scripts_configmap_name }}
   triggers:
     - type: ConfigChange

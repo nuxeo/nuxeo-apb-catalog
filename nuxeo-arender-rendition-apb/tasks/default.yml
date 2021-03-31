@@ -45,6 +45,8 @@
     - name: arender_rendition_sa.yml.j2
     - name: arender_rendition_pull_secret.yml.j2
       apply: "{{ create_pull_secret }}"
+    - name: arender_pre_stop_scripts_config.yml.j2
+      filename: pre-stop.sh
     - name: arender_document_converter_dc.yml.j2
     - name: arender_document_converter_service.yml.j2
     - name: arender_document_file_storage_dc.yml.j2

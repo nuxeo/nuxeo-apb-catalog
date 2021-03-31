@@ -64,6 +64,12 @@ spec:
             - app.jar
           image: {{ arender_document_renderer_image }}
           imagePullPolicy: {{ arender_document_renderer_image_pullPolicy }}
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                  - /bin/sh
+                  - /scripts/pre-stop.sh
           name: arender-document-renderer
           readinessProbe:
             failureThreshold: {{ arender_document_renderer_readiness_probe_failure_threshold }}
@@ -107,6 +113,8 @@ spec:
             mountPath: /arender/modules/document-renderer/config
           - name: logs
             mountPath: /logs
+          - name: scripts
+            mountPath: /scripts
       volumes:
         - name: temp
           persistentVolumeClaim:
@@ -117,5 +125,9 @@ spec:
         - name: logs
           persistentVolumeClaim:
             claimName: {{ arender_logs_pvc_name }}
+        - name: scripts
+          configMap:
+            defaultMode: 493
+            name: {{ arender_pre_stop_scripts_configmap_name }}
   triggers:
     - type: ConfigChange
