@@ -20,6 +20,6 @@ spec:
     data_persistence_size: "{{ elasticsearch_storage_size }}"
     configure_xpack: false
     image_repository: "docker.elastic.co/elasticsearch/elasticsearch-oss"
-    image_tag: "7.6.1"
+    image_tag: "7.9.3"
     client_java_opts: "-Djava.net.preferIPv4Stack=true"
     client_resources: {{ elasticsearch_resources }}

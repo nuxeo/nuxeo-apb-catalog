@@ -48,9 +48,6 @@ spec:
       - image: {{ kibana_image }}:{{ kibana_image_version }}
         imagePullPolicy: IfNotPresent
         name: {{ app_name }}
-        env:
-          - name: "ELASTICSAERCH.URL"
-            value: {{ elasticsearch_service_name }}
         resources:
           limits:
             memory: {{ kibana_memory_limit }}
