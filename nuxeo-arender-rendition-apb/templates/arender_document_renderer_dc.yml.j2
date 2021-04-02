@@ -57,10 +57,8 @@ spec:
             - sh
             - ./entrypoint.sh
             - java
-            - '-Dsun.net.inetaddr.ttl=0'
-            - '-Djava.library.path=/lib/'
+            - "$(JAVA_OPTS)"
             - '-jar'
-            - '-Xmx1g'
             - app.jar
           image: {{ arender_document_renderer_image }}
           imagePullPolicy: {{ arender_document_renderer_image_pullPolicy }}
@@ -102,6 +100,8 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.name
+          - name: JAVA_OPTS
+            value: "{{ arender_document_renderer_java_opts }}"
           resources:
 {% if arender_document_renderer_resources is defined and (arender_document_renderer_resources | from_yaml) %}
 {{ arender_document_renderer_resources | from_yaml | to_nice_yaml(indent=2) | indent(12, true) }}

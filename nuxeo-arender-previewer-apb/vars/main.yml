@@ -43,6 +43,8 @@ arender_previewer_pre_stop_scripts_configmap_name: "{{ name }}-pre-stop-scripts"
 arender_previewer_service_binding_name: "{{ name }}-rendition-binding"
 arender_binding_secret_name: "{{ name }}-rendition-binding"
 
+arender_previewer_java_opts: "-XX:NativeMemoryTracking=summary"
+
 monitoring_es_binding_name: "{{ name }}-monitor-es-binding"
 monitoring_es_binding_secret_name:  "{{ name }}-monitor-es-binding"
 monitoring_es_index_name: "{{ name }}-performance"
