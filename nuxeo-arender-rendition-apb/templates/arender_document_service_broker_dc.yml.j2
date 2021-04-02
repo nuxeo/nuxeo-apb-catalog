@@ -48,9 +48,8 @@ spec:
             - sh
             - ./entrypoint.sh
             - java
-            - '-Dsun.net.inetaddr.ttl=0'
+            - "$(JAVA_OPTS)"
             - '-jar'
-            - '-Xmx1g'
             - app.jar
           image: {{ arender_document_service_broker_image }}
           imagePullPolicy: {{ arender_document_service_broker_image_pullPolicy }}
@@ -96,6 +95,8 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.name
+          - name: JAVA_OPTS
+            value: "{{ arender_document_service_broker_java_opts }}"
 {% if arender_rendition_monitoring_enabled %}
           - name: DSB_AOP_ACTIVE
             value: 'true'
