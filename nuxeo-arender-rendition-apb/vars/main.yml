@@ -75,6 +75,11 @@ arender_document_service_broker_log_configmap_name: "{{ name }}-broker-log"
 
 arender_pre_stop_scripts_configmap_name: "{{ name }}-pre-stop-scripts"
 
+arender_hazelcast_configmap_name: "{{ name }}-hazelcast"
+arender_hazelcast_cluster_name: "{{ name }}-cluster"
+arender_hazelcast_service_name: "{{ name }}-hazelcast-headless"
+arender_hazelcast_internal_port: "5701"
+
 monitoring_es_binding_name: "{{ name }}-monitor-es-binding"
 monitoring_es_binding_secret_name:  "{{ name }}-monitor-es-binding"
 monitoring_es_index_name: "{{ name }}-rendition-performance"
@@ -87,7 +92,7 @@ monitoring_kibana_dashboard_name: "{{ name }}-dashboard"
 monitoring_kibana_dashboard_title: "ARender Rendition for {{ name }}"
 
 arender_document_converter_java_opts: "-Dsun.net.inetaddr.ttl=0 -XX:NativeMemoryTracking=summary -XX:ErrorFile=/logs/hs_err_document_converter_pid_%p.log -Xmx1g"
-arender_document_file_storage_java_opts: "-Dsun.net.inetaddr.ttl=0 -XX:NativeMemoryTracking=summary -XX:ErrorFile=/logs/hs_err_document_file_storage_pid_%p.log -Xmx1g"
+arender_document_file_storage_java_opts: "-Dsun.net.inetaddr.ttl=0 -XX:NativeMemoryTracking=summary -XX:ErrorFile=/logs/hs_err_document_file_storage_pid_%p.log -Xmx1g -Dhazelcast.config=/arender/conf/hazelcast.yaml"
 arender_document_renderer_java_opts: "-Dsun.net.inetaddr.ttl=0 -Djava.library.path=/lib/ -XX:NativeMemoryTracking=summary -XX:ErrorFile=/logs/hs_err_document_renderer_pid_%p.log -Xmx1g"
 arender_document_service_broker_java_opts: "-Dsun.net.inetaddr.ttl=0 -XX:NativeMemoryTracking=summary -XX:ErrorFile=/logs/hs_err_document_service_broker_pid_%p.log -Xmx1g"
 arender_document_text_handler_java_opts: "-Dsun.net.inetaddr.ttl=0 -XX:NativeMemoryTracking=summary -XX:ErrorFile=/logs/hs_err_document_text_handler_pid_%p.log -Xmx1g"
