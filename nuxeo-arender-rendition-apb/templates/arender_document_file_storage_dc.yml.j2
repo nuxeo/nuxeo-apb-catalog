@@ -108,6 +108,8 @@ spec:
             mountPath: /logs
           - name: scripts
             mountPath: /scripts
+          - name: hazelcast-config
+            mountPath: /arender/conf
       volumes:
         - name: temp
           persistentVolumeClaim:
@@ -122,5 +124,9 @@ spec:
           configMap:
             defaultMode: 493
             name: {{ arender_pre_stop_scripts_configmap_name }}
+        - name: hazelcast-config
+          configMap:
+            name: {{ arender_hazelcast_configmap_name }}
+      terminationGracePeriodSeconds: 60
   triggers:
     - type: ConfigChange

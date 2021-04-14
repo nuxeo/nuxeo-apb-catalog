@@ -47,6 +47,8 @@
       apply: "{{ create_pull_secret }}"
     - name: arender_pre_stop_scripts_config.yml.j2
       filename: pre-stop.sh
+    - name: arender_hazelcast_config.yml.j2
+    - name: arender_hazelcast_service.yml.j2
     - name: arender_document_converter_dc.yml.j2
     - name: arender_document_converter_service.yml.j2
     - name: arender_document_file_storage_dc.yml.j2
@@ -68,6 +70,8 @@
   loop:
     - name: document-converter
       target_dc: "{{ arender_document_converter_dc_name }}"
+    - name: document-file-storage
+      target_dc: "{{ arender_document_file_storage_dc_name }}"
     - name: document-text-handler
       target_dc: "{{ arender_document_text_handler_dc_name }}"
     - name: document-renderer
