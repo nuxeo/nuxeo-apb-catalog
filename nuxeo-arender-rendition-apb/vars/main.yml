@@ -80,6 +80,9 @@ arender_hazelcast_cluster_name: "{{ name }}-cluster"
 arender_hazelcast_service_name: "{{ name }}-hazelcast-headless"
 arender_hazelcast_internal_port: "5701"
 
+arender_temp_cleanup_cronjob_name: "{{ name }}-temp-cleanup-cron"
+arender_temp_cleanup_job_name: "{{ name }}-temp-cleanup"
+
 monitoring_es_binding_name: "{{ name }}-monitor-es-binding"
 monitoring_es_binding_secret_name:  "{{ name }}-monitor-es-binding"
 monitoring_es_index_name: "{{ name }}-rendition-performance"
