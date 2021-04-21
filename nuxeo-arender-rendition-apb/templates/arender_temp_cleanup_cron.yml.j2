@@ -1,0 +1,44 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  labels:
+    app: {{ name }}
+    apb_name: '{{ apb_name }}'
+    apb_plan_id: '{{ _apb_plan_id }}'
+    apb_service_class_id: '{{ _apb_service_class_id }}'
+    apb_service_instance_id: '{{ _apb_service_instance_id }}'
+  name: {{ arender_temp_cleanup_cronjob_name }}
+  namespace: {{ namespace }}
+spec:
+  concurrencyPolicy: Allow
+  schedule: '0 */2 * * *'
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: {{ name }}
+        spec:
+          containers:
+            - name: {{ arender_temp_cleanup_job_name }}
+              command:
+                - /bin/sh
+                - -c
+              args:
+                - echo "starting arender cleanup"; find /arender/tmp -type f -mmin +80 -exec rm -f {} +; echo "arender cleanup done";
+              image: openshift/origin-cli:v3.10
+              imagePullPolicy: IfNotPresent
+              terminationMessagePath: /dev/termination-log
+              terminationMessagePolicy: File
+              volumeMounts:
+                - name: temp
+                  mountPath: /arender/tmp
+          dnsPolicy: ClusterFirst
+          restartPolicy: Never
+          terminationGracePeriodSeconds: 30
+          volumes:
+            - name: temp
+              persistentVolumeClaim:
+                claimName: {{ arender_common_tmp_name }}
