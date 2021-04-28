@@ -83,6 +83,16 @@ spec:
               value: "{{ previewer_arender_max_tries }}"
             - name: ARENDERSRV_NUXEO_SERVER_ARENDER_SECRET
               value: {{ previewer_nuxeo_oauth_secret }}
+{% if arender_previewer_image_version is version('10.6.0', '>=') %}
+            - name: ARENDERSRV_NUXEO_OAUTH2_STORAGE_BACKEND
+              value: "hazelcast"
+            - name: ARENDERSRV_NUXEO_OAUTH2_STORAGE_HAZELCAST_CLUSTER_NAME
+              value: "{{ arender_previewer_hazelcast_cluster_name }}"
+            - name: ARENDERSRV_NUXEO_OAUTH2_STORAGE_HAZELCAST_SERVICE_DNS
+              value: "{{ arender_previewer_hazelcast_service_name }}.{{ namespace }}.svc.cluster.local"
+            - name: ARENDERSRV_NUXEO_OAUTH2_STORAGE_HAZELCAST_PORT
+              value: "{{ arender_previewer_hazelcast_internal_port }}"
+{% endif %}
             - name: POD_NAME
               valueFrom:
                 fieldRef:
@@ -155,5 +165,6 @@ spec:
           configMap:
             defaultMode: 493
             name: {{ arender_previewer_pre_stop_scripts_configmap_name }}
+      terminationGracePeriodSeconds: 60
   triggers:
     - type: ConfigChange
