@@ -28,6 +28,7 @@
       file: arender_document_converter_logback.xml
     - name: "{{ arender_document_file_storage_log_configmap_name }}"
       file: arender_document_file_storage_logback.xml
+      apply: "{{ arender_rendition_image_version | regex_replace('\\.NX.*','') is version('4.4.2', '<') }}"
     - name: "{{ arender_document_renderer_log_configmap_name }}"
       file: arender_document_renderer_logback.xml
     - name: "{{ arender_document_text_handler_log_configmap_name }}"
@@ -52,7 +53,9 @@
     - name: arender_document_converter_dc.yml.j2
     - name: arender_document_converter_service.yml.j2
     - name: arender_document_file_storage_dc.yml.j2
+      apply: "{{ arender_rendition_image_version | regex_replace('\\.NX.*','') is version('4.4.2', '<') }}"
     - name: arender_document_file_storage_service.yml.j2
+      apply: "{{ arender_rendition_image_version | regex_replace('\\.NX.*','') is version('4.4.2', '<') }}"
     - name: arender_document_renderer_dc.yml.j2
     - name: arender_document_renderer_service.yml.j2
     - name: arender_document_text_handler_dc.yml.j2
@@ -73,6 +76,7 @@
       target_dc: "{{ arender_document_converter_dc_name }}"
     - name: document-file-storage
       target_dc: "{{ arender_document_file_storage_dc_name }}"
+      apply: "{{ arender_rendition_image_version | regex_replace('\\.NX.*','') is version('4.4.2', '<') }}"
     - name: document-text-handler
       target_dc: "{{ arender_document_text_handler_dc_name }}"
     - name: document-renderer
