@@ -161,3 +161,14 @@ plans:
       title: Name of the Kibana service instance
       display_group: Monitoring
 
+    - name: arender_tmp_storage_size
+      default: 500Gi
+      type: string
+      title: Size of common tmp storage
+      display_group: Others
+
+    - name: arender_log_storage_size
+      default: 150Gi
+      type: string
+      title: Size of common log storage
+      display_group: Others

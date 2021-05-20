@@ -15,6 +15,9 @@ namespace: "{{ lookup('env','NAMESPACE') | default('hello-world', true) }}"
 
 testing: false
 
+arender_tmp_storage_size: 500Gi
+arender_log_storage_size: 150Gi
+
 arender_rendition_image_registry: "docker-registry.default.svc:5000/common-infra"
 arender_rendition_image_version: "4.0.9.NX1.0"
 arender_rendition_image_document_service_broker: arender-document-service-broker
@@ -39,11 +42,14 @@ arender_document_file_storage_image_pullPolicyy: IfNotPresent
 arender_document_renderer_image_pullPolicy: IfNotPresent
 arender_document_text_handler_image_pullPolicy: IfNotPresent
 
-arender_document_service_broker_resources: '{"limits": {"cpu": "1","memory": "1.5Gi"},"requests": {"cpu": "1","memory": "1Gi"}}'
-arender_document_converter_resources: '{"limits": {"cpu": "1.5","memory": "6Gi"},"requests": {"cpu": "1","memory": "4Gi"}}'
-arender_document_text_handler_resources: '{"limits": {"cpu": "1","memory": "1.5Gi"},"requests": {"cpu": "1","memory": "1Gi"}}'
-arender_document_renderer_resources: '{"limits": {"cpu": "2","memory": "6Gi"},"requests": {"cpu": "2","memory": "4Gi"}}'
+arender_document_service_broker_resources: '{"limits": {"cpu": "2","memory": "3Gi"},"requests": {"cpu": "2","memory": "2Gi"}}'
+arender_document_converter_resources: '{"limits": {"cpu": "4","memory": "6Gi"},"requests": {"cpu": "1","memory": "6Gi"}}'
+arender_document_text_handler_resources: '{"limits": {"cpu": "4","memory": "1.5Gi"},"requests": {"cpu": "1","memory": "1Gi"}}'
+arender_document_renderer_resources: '{"limits": {"cpu": "4","memory": "2Gi"},"requests": {"cpu": "1","memory": "1Gi"}}'
 arender_document_file_storage_resources: '{"limits": {"cpu": "1","memory": "1.5Gi"},"requests": {"cpu": "1","memory": "1Gi"}}'
+
+
+
 
 arender_debug_pod: false
 
