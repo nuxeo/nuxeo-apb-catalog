@@ -133,6 +133,10 @@ spec:
             mountPath: /logs/
           - name: scripts
             mountPath: /scripts
+{% if not before_4_4_2 %}
+          - name: hazelcast-config
+            mountPath: /arender/conf
+{% endif %}
       volumes:
         - name: temp
           persistentVolumeClaim:
@@ -147,5 +151,10 @@ spec:
           configMap:
             defaultMode: 493
             name: {{ arender_pre_stop_scripts_configmap_name }}
+{% if not before_4_4_2 %}
+        - name: hazelcast-config
+          configMap:
+            name: {{ arender_hazelcast_configmap_name }}
+{% endif %}
   triggers:
     - type: ConfigChange
