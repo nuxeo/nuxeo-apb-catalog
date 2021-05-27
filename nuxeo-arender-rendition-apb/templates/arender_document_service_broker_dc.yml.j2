@@ -44,6 +44,7 @@ spec:
             mountPath: /logs
       containers:
         - name: arender-broker
+{% if arender_rendition_image_version | regex_replace('\.NX.*','') is version('4.4.2', '<') %}
           command:
             - sh
             - ./entrypoint.sh
@@ -51,6 +52,7 @@ spec:
             - "$(JAVA_OPTS)"
             - '-jar'
             - app.jar
+{% endif %}
           image: {{ arender_document_service_broker_image }}
           imagePullPolicy: {{ arender_document_service_broker_image_pullPolicy }}
           lifecycle:
