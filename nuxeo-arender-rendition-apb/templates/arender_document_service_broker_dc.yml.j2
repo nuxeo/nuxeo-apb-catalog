@@ -131,6 +131,10 @@ spec:
             mountPath: /logs/
           - name: scripts
             mountPath: /scripts
+{% if arender_rendition_image_version | regex_replace('\.NX.*','') is version('4.4.2', '>=') %}
+          - name: hazelcast-config
+            mountPath: /arender/conf
+{% endif %}
       volumes:
         - name: temp
           persistentVolumeClaim:
@@ -145,5 +149,10 @@ spec:
           configMap:
             defaultMode: 493
             name: {{ arender_pre_stop_scripts_configmap_name }}
+{% if arender_rendition_image_version | regex_replace('\.NX.*','') is version('4.4.2', '>=') %}
+        - name: hazelcast-config
+          configMap:
+            name: {{ arender_hazelcast_configmap_name }}
+{% endif %}
   triggers:
     - type: ConfigChange

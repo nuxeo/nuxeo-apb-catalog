@@ -97,7 +97,7 @@ monitoring_kibana_dashboard_title: "ARender Rendition for {{ name }}"
 arender_document_converter_java_opts: "-Dsun.net.inetaddr.ttl=0 -XX:NativeMemoryTracking=summary -XX:ErrorFile=/logs/hs_err_document_converter_pid_%p.log -Xmx1g"
 arender_document_file_storage_java_opts: "-Dsun.net.inetaddr.ttl=0 -XX:NativeMemoryTracking=summary -XX:ErrorFile=/logs/hs_err_document_file_storage_pid_%p.log -Xmx1g -Dhazelcast.config=/arender/conf/hazelcast.yaml"
 arender_document_renderer_java_opts: "-Dsun.net.inetaddr.ttl=0 -Djava.library.path=/lib/ -XX:NativeMemoryTracking=summary -XX:ErrorFile=/logs/hs_err_document_renderer_pid_%p.log -Xmx1g"
-arender_document_service_broker_java_opts: "-Dsun.net.inetaddr.ttl=0 -XX:NativeMemoryTracking=summary -XX:ErrorFile=/logs/hs_err_document_service_broker_pid_%p.log -Xmx1g"
+arender_document_service_broker_java_opts: "-Dsun.net.inetaddr.ttl=0 -XX:NativeMemoryTracking=summary -XX:ErrorFile=/logs/hs_err_document_service_broker_pid_%p.log -Xmx1g -Dhazelcast.config=/arender/conf/hazelcast.yaml"
 arender_document_text_handler_java_opts: "-Dsun.net.inetaddr.ttl=0 -XX:NativeMemoryTracking=summary -XX:ErrorFile=/logs/hs_err_document_text_handler_pid_%p.log -Xmx1g"
 
 # BROKER READINESS / LIVENESS
