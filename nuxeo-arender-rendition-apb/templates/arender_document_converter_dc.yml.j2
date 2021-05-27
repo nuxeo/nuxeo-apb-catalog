@@ -43,13 +43,16 @@ spec:
           - name: logs
             mountPath: /logs
       containers:
-        - command:
+        - name: arender-document-converter
+{% if arender_rendition_image_version | regex_replace('\.NX.*','') is version('4.4.2', '<') %}
+          command:
             - sh
             - ./entrypoint.sh
             - java
             - "$(JAVA_OPTS)"
             - '-jar'
             - app.jar
+{% endif %}
           image: {{ arender_document_converter_image }}
           imagePullPolicy: {{ arender_document_converter_image_pullPolicy }}
           lifecycle:
@@ -58,7 +61,6 @@ spec:
                 command:
                   - /bin/sh
                   - /scripts/pre-stop.sh
-          name: arender-document-converter
           readinessProbe:
             failureThreshold: {{ arender_document_converter_readiness_probe_failure_threshold }}
             httpGet:
