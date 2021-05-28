@@ -44,7 +44,7 @@ spec:
             mountPath: /logs
       containers:
         - name: arender-document-converter
-{% if arender_rendition_image_version | regex_replace('\.NX.*','') is version('4.4.2', '<') %}
+{% if before_4_4_2 %}
           command:
             - sh
             - ./entrypoint.sh

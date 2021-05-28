@@ -44,7 +44,7 @@ spec:
             mountPath: /logs
       containers:
         - name: arender-broker
-{% if arender_rendition_image_version | regex_replace('\.NX.*','') is version('4.4.2', '<') %}
+{% if before_4_4_2 %}
           command:
             - sh
             - ./entrypoint.sh
@@ -85,7 +85,7 @@ spec:
           env:
           - name: DSB_KUBEPROVIDER_KUBE.HOSTS_{{ arender_document_converter_service_name }}
             value: "{{ arender_document_converter_internal_port }}"
-{% if arender_rendition_image_version | regex_replace('\.NX.*','') is version('4.4.2', '<') %}
+{% if before_4_4_2 %}
           - name: DSB_KUBEPROVIDER_KUBE.HOSTS_{{ arender_document_file_storage_service_name }}
             value: "{{ arender_document_file_storage_internal_port }}"
 {% endif %}
