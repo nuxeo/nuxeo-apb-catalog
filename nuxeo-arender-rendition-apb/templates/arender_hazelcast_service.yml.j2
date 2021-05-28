@@ -18,8 +18,8 @@ spec:
       port: {{ arender_hazelcast_internal_port }}
   selector:
     app: {{ app_name }}
-{% if arender_rendition_image_version | regex_replace('\.NX.*','') is version('4.4.2', '>=') %}
-    role: rendition-document-service-broker
-{% else %}
+{% if before_4_4_2 %}
     role: rendition-document-file-storage
+{% else %}
+    role: rendition-document-service-broker
 {% endif %}
