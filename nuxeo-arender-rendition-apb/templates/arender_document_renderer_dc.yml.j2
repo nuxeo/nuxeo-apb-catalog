@@ -98,6 +98,10 @@ spec:
             value: {{ arender_document_renderer_service_name }}
           - name: DRN_LOGGING_CONFIG
             value: "/arender/modules/document-renderer/config/logback-spring.xml"
+          - name: DRN_DOCUMENT_DISPLAY.SEPARATE.O.C.G.LAYERS
+            value: "true"
+          - name: DRN_RENDERER_DISPLAY.SEPARATE.O.C.G.LAYERS
+            value: "true"
           - name: POD_NAME
             valueFrom:
               fieldRef:
