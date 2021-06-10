@@ -71,6 +71,8 @@ spec:
         env:
         - name: NUXEO_CLUSTERING
           value: 'true'
+        - name: NUXEO_URL
+          value: https://{{ applicationUrl }}/nuxeo
         - name: NUXEO_NODE_ID
           valueFrom:
             fieldRef:
@@ -122,7 +124,7 @@ spec:
         name: nuxeo
         env:
         - name: NUXEO_URL
-          value: {{ applicationUrl }}
+          value: https://{{ applicationUrl }}/nuxeo
 {% if connect_enabled %}
         - name: NUXEO_CLID
           valueFrom:
