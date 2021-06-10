@@ -126,7 +126,11 @@ spec:
 {% endif %}
           volumeMounts:
           - name: temp
+{% if before_4_4_2 %}
+            mountPath: /tmp
+{% else %}
             mountPath: /arender/tmp
+{% endif %}
           - name: config
             mountPath: /arender/modules/config
           - name: logs
