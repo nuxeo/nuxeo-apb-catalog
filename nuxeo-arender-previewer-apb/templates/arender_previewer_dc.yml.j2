@@ -83,7 +83,7 @@ spec:
               value: "{{ previewer_arender_max_tries }}"
             - name: ARENDERSRV_NUXEO_SERVER_ARENDER_SECRET
               value: {{ previewer_nuxeo_oauth_secret }}
-{% if after_10_6_0 %}
+{% if arender_previewer_ha %}
             - name: ARENDERSRV_NUXEO_OAUTH2_STORAGE_BACKEND
               value: "hazelcast"
             - name: ARENDERSRV_NUXEO_OAUTH2_STORAGE_HAZELCAST_CLUSTER_NAME
