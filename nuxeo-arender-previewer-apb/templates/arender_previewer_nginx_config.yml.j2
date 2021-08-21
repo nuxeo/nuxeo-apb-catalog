@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    app: {{ name }}
+    apb_name: '{{ apb_name }}'
+    apb_plan_id: '{{ _apb_plan_id }}'
+    apb_service_class_id: '{{ _apb_service_class_id }}'
+    apb_service_instance_id: '{{ _apb_service_instance_id }}'
+  name: {{ nginx_configmap_name }}
+  namespace: {{ namespace }}
+data:
+  nginx.conf: |
+    {{ lookup('file', '../files/nginx.conf') | indent(4) }}
+  proxy.conf: |
+    {{ lookup('file', '../files/proxy.conf') | indent(4) }}  
