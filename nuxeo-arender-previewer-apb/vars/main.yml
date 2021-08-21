@@ -33,6 +33,7 @@ use_pull_secret: "{{ true if ( arender_previewer_image_pull_existing_secret is d
 arender_previewer_service_name: "{{ name }}-previewer"
 arender_previewer_route_name: "{{ name }}-previewer"
 arender_previewer_config_name: "{{ name }}-previewer"
+nginx_configmap_name: "{{ name }}-nginx-config"
 arender_previewer_dc_name: "{{ name }}-previewer"
 arender_previewer_autoscaling_name: "{{ name }}-previewer"
 arender_previewer_ha: false

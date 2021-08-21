@@ -41,6 +41,20 @@ spec:
 {{ previewer_securityContext | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
 {% endif %}
       containers:
+        - name: nginx-proxy
+          image: twalter/openshift-nginx
+          volumeMounts:
+          - name: nginx-conf
+            readOnly: true
+            mountPath: "/etc/nginx/"
+          - name: nginx-cache
+            mountPath: "/var/cache/nginx"
+          - name: nginx-tmp
+            mountPath: "/var/tmp"
+          ports:
+          - name: http-endpoint
+            containerPort: 8081
+            protocol: TCP
         - image: {{ arender_previewer_image }}:{{ arender_previewer_image_version }}
           imagePullPolicy: {{ previewer_image_pullPolicy }}
           lifecycle:
@@ -165,6 +179,13 @@ spec:
           configMap:
             defaultMode: 493
             name: {{ arender_previewer_pre_stop_scripts_configmap_name }}
+        - name: nginx-conf
+          configMap:
+            name: {{ nginx_configmap_name }}
+        - name: nginx-cache
+          emptyDir: {}
+        - name: nginx-tmp
+          emptyDir: {}
       terminationGracePeriodSeconds: 60
   triggers:
     - type: ConfigChange
