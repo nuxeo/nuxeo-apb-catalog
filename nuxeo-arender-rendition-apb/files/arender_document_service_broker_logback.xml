@@ -61,6 +61,9 @@
         <appender-ref ref="HEALTH" />
     </logger>
 
+    <!-- mute the type removal warning -->
+    <logger name="org.elasticsearch.client.RestClient" level="ERROR" />
+
     <root level="info">
         <appender-ref ref="STDOUT" />
         <appender-ref ref="SERVER" />
