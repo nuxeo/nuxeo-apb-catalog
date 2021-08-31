@@ -1,0 +1,56 @@
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/"
+  debug="false" threshold="null">
+
+  <!-- A time/date based rolling appender -->
+  <appender name="FILE" class="org.apache.log4j.DailyRollingFileAppender">
+    <errorHandler class="org.apache.log4j.helpers.OnlyOnceErrorHandler" />
+    <param name="File" value="/usr/local/tomcat/logs/${POD_NAME}.log" />
+    <param name="Append" value="true" />
+    <!-- Rollover at midnight every day -->
+    <param name="DatePattern" value="'.'yyyy-MM-dd" />
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%d{ISO8601} %-5p [%t] [%c] %m%n" />
+    </layout>
+  </appender>
+
+  <!-- ============================== -->
+  <!-- Append messages to the console -->
+  <!-- ============================== -->
+
+  <appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
+    <errorHandler class="org.apache.log4j.helpers.OnlyOnceErrorHandler" />
+    <param name="Target" value="System.out" />
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%d{ISO8601} %-5p [%t] [%c{1}] %m%n" />
+    </layout>
+    <filter class="org.apache.log4j.varia.LevelRangeFilter">
+      <param name="levelMin" value="WARN" />
+    </filter>
+  </appender>
+
+  <!-- category for Tomcat -->
+  <category name="org.apache.catalina">
+    <priority value="WARN" />
+  </category>
+  <category name="org.apache.catalina.startup">
+    <priority value="INFO" />
+  </category>
+
+  <!-- Disable ES warn logs about type removal -->
+  <category name="org.elasticsearch.client.RestClient">
+    <priority value="ERROR" />
+  </category>
+
+  <!-- ======================= -->
+  <!-- Setup the Root category -->
+  <!-- ======================= -->
+
+  <root>
+    <level value="WARN" />
+    <appender-ref ref="CONSOLE" />
+    <appender-ref ref="FILE" />
+  </root>
+
+</log4j:configuration>
+

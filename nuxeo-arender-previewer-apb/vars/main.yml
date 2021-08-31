@@ -38,7 +38,8 @@ arender_previewer_dc_name: "{{ name }}-previewer"
 arender_previewer_autoscaling_name: "{{ name }}-previewer"
 arender_previewer_ha: false
 
-arender_previewer_pvc_name: "{{ name }}-previewer"
+arender_previewer_log_configmap_name: "{{ name }}-log"
+arender_previewer_logs_pvc_name: "{{ name }}-logs"
 
 arender_previewer_pre_stop_scripts_configmap_name: "{{ name }}-pre-stop-scripts"
 
@@ -49,7 +50,7 @@ arender_previewer_hazelcast_internal_port: "5701"
 arender_previewer_service_binding_name: "{{ name }}-rendition-binding"
 arender_binding_secret_name: "{{ name }}-rendition-binding"
 
-arender_previewer_java_opts: "-XX:NativeMemoryTracking=summary"
+arender_previewer_java_opts: "-XX:NativeMemoryTracking=summary -DPOD_NAME=${POD_NAME} -Dlog4j.configuration=file:/usr/local/tomcat/log-config/log4j.xml -Djava.util.logging.config.file=/usr/local/tomcat/log-config/logging.properties"
 
 monitoring_es_binding_name: "{{ name }}-monitor-es-binding"
 monitoring_es_binding_secret_name:  "{{ name }}-monitor-es-binding"
