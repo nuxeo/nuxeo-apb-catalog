@@ -36,9 +36,14 @@ plans:
       title: Timeout for the Nuxeo Client
       display_group: Client Nuxeo
     - name: previewer_arender_max_tries
-      default: 5
+      default: 2
       type: number
       title: Number of retries for ARender hmi to ask for a rendition call
+      display_group: Client Nuxeo
+    - name: previewer_arender_rest_long_timeout
+      default: 60000
+      type: number
+      title: Timeout for rendition calls made by ARender hmi
       display_group: Client Nuxeo
     - name: previewer_nuxeo_oauth_secret
       default: 'OAUTH2_SECRET'
