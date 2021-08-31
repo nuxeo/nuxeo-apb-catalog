@@ -133,6 +133,8 @@ spec:
 {{ previewer_resources | from_yaml | to_nice_yaml(indent=2) | indent(12, true) }}
 {% endif %}
           volumeMounts:
+          - name: log-config
+            mountPath: /usr/local/tomcat/log-config
           - name: logs
             mountPath: /usr/local/tomcat/logs
           - name: tmp
@@ -165,8 +167,13 @@ spec:
 
           command: ['sh', '-c', 'until nc -w1 $BROKER_SERVICE_DNS $BROKER_SERVICE_PORT; do echo "waiting for rendition"; sleep 5; done;']
       volumes:
+        - name: log-config
+          configMap:
+            defaultMode: 420
+            name: {{ arender_previewer_log_configmap_name }}
         - name: logs
-          emptyDir: {}
+          persistentVolumeClaim:
+            claimName: "{{ arender_previewer_logs_pvc_name }}"
         - name: tmp
           emptyDir: {}
         - name: work
