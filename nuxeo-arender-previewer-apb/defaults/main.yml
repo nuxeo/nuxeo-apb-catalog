@@ -20,6 +20,7 @@ arender_previewer_monitoring_enabled: false
 arender_previewer_monitoring_es_service: arender-monitor-elasticsearch
 arender_previewer_monitoring_kibana_service: arender-monitor-kibana
 
+arender_previewer_ha: false
 
 previewer_image_pullPolicy: IfNotPresent
 previewer_resources: '{"limits": {"cpu": "2","memory": "4Gi"},"requests": {"cpu": "1","memory": "3Gi"}}'

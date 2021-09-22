@@ -36,7 +36,6 @@ arender_previewer_config_name: "{{ name }}-previewer"
 nginx_configmap_name: "{{ name }}-nginx-config"
 arender_previewer_dc_name: "{{ name }}-previewer"
 arender_previewer_autoscaling_name: "{{ name }}-previewer"
-arender_previewer_ha: false
 
 arender_previewer_log_configmap_name: "{{ name }}-log"
 arender_previewer_logs_pvc_name: "{{ name }}-logs"

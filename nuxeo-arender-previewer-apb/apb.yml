@@ -118,6 +118,12 @@ plans:
       display_type: textarea
       display_group: Container Specs
 
+    - name: arender_previewer_ha
+      default: false
+      type: boolean
+      title: Enable High availability
+      display_group: Autoscaling
+
     - name: arender_autoscaling_min
       default: 1
       type: number
