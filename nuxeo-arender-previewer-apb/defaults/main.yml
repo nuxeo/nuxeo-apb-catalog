@@ -32,6 +32,8 @@ previewer_nuxeo_url: 'https://nuxeo.url/nuxeo'
 previewer_nuxeo_client_timeout: 60
 previewer_nuxeo_oauth_secret: 'OAUTH2_SECRET'
 previewer_arender_max_tries: 2
+previewer_arender_rest_connection_pool_use: true
+previewer_arender_rest_connection_pool_max_total: 100
 previewer_arender_rest_long_timeout: 60000
 
 arender_rendition_service_name: arender-pool-1

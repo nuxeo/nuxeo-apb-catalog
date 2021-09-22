@@ -95,6 +95,10 @@ spec:
               value: "{{ previewer_nuxeo_client_timeout }}"
             - name: ARENDERSRV_ARENDER_SERVER_RENDITION_MAX_TRIES
               value: "{{ previewer_arender_max_tries }}"
+            - name: ARENDERSRV_ARENDER_REST_CONNECTION_POOL_USE
+              value: "{{ previewer_arender_rest_connection_pool_use }}"
+            - name: ARENDERSRV_ARENDER_REST_CONNECTION_POOL_MAX_TOTAL
+              value: "{{ previewer_arender_rest_connection_pool_max_total }}"
             - name: ARENDERSRV_ARENDER_REST_LONG_TIMEOUT
               value: "{{ previewer_arender_rest_long_timeout }}"
             - name: ARENDERSRV_NUXEO_SERVER_ARENDER_SECRET

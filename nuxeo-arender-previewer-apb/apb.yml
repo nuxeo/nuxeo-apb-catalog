@@ -40,6 +40,16 @@ plans:
       type: number
       title: Number of retries for ARender hmi to ask for a rendition call
       display_group: Client Nuxeo
+    - name: previewer_arender_rest_connection_pool_use
+      default: true
+      type: boolean
+      title: Whether or not to use the http connection pool for rendition calls
+      display_group: Client Nuxeo
+    - name: previewer_arender_rest_connection_pool_max_total
+      default: 100
+      type: number
+      title: Maximum number of http connections in the pool
+      display_group: Client Nuxeo
     - name: previewer_arender_rest_long_timeout
       default: 60000
       type: number
