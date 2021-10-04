@@ -119,6 +119,11 @@ spec:
             value: {{ monitoring_es_index_name }}
           - name: DSB_AOP_ES.PROTOCOL
             value: http
+{% else %}
+          - name: DSB_AOP_ACTIVE
+            value: 'true'
+          - name: DSB_AOP_ACTIVATE.LOGGER
+            value: 'true'
 {% endif %}
           resources:
 {% if arender_document_service_broker_resources is defined and (arender_document_service_broker_resources | from_yaml) %}
