@@ -14,6 +14,18 @@
     </layout>
   </appender>
 
+  <!-- A time/date based rolling appender -->
+  <appender name="FILE-PERF" class="org.apache.log4j.DailyRollingFileAppender">
+    <errorHandler class="org.apache.log4j.helpers.OnlyOnceErrorHandler" />
+    <param name="File" value="/usr/local/tomcat/logs/${POD_NAME}-perf.log" />
+    <param name="Append" value="true" />
+    <!-- Rollover at midnight every day -->
+    <param name="DatePattern" value="'.'yyyy-MM-dd" />
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%m%n" />
+    </layout>
+  </appender>
+
   <!-- ============================== -->
   <!-- Append messages to the console -->
   <!-- ============================== -->
@@ -40,6 +52,12 @@
   <!-- Disable ES warn logs about type removal -->
   <category name="org.elasticsearch.client.RestClient">
     <priority value="ERROR" />
+  </category>
+
+  <!-- Configure perf logs -->
+  <category name="com.arondor.viewer.common.logger" additivity="false">
+    <priority value="INFO" />
+    <appender-ref ref="FILE-PERF" />
   </category>
 
   <!-- ======================= -->
