@@ -119,6 +119,8 @@ spec:
                   fieldPath: metadata.name
             - name: JAVA_OPTS
               value: "{{ arender_previewer_java_opts }}"
+            - name: ARENDERSRV_ARENDER_SERVER_PERF_LOGGER_USE
+              value: 'true'
 {% if arender_previewer_monitoring_enabled %}
             - name: ARENDERSRV_ARENDER_SERVER_PERF_ES_USE
               value: 'true'
