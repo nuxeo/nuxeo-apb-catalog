@@ -164,3 +164,16 @@ plans:
       type: string
       title: Name of the Kibana service instance
       display_group: Monitoring
+
+    - name: arender_previewer_monitoring_datadog_enabled
+      default: false
+      type: boolean
+      display_type: checkbox
+      title: Enable Datadog agent
+      display_group: Monitoring
+
+    - name: arender_previewer_monitoring_datadog_key
+      default: ''
+      type: string
+      title: Datadog API Key
+      display_group: Monitoring

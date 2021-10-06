@@ -121,6 +121,10 @@ spec:
               value: "{{ arender_previewer_java_opts }}"
             - name: ARENDERSRV_ARENDER_SERVER_PERF_LOGGER_USE
               value: 'true'
+{% if arender_previewer_monitoring_datadog_enabled %}
+            - name: TOMCAT_JMX_PORT
+              value: "{{ monitoring_jmx_tomcat_port }}"
+{% endif %}
 {% if arender_previewer_monitoring_enabled %}
             - name: ARENDERSRV_ARENDER_SERVER_PERF_ES_USE
               value: 'true'
@@ -153,6 +157,24 @@ spec:
             mountPath: /docker-entrypoint-init.d
           - name: scripts
             mountPath: /scripts
+{% if arender_previewer_monitoring_datadog_enabled %}
+        - name: datadog-agent
+          image: gcr.io/datadoghq/agent:latest-jmx
+          env:
+            - name: DD_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ datadog_agent_secret_name }}
+                  key: api_key
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          volumeMounts:
+          - name: datadog-agent-conf
+            readOnly: true
+            mountPath: "/conf.d/tomcat.d"
+{% endif %}
 
 {% if use_pull_secret %}
       imagePullSecrets:
@@ -201,6 +223,11 @@ spec:
           emptyDir: {}
         - name: nginx-tmp
           emptyDir: {}
+{% if arender_previewer_monitoring_datadog_enabled %}
+        - name: datadog-agent-conf
+          configMap:
+            name: {{ datadog_agent_configmap_name }}
+{% endif %}
       terminationGracePeriodSeconds: 60
   triggers:
     - type: ConfigChange

@@ -51,6 +51,10 @@ arender_binding_secret_name: "{{ name }}-rendition-binding"
 
 arender_previewer_java_opts: "-XX:NativeMemoryTracking=summary -DPOD_NAME=${POD_NAME} -Dlog4j.configuration=file:/usr/local/tomcat/log-config/log4j.xml -Djava.util.logging.config.file=/usr/local/tomcat/log-config/logging.properties"
 
+monitoring_jmx_tomcat_port: "9000"
+datadog_agent_configmap_name: "{{ name }}-datadog-agent-config"
+datadog_agent_secret_name: "{{ name }}-datadog-agent-api-key"
+
 monitoring_es_binding_name: "{{ name }}-monitor-es-binding"
 monitoring_es_binding_secret_name:  "{{ name }}-monitor-es-binding"
 monitoring_es_index_name: "{{ name }}-performance"
