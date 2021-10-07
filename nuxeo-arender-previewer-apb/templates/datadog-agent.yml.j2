@@ -34,13 +34,60 @@ init_config:
     ## The default metrics to be collected are kept in metrics.yaml, but you can still
     ## add your own metrics here.
     #
-    # conf:
-    #   - include:
-    #       bean: <BEAN_NAME>
-    #       attribute:
-    #         MyAttribute:
-    #           alias: my.metric.name
-    #           metric_type: gauge
+    conf:
+      - include:
+          domain: NuxeoConnector
+          bean_regex:
+            - "NuxeoConnector:name=okhttpMonitor.method.([a-zA-Z]+).status.([0-9]+).targetHost.(.+).targetPort.([0-9]+).targetScheme.([a-z]+).uri.(.+)"
+          attribute:
+            # meanRate is in requests / second
+            MeanRate:
+              alias: okhttp.monitor.request_count
+              metric_type: counter
+            # mean is in milliseconds
+            Mean:
+              alias: okhttp.monitor.request_duration.mean
+              metric_type: gauge
+            # percentiles are in milliseconds
+            50thPercentile:
+              alias: okhttp.monitor.request_duration.p50
+              metric_type: gauge
+            75thPercentile:
+              alias: okhttp.monitor.request_duration.p75
+              metric_type: gauge
+            95thPercentile:
+              alias: okhttp.monitor.request_duration.p95
+              metric_type: gauge
+            98thPercentile:
+              alias: okhttp.monitor.request_duration.p98
+              metric_type: gauge
+            99thPercentile:
+              alias: okhttp.monitor.request_duration.p99
+              metric_type: gauge
+            999thPercentile:
+              alias: okhttp.monitor.request_duration.p999
+              metric_type: gauge
+          tags:
+            method: $1
+            status: $2
+            target_host: $3
+            target_port: $4
+            target_scheme: $5
+            uri: $6
+      - include:
+          domain: NuxeoConnector
+          bean_name: NuxeoConnector:name=okhttpPoolConnectionCount.state.active
+          attribute:
+            Value:
+              alias: okhttp.pool.connection_active
+              metric_type: gauge
+      - include:
+          domain: NuxeoConnector
+          bean_name: NuxeoConnector:name=okhttpPoolConnectionCount.state.idle
+          attribute:
+            Value:
+              alias: okhttp.pool.connection_active
+              metric_type: gauge
 
     ## @param service - string - optional
     ## Attach the tag `service:<SERVICE>` to every metric, event, and service check emitted by this integration.
