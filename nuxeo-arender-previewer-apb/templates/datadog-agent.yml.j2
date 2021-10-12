@@ -40,8 +40,7 @@ init_config:
           bean_regex:
             - "NuxeoConnector:name=okhttpMonitor.method.([a-zA-Z]+).status.([0-9]+).targetHost.(.+).targetPort.([0-9]+).targetScheme.([a-z]+).uri.(.+)"
           attribute:
-            # meanRate is in requests / second
-            MeanRate:
+            Count:
               alias: okhttp.monitor.request_count
               metric_type: counter
             # mean is in milliseconds
