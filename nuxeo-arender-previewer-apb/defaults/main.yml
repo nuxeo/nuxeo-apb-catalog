@@ -13,8 +13,11 @@ apb_name: nuxeo-arender-previewer-apb
 namespace: "{{ lookup('env','NAMESPACE') | default('hello-world', true) }}"
 
 testing: false
-arender_previewer_image: docker-registry.default.svc:5000/common-infra/arender-previewer
-arender_previewer_image_version: "10.3.5"
+arender_previewer_image_registry: "docker-registry.default.svc:5000/common-infra"
+arender_previewer_image_legacy: true
+arender_previewer_image_name: "{{ 'arender-previewer' if arender_previewer_image_legacy else 'nuxeo-arender-ui' }}"
+arender_previewer_image: "{{ arender_previewer_image_registry }}/{{ arender_previewer_image_name }}"
+arender_previewer_image_version: "{{ '10.6.8' if arender_previewer_image_legacy else '1.0.0' }}"
 
 arender_previewer_monitoring_enabled: false
 arender_previewer_monitoring_es_service: arender-monitor-elasticsearch
