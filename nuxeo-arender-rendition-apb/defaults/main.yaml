@@ -19,12 +19,13 @@ arender_tmp_storage_size: 500Gi
 arender_log_storage_size: 150Gi
 
 arender_rendition_image_registry: "docker-registry.default.svc:5000/common-infra"
-arender_rendition_image_version: "4.0.9.NX1.0"
-arender_rendition_image_document_service_broker: arender-document-service-broker
-arender_rendition_image_document_converter: arender-document-converter
+arender_rendition_image_legacy: true
+arender_rendition_image_version: "{{ '4.4.2.NX1.6' if arender_rendition_image_legacy else '1.0.0' }}"
+arender_rendition_image_document_service_broker: "{{ 'arender-document-service-broker' if arender_rendition_image_legacy else 'nuxeo-arender-document-service-broker' }}"
+arender_rendition_image_document_converter: "{{ 'arender-document-converter' if arender_rendition_image_legacy else 'nuxeo-arender-document-converter' }}"
 arender_rendition_image_document_file_storage: arender-document-file-storage
-arender_rendition_image_document_renderer: arender-document-renderer
-arender_rendition_image_document_text_handler: arender-document-text-handler
+arender_rendition_image_document_renderer: "{{ 'arender-document-renderer' if arender_rendition_image_legacy else 'nuxeo-arender-document-renderer' }}"
+arender_rendition_image_document_text_handler: "{{ 'arender-document-text-handler' if arender_rendition_image_legacy else 'nuxeo-arender-document-text-handler' }}"
 
 arender_rendition_monitoring_enabled: false
 arender_rendition_monitoring_es_service: arender-monitor-elasticsearch
