@@ -110,6 +110,12 @@ spec:
 {% if arender_previewer_monitoring_datadog_enabled %}
             - name: TOMCAT_JMX_PORT
               value: "{{ monitoring_jmx_tomcat_port }}"
+{% if datadog_tomcat_access_logs_enabled %}
+            - name: TOMCAT_ACCESS_LOG_DIRECTORY
+              value: "/var/log/arender-ui"
+            - name: TOMCAT_ACCESS_LOG_MAX_DAYS
+              value: "2"
+{% endif %}
 {% endif %}
 {% if arender_previewer_monitoring_enabled %}
             - name: ARENDERSRV_ARENDER_SERVER_PERF_ES_USE
@@ -131,6 +137,8 @@ spec:
 {{ previewer_resources | from_yaml | to_nice_yaml(indent=2) | indent(12, true) }}
 {% endif %}
           volumeMounts:
+          - name: datadog-logs
+            mountPath: "/var/log/arender-ui"
           - name: log-config
             mountPath: /usr/local/tomcat/log-config
           - name: logs
@@ -152,6 +160,8 @@ spec:
                 secretKeyRef:
                   name: {{ datadog_agent_secret_name }}
                   key: api_key
+            - name: DD_LOGS_ENABLED
+              value: "true"
             - name: POD_NAME
               valueFrom:
                 fieldRef:
@@ -160,6 +170,9 @@ spec:
           - name: datadog-agent-conf
             readOnly: true
             mountPath: "/conf.d/tomcat.d"
+          - name: datadog-logs
+            readOnly: true
+            mountPath: "/var/log/arender-ui"
 {% endif %}
 {% if arender_previewer_nginx_proxy_enabled %}
         - name: nginx-proxy
@@ -231,6 +244,8 @@ spec:
         - name: datadog-agent-conf
           configMap:
             name: {{ datadog_agent_configmap_name }}
+        - name: datadog-logs
+          emptyDir: {}
 {% endif %}
       terminationGracePeriodSeconds: 60
   triggers:

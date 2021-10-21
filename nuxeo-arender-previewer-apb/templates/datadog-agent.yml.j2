@@ -238,8 +238,15 @@ instances:
 ##
 ## Discover Datadog log collection: https://docs.datadoghq.com/logs/log_collection/
 #
-# logs:
-#   - type: file
-#     path: /var/log/tomcat/*.log
-#     source: tomcat
-#     service: <SERVICE_NAME>
+{% if datadog_tomcat_access_logs_enabled %}
+logs:
+  - type: file
+    path: /var/log/arender-ui/*_access_log.*.txt
+    source: nev-ui-access
+    service: {{ name }}
+    sourcecategory: http_web_access
+    tags:
+      - app_name:{{ name }}
+      - log_type:tomcat_access_log
+      - namespace:{{ namespace }}
+{% endif %}
