@@ -11,6 +11,6 @@ metadata:
   namespace: {{ namespace }}
 data:
   log4j.xml: |
-    {{ lookup('file', '../files/log4j.xml') | indent(4) }}
+    {{ lookup('template', './log4j.xml.j2') | indent(4) }}
   logging.properties: |
-    {{ lookup('file', '../files/logging.properties') | indent(4) }}
+    {{ lookup('template', './logging.properties.j2') | indent(4) }}
