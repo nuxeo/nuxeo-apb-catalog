@@ -21,7 +21,11 @@
   <!-- A time/date based rolling appender -->
   <appender name="FILE-PERF" class="org.apache.log4j.DailyRollingFileAppender">
     <errorHandler class="org.apache.log4j.helpers.OnlyOnceErrorHandler" />
+{% if arender_previewer_monitoring_datadog_enabled %}
+    <param name="File" value="/var/log/arender-ui/${POD_NAME}-perf.log" />
+{% else %}
     <param name="File" value="/usr/local/tomcat/logs/${POD_NAME}-perf.log" />
+{% endif %}
     <param name="Append" value="true" />
     <!-- Rollover at midnight every day -->
     <param name="DatePattern" value="'.'yyyy-MM-dd" />
