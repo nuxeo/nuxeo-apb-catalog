@@ -41,20 +41,6 @@ spec:
 {{ previewer_securityContext | from_yaml | to_nice_yaml(indent=2) | indent(8, true) }}
 {% endif %}
       containers:
-        - name: nginx-proxy
-          image: twalter/openshift-nginx
-          volumeMounts:
-          - name: nginx-conf
-            readOnly: true
-            mountPath: "/etc/nginx/"
-          - name: nginx-cache
-            mountPath: "/var/cache/nginx"
-          - name: nginx-tmp
-            mountPath: "/var/tmp"
-          ports:
-          - name: http-endpoint
-            containerPort: 8081
-            protocol: TCP
         - image: {{ arender_previewer_image }}:{{ arender_previewer_image_version }}
           imagePullPolicy: {{ previewer_image_pullPolicy }}
           lifecycle:
@@ -175,6 +161,20 @@ spec:
             readOnly: true
             mountPath: "/conf.d/tomcat.d"
 {% endif %}
+        - name: nginx-proxy
+          image: twalter/openshift-nginx
+          volumeMounts:
+          - name: nginx-conf
+            readOnly: true
+            mountPath: "/etc/nginx/"
+          - name: nginx-cache
+            mountPath: "/var/cache/nginx"
+          - name: nginx-tmp
+            mountPath: "/var/tmp"
+          ports:
+          - name: http-endpoint
+            containerPort: 8081
+            protocol: TCP
 
 {% if use_pull_secret %}
       imagePullSecrets:
