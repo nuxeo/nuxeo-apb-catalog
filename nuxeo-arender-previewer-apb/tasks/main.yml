@@ -27,6 +27,7 @@
     - name: arender_previewer_hazelcast_service.yml.j2
       apply: "{{ arender_previewer_ha }}"
     - name: arender_previewer_nginx_config.yml.j2
+      apply: "{{ arender_previewer_nginx_proxy_enabled }}"
     - name: arender_previewer_datadog_agent_config.yml.j2
       apply: "{{ arender_previewer_monitoring_datadog_enabled }}"
     - name: arender_previewer_datadog_agent_secret.yml.j2
