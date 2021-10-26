@@ -23,6 +23,8 @@ arender_previewer_monitoring_kibana_service: arender-monitor-kibana
 arender_previewer_monitoring_datadog_enabled: false
 arender_previewer_monitoring_datadog_key: ''
 
+arender_previewer_nginx_proxy_enabled: false
+
 arender_previewer_ha: false
 
 previewer_image_pullPolicy: IfNotPresent

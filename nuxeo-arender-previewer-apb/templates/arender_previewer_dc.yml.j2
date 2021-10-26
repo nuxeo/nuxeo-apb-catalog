@@ -161,6 +161,7 @@ spec:
             readOnly: true
             mountPath: "/conf.d/tomcat.d"
 {% endif %}
+{% if arender_previewer_nginx_proxy_enabled %}
         - name: nginx-proxy
           image: twalter/openshift-nginx
           volumeMounts:
@@ -175,6 +176,7 @@ spec:
           - name: http-endpoint
             containerPort: 8081
             protocol: TCP
+{% endif %}
 
 {% if use_pull_secret %}
       imagePullSecrets:
@@ -216,6 +218,7 @@ spec:
           configMap:
             defaultMode: 493
             name: {{ arender_previewer_pre_stop_scripts_configmap_name }}
+{% if arender_previewer_nginx_proxy_enabled %}
         - name: nginx-conf
           configMap:
             name: {{ nginx_configmap_name }}
@@ -223,6 +226,7 @@ spec:
           emptyDir: {}
         - name: nginx-tmp
           emptyDir: {}
+{% endif %}
 {% if arender_previewer_monitoring_datadog_enabled %}
         - name: datadog-agent-conf
           configMap:
