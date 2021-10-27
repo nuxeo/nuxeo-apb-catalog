@@ -81,6 +81,7 @@ arender_hazelcast_cluster_name: "{{ name }}-cluster"
 arender_hazelcast_service_name: "{{ name }}-hazelcast-headless"
 arender_hazelcast_internal_port: "5701"
 
+arender_temp_cleanup_cronjob_enable: false
 arender_temp_cleanup_cronjob_name: "{{ name }}-temp-cleanup-cron"
 arender_temp_cleanup_job_name: "{{ name }}-temp-cleanup"
 

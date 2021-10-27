@@ -65,6 +65,7 @@
     - name: arender_document_service_broker_dc.yml.j2
     - name: arender_document_service_broker_service.yml.j2
     - name: arender_temp_cleanup_cron.yml.j2
+      apply: "{{ arender_temp_cleanup_cronjob_enable }}"
     - name: arender_debug_dc.yml.j2
       apply: "{{ arender_debug_pod == true }}"
 
