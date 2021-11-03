@@ -62,6 +62,14 @@
     <priority value="ERROR" />
   </category>
 
+  <!-- Configure too verbose loggers -->
+  <category name="com.arondor.common.reflection.parser.spring.XMLBeanDefinitionParser">
+    <priority value="OFF" />
+  </category>
+  <category name="com.arondor.viewer.server.servlet.PerSessionDocumentMap">
+    <priority value="ERROR" />
+  </category>
+
   <!-- Configure perf logs -->
   <category name="com.arondor.viewer.common.logger" additivity="false">
     <priority value="INFO" />
