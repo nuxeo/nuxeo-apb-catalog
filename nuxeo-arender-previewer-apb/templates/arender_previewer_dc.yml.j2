@@ -137,8 +137,10 @@ spec:
 {{ previewer_resources | from_yaml | to_nice_yaml(indent=2) | indent(12, true) }}
 {% endif %}
           volumeMounts:
+{% if arender_previewer_monitoring_datadog_enabled %}
           - name: datadog-logs
             mountPath: "/var/log/arender-ui"
+{% endif %}
           - name: log-config
             mountPath: /usr/local/tomcat/log-config
           - name: logs
