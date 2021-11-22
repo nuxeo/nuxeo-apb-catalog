@@ -202,6 +202,9 @@ instances:
     tags:
        - namespace:{{ namespace }}
        - app_name:{{ name }}
+{% for key, value in datadog_tags_json.items() %}
+       - {{ key }}:{{ value }}
+{% endfor %}
 
     ## @param service - string - optional
     ## Attach the tag `service:<SERVICE>` to every metric, event, and service check emitted by this integration.
@@ -249,6 +252,9 @@ logs:
       - app_name:{{ name }}
       - log_type:tomcat_access_log
       - namespace:{{ namespace }}
+{% for key, value in datadog_tags_json.items() %}
+      - {{ key }}:{{ value }}
+{% endfor %}
 {% endif %}
   - type: file
     path: /var/log/arender-ui/*-app.log
@@ -263,6 +269,9 @@ logs:
       - app_name:{{ name }}
       - log_type:tomcat_application_log
       - namespace:{{ namespace }}
+{% for key, value in datadog_tags_json.items() %}
+      - {{ key }}:{{ value }}
+{% endfor %}
   - type: file
     path: /var/log/arender-ui/catalina.log
     source: nev-ui
@@ -277,6 +286,9 @@ logs:
       - app_name:{{ name }}
       - log_type:tomcat_catalina_log
       - namespace:{{ namespace }}
+{% for key, value in datadog_tags_json.items() %}
+      - {{ key }}:{{ value }}
+{% endfor %}
   - type: file
     path: /var/log/arender-ui/*-perf.log
     source: nev-ui-perf
@@ -293,4 +305,6 @@ logs:
       - app_name:{{ name }}
       - log_type:tomcat_perf_log
       - namespace:{{ namespace }}
-
+{% for key, value in datadog_tags_json.items() %}
+      - {{ key }}:{{ value }}
+{% endfor %}

@@ -177,3 +177,9 @@ plans:
       type: string
       title: Datadog API Key
       display_group: Monitoring
+
+    - name:: arender_previewer_monitoring_datadog_tags
+      default: '{"staging": "dev", "project": "internal"}'
+      type: string
+      title: Datadog Additional Tags
+      display_group: Monitoring
