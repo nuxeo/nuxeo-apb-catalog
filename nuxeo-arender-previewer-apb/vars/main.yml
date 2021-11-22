@@ -56,6 +56,7 @@ datadog_agent_configmap_name: "{{ name }}-datadog-agent-config"
 datadog_agent_secret_name: "{{ name }}-datadog-agent-api-key"
 # disable for legacy as image doesn't support it in 10.6.8
 datadog_tomcat_access_logs_enabled: "{{ false if arender_previewer_image_legacy else arender_previewer_monitoring_datadog_enabled }}"
+datadog_tags_json: "{{ arender_previewer_monitoring_datadog_tags | from_json }}"
 
 monitoring_es_binding_name: "{{ name }}-monitor-es-binding"
 monitoring_es_binding_secret_name:  "{{ name }}-monitor-es-binding"
