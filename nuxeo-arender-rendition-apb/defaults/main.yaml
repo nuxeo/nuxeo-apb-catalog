@@ -31,6 +31,10 @@ arender_rendition_monitoring_enabled: false
 arender_rendition_monitoring_es_service: arender-monitor-elasticsearch
 arender_rendition_monitoring_kibana_service: arender-monitor-kibana
 
+arender_rendition_monitoring_datadog_enabled: false
+arender_rendition_monitoring_datadog_key: ''
+arender_rendition_monitoring_datadog_tags: '{}'
+
 arender_rendition_image_pull_username: nuxeo
 
 arender_autoscaling_min: 1

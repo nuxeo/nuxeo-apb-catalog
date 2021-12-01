@@ -130,6 +130,10 @@ spec:
 {{ arender_document_service_broker_resources | from_yaml | to_nice_yaml(indent=2) | indent(12, true) }}
 {% endif %}
           volumeMounts:
+{% if arender_rendition_monitoring_datadog_enabled %}
+          - name: datadog-logs
+            mountPath: "/var/log/arender-document-service-broker"
+{% endif %}
           - name: temp
 {% if before_4_4_2 %}
             mountPath: /tmp
@@ -145,6 +149,36 @@ spec:
 {% if not before_4_4_2 %}
           - name: hazelcast-config
             mountPath: /arender/conf
+{% endif %}
+{% if arender_rendition_monitoring_datadog_enabled %}
+        - name: datadog-agent
+          image: gcr.io/datadoghq/agent:latest
+          env:
+            - name: DD_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ arender_rendition_monitoring_datadog_agent_secret_name }}
+                  key: api_key
+            - name: DD_LOGS_ENABLED
+              value: "true"
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "200m"
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
+          volumeMounts:
+          - name: datadog-agent-conf
+            readOnly: true
+            mountPath: "/conf.d"
+          - name: datadog-logs
+            readOnly: true
+            mountPath: "/var/log/arender-document-service-broker"
 {% endif %}
       volumes:
         - name: temp
@@ -164,6 +198,13 @@ spec:
         - name: hazelcast-config
           configMap:
             name: {{ arender_hazelcast_configmap_name }}
+{% endif %}
+{% if arender_rendition_monitoring_datadog_enabled %}
+        - name: datadog-agent-conf
+          configMap:
+            name: {{ arender_document_service_broker_datadog_configmap_name }}
+        - name: datadog-logs
+          emptyDir: {}
 {% endif %}
   triggers:
     - type: ConfigChange

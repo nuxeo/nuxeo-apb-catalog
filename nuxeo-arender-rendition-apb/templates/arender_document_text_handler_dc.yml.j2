@@ -101,6 +101,10 @@ spec:
 {{ arender_document_text_handler_resources | from_yaml | to_nice_yaml(indent=2) | indent(12, true) }}
 {% endif %}
           volumeMounts:
+{% if arender_rendition_monitoring_datadog_enabled %}
+          - name: datadog-logs
+            mountPath: "/var/log/arender-document-text-handler"
+{% endif %}
           - name: temp
             mountPath: /arender/tmp
           - name: config
@@ -109,6 +113,36 @@ spec:
             mountPath: /logs
           - name: scripts
             mountPath: /scripts
+{% if arender_rendition_monitoring_datadog_enabled %}
+        - name: datadog-agent
+          image: gcr.io/datadoghq/agent:latest
+          env:
+            - name: DD_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ arender_rendition_monitoring_datadog_agent_secret_name }}
+                  key: api_key
+            - name: DD_LOGS_ENABLED
+              value: "true"
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "200m"
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
+          volumeMounts:
+          - name: datadog-agent-conf
+            readOnly: true
+            mountPath: "/conf.d"
+          - name: datadog-logs
+            readOnly: true
+            mountPath: "/var/log/arender-document-text-handler"
+{% endif %}
       volumes:
         - name: temp
           persistentVolumeClaim:
@@ -123,5 +157,12 @@ spec:
           configMap:
             defaultMode: 493
             name: {{ arender_pre_stop_scripts_configmap_name }}
+{% if arender_rendition_monitoring_datadog_enabled %}
+        - name: datadog-agent-conf
+          configMap:
+            name: {{ arender_document_text_handler_datadog_configmap_name }}
+        - name: datadog-logs
+          emptyDir: {}
+{% endif %}
   triggers:
     - type: ConfigChange
