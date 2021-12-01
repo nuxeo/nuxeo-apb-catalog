@@ -161,6 +161,26 @@ plans:
       title: Name of the Kibana service instance
       display_group: Monitoring
 
+    - name: arender_rendition_monitoring_datadog_enabled
+      default: false
+      type: boolean
+      display_type: checkbox
+      title: Enable Datadog agent
+      display_group: Monitoring
+
+    - name: arender_rendition_monitoring_datadog_key
+      default: ''
+      type: string
+      title: Datadog API Key
+      display_group: Monitoring
+
+    - name:: arender_rendition_monitoring_datadog_tags
+      default: '{"staging": "dev", "project": "internal"}'
+      type: string
+      title: Datadog Additional Tags
+      display_group: Monitoring
+
+
     - name: arender_tmp_storage_size
       default: 500Gi
       type: string

@@ -10,5 +10,5 @@ metadata:
   name: {{ item.name }}
   namespace: {{ namespace }}
 data:
-  logback-spring.xml: |
-    {{ lookup('template', './logback.xml.j2') | indent(4) }}
+  conf.yaml: |
+    {{ lookup('template', './datadog-agent.yml.j2') | indent(4) }}

@@ -25,18 +25,40 @@
   k8s:
     state: "{{ state }}"
     definition: "{{ lookup('template', 'arender_log_config.yml.j2') | from_yaml }}"
+  when: item.apply | default(True)
   loop:
     - name: "{{ arender_document_converter_log_configmap_name }}"
-      file: arender_document_converter_logback.xml
+      arender_service: arender-document-converter
+      arender_log_prefix: DCV
     - name: "{{ arender_document_file_storage_log_configmap_name }}"
-      file: arender_document_file_storage_logback.xml
+      arender_service: arender-document-file-storage
+      arender_log_prefix: DFS
       apply: "{{ before_4_4_2 }}"
     - name: "{{ arender_document_renderer_log_configmap_name }}"
-      file: arender_document_renderer_logback.xml
+      arender_service: arender-document-renderer
+      arender_log_prefix: DRN
     - name: "{{ arender_document_text_handler_log_configmap_name }}"
-      file: arender_document_text_handler_logback.xml
+      arender_service: arender-document-text-handler
+      arender_log_prefix: DTH
     - name: "{{ arender_document_service_broker_log_configmap_name }}"
-      file: arender_document_service_broker_logback.xml
+      arender_service: arender-document-service-broker
+      arender_log_prefix: DSB
+
+
+- name: "Set Datadog config {{ state }}"
+  k8s:
+    state: "{{ state }}"
+    definition: "{{ lookup('template', 'arender_rendition_datadog_agent_config.yml.j2') | from_yaml }}"
+  when: arender_rendition_monitoring_datadog_enabled
+  loop:
+    - name: "{{ arender_document_converter_datadog_configmap_name }}"
+      arender_service: arender-document-converter
+    - name: "{{ arender_document_renderer_datadog_configmap_name }}"
+      arender_service: arender-document-renderer
+    - name: "{{ arender_document_text_handler_datadog_configmap_name }}"
+      arender_service: arender-document-text-handler
+    - name: "{{ arender_document_service_broker_datadog_configmap_name }}"
+      arender_service: arender-document-service-broker
 
 
 - name: "Set ARender objects state={{ state }}"
@@ -52,6 +74,8 @@
       filename: pre-stop.sh
     - name: arender_hazelcast_config.yml.j2
     - name: arender_hazelcast_service.yml.j2
+    - name: arender_rendition_datadog_agent_secret.yml.j2
+      apply: "{{ arender_rendition_monitoring_datadog_enabled }}"
     - name: arender_document_converter_dc.yml.j2
     - name: arender_document_converter_service.yml.j2
     - name: arender_document_file_storage_dc.yml.j2
