@@ -168,6 +168,13 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "200m"
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
           volumeMounts:
           - name: datadog-agent-conf
             readOnly: true
