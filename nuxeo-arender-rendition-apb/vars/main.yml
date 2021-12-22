@@ -9,7 +9,7 @@ pod_namespace: "{{ lookup('env', 'POD_NAMESPACE') }}"
 in_cluster: "{{ True if (pod_name and pod_namespace) else False }}"
 
 name: "{{ project_name if project_name is defined else 'nuxeo-arender-' + (_apb_service_instance_id | string |truncate(5, True, '') ) }}"
-before_4_4_2: "{{ arender_rendition_image_version | regex_replace('\\.NX.*','') is version('4.4.2', '<') }}"
+before_4_4_2: "{{ arender_rendition_image_version | regex_replace('\\.NX.*','') is version('4.4.2', '<') and arender_rendition_image_legacy }}"
 
 arender_document_service_broker_dc_lookup: "{{ lookup('openshift', kind='DeploymentConfig', namespace=namespace, resource_name=arender_document_service_broker_dc_name) }}"
 arender_document_converter_dc_lookup: "{{ lookup('openshift', kind='DeploymentConfig', namespace=namespace, resource_name=arender_document_converter_dc_name) }}"
