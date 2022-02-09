@@ -10,7 +10,7 @@
   "installImage_tag": "0.6",
   "installImage_pullPolicy": "IfNotPresent",
   "image_repository": "docker.io/mongo",
-  "image_tag": "3.4",
+  "image_tag": "4",
   "image_pullPolicy": "IfNotPresent",
   "podAnnotations": {},
   "securityContext": {},
