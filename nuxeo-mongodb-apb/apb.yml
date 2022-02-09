@@ -85,7 +85,7 @@ plans:
         title: MongoDB image name
         display_group: Container Specs
       - name: image_tag
-        default: '3.6'
+        default: '4'
         type: string
         title: MongoDB image tag
         display_group: Container Specs
@@ -289,7 +289,7 @@ plans:
         title: MongoDB image name
         display_group: Container Specs
       - name: image_tag
-        default: '3.6'
+        default: '4'
         type: string
         title: MongoDB image tag
         display_group: Container Specs
