@@ -103,6 +103,27 @@ spec:
                 fieldPath: metadata.name
           - name: JAVA_OPTS
             value: "{{ arender_document_converter_java_opts }}"
+{% if arender_rendition_monitoring_datadog_enabled %}
+          - name: DCV_MANAGEMENT_METRICS_EXPORT_DATADOG_ENABLED
+            value: 'true'
+          - name: DCV_MANAGEMENT_METRICS_EXPORT_DATADOG_API-KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ arender_rendition_monitoring_datadog_agent_secret_name }}
+                key: api_key
+          - name: DCV_MANAGEMENT_METRICS_TAGS_HOST
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: DCV_MANAGEMENT_METRICS_TAGS_RENDITION-NAME
+            value: {{ name }}
+          - name: DCV_MANAGEMENT_METRICS_TAGS_NAMESPACE
+            value: {{ namespace }}
+{% for key, value in datadog_tags_json.items() %}
+          - name: "DCV_MANAGEMENT_METRICS_TAGS_{{ key | upper }}"
+            value: {{ value }}
+{% endfor %}
+{% endif %}
           resources:
 {% if arender_document_converter_resources is defined and (arender_document_converter_resources | from_yaml) %}
 {{ arender_document_converter_resources | from_yaml | to_nice_yaml(indent=2) | indent(12, true) }}

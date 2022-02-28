@@ -88,7 +88,7 @@ arender_temp_cleanup_job_name: "{{ name }}-temp-cleanup"
 arender_document_converter_datadog_configmap_name: "{{ name }}-converter-datadog-agent-config"
 arender_document_renderer_datadog_configmap_name: "{{ name }}-renderer-datadog-agent-config"
 arender_document_text_handler_datadog_configmap_name: "{{ name }}-text-handler-datadog-agent-config"
-arender_document_service_broker_datadog_configmap_name: "{{ name }}-serbice-broker-datadog-agent-config"
+arender_document_service_broker_datadog_configmap_name: "{{ name }}-service-broker-datadog-agent-config"
 arender_rendition_monitoring_datadog_agent_secret_name: "{{ name }}-datadog-agent-api-key"
 datadog_tags_json: "{{ arender_rendition_monitoring_datadog_tags | from_json }}"
 
