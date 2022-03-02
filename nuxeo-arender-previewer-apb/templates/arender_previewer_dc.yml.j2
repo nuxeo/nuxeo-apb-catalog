@@ -108,6 +108,7 @@ spec:
             - name: ARENDERSRV_ARENDER_SERVER_PERF_LOGGER_USE
               value: 'true'
 {% if arender_previewer_monitoring_datadog_enabled %}
+            # micrometer uses JMX to query tomcat metrics
             - name: TOMCAT_JMX_PORT
               value: "{{ monitoring_jmx_tomcat_port }}"
 {% if datadog_tomcat_access_logs_enabled %}
@@ -132,6 +133,27 @@ spec:
             - name: ARENDERSRV_ARENDER_SERVER_PERF_ES_INDEX_NAME
               value: {{ monitoring_es_index_name }}
 {% endif %}
+{% if arender_previewer_monitoring_datadog_enabled and after_2_1_0 %}
+            - name: ARENDERSRV_ARENDER_SERVER_EXPORT_DATADOG_ENABLED
+              value: 'true'
+            - name: ARENDERSRV_ARENDER_SERVER_EXPORT_DATADOG_API-KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ datadog_agent_secret_name }}
+                  key: api_key
+            - name: ARENDERSRV_ARENDER_SERVER_METRICS_TAGS_HOST
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: ARENDERSRV_ARENDER_SERVER_METRICS_TAGS_APP-NAME
+              value: {{ name }}
+            - name: ARENDERSRV_ARENDER_SERVER_METRICS_TAGS_NAMESPACE
+              value: {{ namespace }}
+{% for key, value in datadog_tags_json.items() %}
+            - name: "ARENDERSRV_ARENDER_SERVER_METRICS_TAGS_{{ key | upper }}"
+              value: {{ value }}
+{% endfor %}
+{% endif %}
           resources:
 {% if previewer_resources is defined and (previewer_resources | from_yaml) %}
 {{ previewer_resources | from_yaml | to_nice_yaml(indent=2) | indent(12, true) }}
@@ -155,7 +177,11 @@ spec:
             mountPath: /scripts
 {% if arender_previewer_monitoring_datadog_enabled %}
         - name: datadog-agent
+{% if after_2_1_0 %}
+          image: gcr.io/datadoghq/agent:7.33.1
+{% else %}
           image: gcr.io/datadoghq/agent:7.33.1-jmx
+{% endif %}
           env:
             - name: DD_API_KEY
               valueFrom:
@@ -178,7 +204,11 @@ spec:
           volumeMounts:
           - name: datadog-agent-conf
             readOnly: true
+{% if after_2_1_0 %}
+            mountPath: "/conf.d"
+{% else %}
             mountPath: "/conf.d/tomcat.d"
+{% endif %}
           - name: datadog-logs
             readOnly: true
             mountPath: "/var/log/arender-ui"
