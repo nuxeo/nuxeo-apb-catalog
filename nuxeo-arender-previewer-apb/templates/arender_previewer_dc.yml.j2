@@ -155,7 +155,7 @@ spec:
             mountPath: /scripts
 {% if arender_previewer_monitoring_datadog_enabled %}
         - name: datadog-agent
-          image: gcr.io/datadoghq/agent:latest-jmx
+          image: gcr.io/datadoghq/agent:7.33.1-jmx
           env:
             - name: DD_API_KEY
               valueFrom:

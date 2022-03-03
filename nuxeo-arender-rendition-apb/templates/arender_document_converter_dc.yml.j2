@@ -122,7 +122,7 @@ spec:
             mountPath: /scripts
 {% if arender_rendition_monitoring_datadog_enabled %}
         - name: datadog-agent
-          image: gcr.io/datadoghq/agent:latest
+          image: gcr.io/datadoghq/agent:7.33.1
           env:
             - name: DD_API_KEY
               valueFrom:
