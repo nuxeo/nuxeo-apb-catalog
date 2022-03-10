@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+{% if arender_previewer_monitoring_datadog_enabled %}
+  <property name="logging.file_prefix" value="/var/log/arender-ui/${POD_NAME}" />
+{% else %}
+  <property name="logging.file_prefix" value="/usr/local/tomcat/logs/${POD_NAME}" />
+{% endif %}
+  <property name="logging.file_pattern" value="%date %-5level [%thread] [%logger] %msg%n" />
+  <property name="logging.console_pattern" value="%date %-5level [%thread] [%logger{0}] %msg%n" />
+
+  <appender name="SERVER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${logging.file_prefix}-app.log</file>
+    <encoder>
+      <pattern>${logging.file_pattern}</pattern>
+    </encoder>
+    <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+      <fileNamePattern>${logging.file_prefix}-app.log.%i.zip</fileNamePattern>
+      <minIndex>1</minIndex>
+      <maxIndex>20</maxIndex>
+    </rollingPolicy>
+    <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+      <maxFileSize>50MB</maxFileSize>
+    </triggeringPolicy>
+  </appender>
+
+  <appender name="PERF" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${logging.file_prefix}-perf.log</file>
+    <encoder>
+      <pattern>%msg%n</pattern>
+    </encoder>
+    <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+      <fileNamePattern>${logging.file_prefix}-perf.log.%i.zip</fileNamePattern>
+      <minIndex>1</minIndex>
+      <maxIndex>20</maxIndex>
+    </rollingPolicy>
+    <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+      <maxFileSize>50MB</maxFileSize>
+    </triggeringPolicy>
+  </appender>
+
+  <!-- ============================== -->
+  <!-- Append messages to the console -->
+  <!-- ============================== -->
+
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>${logging.console_pattern}</pattern>
+    </encoder>
+    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+      <level>WARN</level>
+    </filter>
+  </appender>
+
+  <!-- Logger -->
+  <!-- Logger for Tomcat -->
+  <logger name="org.apache.catalina" level="WARN" />
+  <logger name="org.apache.catalina.startup" level="INFO" />
+
+  <!-- Disable ES warn logs about type removal -->
+  <logger name="org.elasticsearch.client.RestClient" level="ERROR" />
+
+  <logger name="arender-startup" level="INFO" />
+  <!-- Configure too verbose loggers -->
+  <logger name="com.arondor.common.management" level="ERROR" />
+  <logger name="com.arondor.common.reflection.parser.spring" level="OFF" />
+  <logger name="com.arondor.viewer.server.servlet.PerSessionDocumentMap" level="ERROR" />
+
+  <!-- Configure perf logs -->
+  <logger name="com.arondor.viewer.common.logger" level="INFO" additivity="false">
+    <appender-ref ref="PERF" />
+  </logger>
+
+  <!-- ======================= -->
+  <!-- Setup the Root category -->
+  <!-- ======================= -->
+
+  <root level="WARN">
+    <appender-ref ref="STDOUT" />
+    <appender-ref ref="SERVER" />
+  </root>
+
+</configuration>
+
+
