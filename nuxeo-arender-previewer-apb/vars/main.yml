@@ -49,7 +49,7 @@ arender_previewer_hazelcast_internal_port: "5701"
 arender_previewer_service_binding_name: "{{ name }}-rendition-binding"
 arender_binding_secret_name: "{{ name }}-rendition-binding"
 
-arender_previewer_java_opts: "-XX:NativeMemoryTracking=summary -DPOD_NAME=${POD_NAME} -Dlog4j.configuration=file:/usr/local/tomcat/log-config/log4j.xml -Djava.util.logging.config.file=/usr/local/tomcat/log-config/logging.properties"
+arender_previewer_java_opts: "-XX:NativeMemoryTracking=summary -DPOD_NAME=${POD_NAME} {{ '-Dlogback.configurationFile=/usr/local/tomcat/log-config/logback.xml' if after_2_1_0 else '-Dlog4j.configuration=file:/usr/local/tomcat/log-config/log4j.xml' }} -Djava.util.logging.config.file=/usr/local/tomcat/log-config/logging.properties"
 
 monitoring_jmx_tomcat_port: "9000"
 datadog_agent_configmap_name: "{{ name }}-datadog-agent-config"

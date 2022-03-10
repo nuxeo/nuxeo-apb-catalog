@@ -10,7 +10,12 @@ metadata:
   name: {{ arender_previewer_log_configmap_name }}
   namespace: {{ namespace }}
 data:
+{% if after_2_1_0 %}
+  logback.xml: |
+    {{ lookup('template', './logback.xml.j2') | indent(4) }}
+{% else %}
   log4j.xml: |
     {{ lookup('template', './log4j.xml.j2') | indent(4) }}
+{% endif %}
   logging.properties: |
     {{ lookup('template', './logging.properties.j2') | indent(4) }}
