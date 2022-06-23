@@ -31,5 +31,6 @@
 "kafkaServiceName": "nuxeo11-sandbox-kafka",
 "useMinioForBinaries": false,
 "minioServiceName": "nuxeo11-sandbox-minio",
-"nuxeoClid":""
+"nuxeoClid":"",
+"useCustomSecret": true
 }
