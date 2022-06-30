@@ -68,44 +68,54 @@ skipping: [localhost]
 TASK [nuxeo-arender-rendition-apb : Update last operation] *********************
 skipping: [localhost]
 
+TASK [nuxeo-arender-rendition-apb : Deploy ARender rendition pool] *************
+included: /opt/ansible/roles/nuxeo-arender-rendition-apb/tasks/default.yml for localhost
+
+TASK [nuxeo-arender-rendition-apb : Configure monitoring stack] ****************
+skipping: [localhost]
+
 TASK [nuxeo-arender-rendition-apb : Creating Stack Service Account] ************
-changed: [localhost]
+ok: [localhost]
 
 TASK [nuxeo-arender-rendition-apb : Set PVC present] ***************************
-changed: [localhost] => (item={u'pvc_name': u'nuxeo-arender-0-tmp-broker'})
-changed: [localhost] => (item={u'pvc_name': u'nuxeo-arender-0-tmp-converter'})
-changed: [localhost] => (item={u'pvc_name': u'nuxeo-arender-0-tmp-pdfbox'})
-changed: [localhost] => (item={u'pvc_name': u'nuxeo-arender-0-tmp-jni'})
-changed: [localhost] => (item={u'pvc_name': u'nuxeo-arender-0-tmp-dfs'})
-changed: [localhost] => (item={u'pvc_name': u'nuxeo-arender-0-logs'})
+ok: [localhost] => (item={u'pvc_name': u'arender-pool-1-tmp-common', u'size': u'500Gi'})
+ok: [localhost] => (item={u'pvc_name': u'arender-pool-1-logs', u'size': u'150Gi'})
 
 TASK [nuxeo-arender-rendition-apb : Set Log config present] ********************
-changed: [localhost] => (item={u'name': u'nuxeo-arender-0-converter-log', u'file': u'arender_document_converter_logback.xml'})
-changed: [localhost] => (item={u'name': u'nuxeo-arender-0-dfs-log', u'file': u'arender_document_file_storage_logback.xml'})
-changed: [localhost] => (item={u'name': u'nuxeo-arender-0-jni-log', u'file': u'arender_document_renderer_logback.xml'})
-changed: [localhost] => (item={u'name': u'nuxeo-arender-0-pdfbox-log', u'file': u'arender_document_text_handler_logback.xml'})
-changed: [localhost] => (item={u'name': u'nuxeo-arender-0-broker-log', u'file': u'arender_document_service_broker_logback.xml'})
+ok: [localhost] => (item={u'arender_log_prefix': u'DCV', u'name': u'arender-pool-1-converter-log', u'arender_service': u'arender-document-converter'})
+ok: [localhost] => (item={u'arender_log_prefix': u'DRN', u'name': u'arender-pool-1-document-renderer-log', u'arender_service': u'arender-document-renderer'})
+ok: [localhost] => (item={u'arender_log_prefix': u'DTH', u'name': u'arender-pool-1-document-text-handler-log', u'arender_service': u'arender-document-text-handler'})
+ok: [localhost] => (item={u'arender_log_prefix': u'DSB', u'name': u'arender-pool-1-broker-log', u'arender_service': u'arender-document-service-broker'})
+
+TASK [nuxeo-arender-rendition-apb : Set Datadog config present] ****************
+ok: [localhost] => (item={u'name': u'arender-pool-1-converter-datadog-agent-config', u'arender_service': u'arender-document-converter'})
+ok: [localhost] => (item={u'name': u'arender-pool-1-renderer-datadog-agent-config', u'arender_service': u'arender-document-renderer'})
+ok: [localhost] => (item={u'name': u'arender-pool-1-text-handler-datadog-agent-config', u'arender_service': u'arender-document-text-handler'})
+ok: [localhost] => (item={u'name': u'arender-pool-1-service-broker-datadog-agent-config', u'arender_service': u'arender-document-service-broker'})
 
 TASK [nuxeo-arender-rendition-apb : Set ARender objects state=present] *********
 ok: [localhost] => (item={u'name': u'arender_rendition_sa.yml.j2'})
 skipping: [localhost] => (item={u'apply': False, u'name': u'arender_rendition_pull_secret.yml.j2'})
+ok: [localhost] => (item={u'name': u'arender_pre_stop_scripts_config.yml.j2', u'filename': u'pre-stop.sh'})
+ok: [localhost] => (item={u'name': u'arender_hazelcast_config.yml.j2'})
+ok: [localhost] => (item={u'name': u'arender_hazelcast_service.yml.j2'})
+ok: [localhost] => (item={u'apply': True, u'name': u'arender_rendition_datadog_agent_secret.yml.j2'})
 changed: [localhost] => (item={u'name': u'arender_document_converter_dc.yml.j2'})
-changed: [localhost] => (item={u'name': u'arender_document_converter_service.yml.j2'})
-changed: [localhost] => (item={u'name': u'arender_document_file_storage_dc.yml.j2'})
-changed: [localhost] => (item={u'name': u'arender_document_file_storage_service.yml.j2'})
+ok: [localhost] => (item={u'name': u'arender_document_converter_service.yml.j2'})
 changed: [localhost] => (item={u'name': u'arender_document_renderer_dc.yml.j2'})
-changed: [localhost] => (item={u'name': u'arender_document_renderer_service.yml.j2'})
+ok: [localhost] => (item={u'name': u'arender_document_renderer_service.yml.j2'})
 changed: [localhost] => (item={u'name': u'arender_document_text_handler_dc.yml.j2'})
-changed: [localhost] => (item={u'name': u'arender_document_text_handler_service.yml.j2'})
+ok: [localhost] => (item={u'name': u'arender_document_text_handler_service.yml.j2'})
 changed: [localhost] => (item={u'name': u'arender_document_service_broker_dc.yml.j2'})
-changed: [localhost] => (item={u'name': u'arender_document_service_broker_service.yml.j2'})
+ok: [localhost] => (item={u'name': u'arender_document_service_broker_service.yml.j2'})
+skipping: [localhost] => (item={u'apply': False, u'name': u'arender_temp_cleanup_cron.yml.j2'})
 skipping: [localhost] => (item={u'apply': False, u'name': u'arender_debug_dc.yml.j2'})
 
 TASK [nuxeo-arender-rendition-apb : Set Autoscaling objects present] ***********
-changed: [localhost] => (item={u'target_dc': u'nuxeo-arender-0-converter', u'name': u'converter'})
-changed: [localhost] => (item={u'target_dc': u'nuxeo-arender-0-pdfbox', u'name': u'pdfbox'})
-changed: [localhost] => (item={u'target_dc': u'nuxeo-arender-0-jni', u'name': u'jni'})
-changed: [localhost] => (item={u'target_dc': u'nuxeo-arender-0-rendition-broker', u'name': u'broker'})
+ok: [localhost] => (item={u'target_dc': u'arender-pool-1-document-converter', u'name': u'document-converter'})
+ok: [localhost] => (item={u'target_dc': u'arender-pool-1-document-text-handler', u'name': u'document-text-handler'})
+ok: [localhost] => (item={u'target_dc': u'arender-pool-1-document-renderer', u'name': u'document-renderer'})
+ok: [localhost] => (item={u'target_dc': u'arender-pool-1-document-service-broker', u'name': u'document-service-broker'})
 
 TASK [nuxeo-arender-rendition-apb : Wait for Rendition Deployment to become ready] ***
 FAILED - RETRYING: Wait for Rendition Deployment to become ready (20 retries left).Result was: {
@@ -133,17 +143,14 @@ ok: [localhost] => {
 TASK [nuxeo-arender-rendition-apb : encode bind credentials] *******************
 skipping: [localhost]
 
+TASK [nuxeo-arender-rendition-apb : Deploy Bridge to rendition pool] ***********
+skipping: [localhost]
+
 TASK [nuxeo-arender-rendition-apb : Update last operation] *********************
 skipping: [localhost]
 
 PLAY RECAP *********************************************************************
-localhost                  : ok=6    changed=5    unreachable=0    failed=0
-
-
-
-PLAY RECAP *********************************************************************
-localhost                  : ok=6    changed=5    unreachable=0    failed=0
-
+localhost                  : ok=8    changed=1    unreachable=0    failed=0
 ```
 
 ## Undeploy an ARender instance

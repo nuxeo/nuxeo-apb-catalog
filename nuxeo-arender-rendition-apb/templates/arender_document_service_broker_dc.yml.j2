@@ -85,10 +85,6 @@ spec:
           env:
           - name: DSB_KUBEPROVIDER_KUBE.HOSTS_{{ arender_document_converter_service_name }}
             value: "{{ arender_document_converter_internal_port }}"
-{% if before_4_4_2 %}
-          - name: DSB_KUBEPROVIDER_KUBE.HOSTS_{{ arender_document_file_storage_service_name }}
-            value: "{{ arender_document_file_storage_internal_port }}"
-{% endif %}
           - name: DSB_KUBEPROVIDER_KUBE.HOSTS_{{ arender_document_renderer_service_name }}
             value: "{{ arender_document_renderer_internal_port }}"
           - name: DSB_KUBEPROVIDER_KUBE.HOSTS_{{ arender_document_text_handler_service_name }}
