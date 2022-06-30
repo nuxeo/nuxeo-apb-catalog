@@ -13,7 +13,6 @@ before_4_4_2: "{{ arender_rendition_image_version | regex_replace('\\.NX.*','') 
 
 arender_document_service_broker_dc_lookup: "{{ lookup('openshift', kind='DeploymentConfig', namespace=namespace, resource_name=arender_document_service_broker_dc_name) }}"
 arender_document_converter_dc_lookup: "{{ lookup('openshift', kind='DeploymentConfig', namespace=namespace, resource_name=arender_document_converter_dc_name) }}"
-arender_document_file_storage_dc_lookup: "{{ lookup('openshift', kind='DeploymentConfig', namespace=namespace, resource_name=arender_document_file_storage_dc_name) }}"
 arender_document_renderer_dc_lookup: "{{ lookup('openshift', kind='DeploymentConfig', namespace=namespace, resource_name=arender_document_renderer_dc_name) }}"
 arender_document_text_handler_dc_lookup: "{{ lookup('openshift', kind='DeploymentConfig', namespace=namespace, resource_name=arender_document_text_handler_dc_name) }}"
 
@@ -26,14 +25,12 @@ monitoring_binding_kibana_host: "{{ monitoring_binding_kibana_secret_lookup | js
 ready_replicas_query: "[spec.replicas, status.readyReplicas]"
 arender_document_service_broker_dc_query: "{{ arender_document_service_broker_dc_lookup | json_query(ready_replicas_query) | unique | count == 1 }}"
 arender_document_converter_dc_query: "{{ arender_document_converter_dc_lookup | json_query(ready_replicas_query) | unique | count == 1 }}"
-arender_document_file_storage_dc_query: "{{ arender_document_file_storage_dc_lookup | json_query(ready_replicas_query) | unique | count == 1 }}"
 arender_document_renderer_dc_query: "{{ arender_document_renderer_dc_lookup | json_query(ready_replicas_query) | unique | count == 1 }}"
 arender_document_text_handler_dc_query: "{{ arender_document_text_handler_dc_lookup | json_query(ready_replicas_query) | unique | count == 1 }}"
 
 
 arender_document_service_broker_image: "{{ arender_rendition_image_registry }}/{{ arender_rendition_image_document_service_broker}}:{{ arender_rendition_image_version }}"
 arender_document_converter_image: "{{ arender_rendition_image_registry }}/{{ arender_rendition_image_document_converter}}:{{ arender_rendition_image_version }}"
-arender_document_file_storage_image: "{{ arender_rendition_image_registry }}/{{ arender_rendition_image_document_file_storage}}:{{ arender_rendition_image_version }}"
 arender_document_renderer_image: "{{ arender_rendition_image_registry }}/{{ arender_rendition_image_document_renderer}}:{{ arender_rendition_image_version }}"
 arender_document_text_handler_image: "{{ arender_rendition_image_registry }}/{{ arender_rendition_image_document_text_handler}}:{{ arender_rendition_image_version }}"
 
@@ -54,8 +51,6 @@ arender_document_converter_dc_name: "{{ name }}-document-converter"
 
 arender_as_prefix: "{{ name }}-autoscaling"
 
-arender_document_file_storage_service_name: "{{ name }}-document-file-storage"
-arender_document_file_storage_dc_name: "{{ name }}-document-file-storage"
 
 arender_document_renderer_service_name: "{{ name }}-document-renderer"
 arender_document_renderer_dc_name: "{{ name }}-document-renderer"
@@ -69,7 +64,6 @@ arender_common_tmp_name: "{{ name }}-tmp-common"
 arender_logs_pvc_name: "{{ name }}-logs"
 
 arender_document_converter_log_configmap_name: "{{ name }}-converter-log"
-arender_document_file_storage_log_configmap_name: "{{ name }}-document-file-storage-log"
 arender_document_renderer_log_configmap_name: "{{ name }}-document-renderer-log"
 arender_document_text_handler_log_configmap_name: "{{ name }}-document-text-handler-log"
 arender_document_service_broker_log_configmap_name: "{{ name }}-broker-log"
@@ -104,7 +98,6 @@ monitoring_kibana_dashboard_name: "{{ name }}-dashboard"
 monitoring_kibana_dashboard_title: "ARender Rendition for {{ name }}"
 
 arender_document_converter_java_opts: "-Dsun.net.inetaddr.ttl=0 -XX:NativeMemoryTracking=summary -XX:ErrorFile=/logs/hs_err_document_converter_pid_%p.log -XX:MaxRAMPercentage=50  -Dlog4j2.formatMsgNoLookups=true"
-arender_document_file_storage_java_opts: "-Dsun.net.inetaddr.ttl=0 -XX:NativeMemoryTracking=summary -XX:ErrorFile=/logs/hs_err_document_file_storage_pid_%p.log -Xmx1g -Dhazelcast.config=/arender/conf/hazelcast.yaml"
 arender_document_renderer_java_opts: "-Dsun.net.inetaddr.ttl=0 -Djava.library.path=/lib/ -XX:NativeMemoryTracking=summary -XX:ErrorFile=/logs/hs_err_document_renderer_pid_%p.log -XX:MaxRAMPercentage=50"
 arender_document_service_broker_java_opts: "-Dsun.net.inetaddr.ttl=0 -XX:NativeMemoryTracking=summary -XX:ErrorFile=/logs/hs_err_document_service_broker_pid_%p.log -XX:MaxRAMPercentage=70 -Dhazelcast.config=/arender/conf/hazelcast.yaml"
 arender_document_text_handler_java_opts: "-Dsun.net.inetaddr.ttl=0 -XX:NativeMemoryTracking=summary -XX:ErrorFile=/logs/hs_err_document_text_handler_pid_%p.log -XX:MaxRAMPercentage=70"
@@ -140,22 +133,6 @@ arender_document_converter_liveness_probe_period_seconds: "30"
 arender_document_converter_liveness_probe_timeout_seconds: "10"
 arender_document_converter_liveness_probe_success_threshold: "1"
 arender_document_converter_liveness_probe_failure_threshold: "5"
-
-# Document File Storage READINESS / LIVENESS
-arender_document_file_storage_internal_port: "8081"
-arender_document_file_storage_external_port: "8081"
-arender_document_file_storage_readiness_probe_path: "/health/record"
-arender_document_file_storage_readiness_probe_initial_delay_secs: "10"
-arender_document_file_storage_readiness_probe_period_seconds: "5"
-arender_document_file_storage_readiness_probe_timeout_seconds: "3"
-arender_document_file_storage_readiness_probe_success_threshold: "1"
-arender_document_file_storage_readiness_probe_failure_threshold: "15"
-arender_document_file_storage_liveness_probe_path: "/health/record"
-arender_document_file_storage_liveness_probe_initial_delay_secs: "60"
-arender_document_file_storage_liveness_probe_period_seconds: "30"
-arender_document_file_storage_liveness_probe_timeout_seconds: "10"
-arender_document_file_storage_liveness_probe_success_threshold: "1"
-arender_document_file_storage_liveness_probe_failure_threshold: "5"
 
 # Document Renderer READINESS / LIVENESS
 arender_document_renderer_internal_port: "9091"

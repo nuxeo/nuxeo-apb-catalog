@@ -30,10 +30,6 @@
     - name: "{{ arender_document_converter_log_configmap_name }}"
       arender_service: arender-document-converter
       arender_log_prefix: DCV
-    - name: "{{ arender_document_file_storage_log_configmap_name }}"
-      arender_service: arender-document-file-storage
-      arender_log_prefix: DFS
-      apply: "{{ before_4_4_2 }}"
     - name: "{{ arender_document_renderer_log_configmap_name }}"
       arender_service: arender-document-renderer
       arender_log_prefix: DRN
@@ -78,10 +74,6 @@
       apply: "{{ arender_rendition_monitoring_datadog_enabled }}"
     - name: arender_document_converter_dc.yml.j2
     - name: arender_document_converter_service.yml.j2
-    - name: arender_document_file_storage_dc.yml.j2
-      apply: "{{ before_4_4_2 }}"
-    - name: arender_document_file_storage_service.yml.j2
-      apply: "{{ before_4_4_2 }}"
     - name: arender_document_renderer_dc.yml.j2
     - name: arender_document_renderer_service.yml.j2
     - name: arender_document_text_handler_dc.yml.j2
@@ -101,9 +93,6 @@
   loop:
     - name: document-converter
       target_dc: "{{ arender_document_converter_dc_name }}"
-    - name: document-file-storage
-      target_dc: "{{ arender_document_file_storage_dc_name }}"
-      apply: "{{ before_4_4_2 }}"
     - name: document-text-handler
       target_dc: "{{ arender_document_text_handler_dc_name }}"
     - name: document-renderer
@@ -116,13 +105,12 @@
 
 - name: "Wait for Rendition Deployment to become ready"
   debug:
-    msg: "DeploymentConfig ready status: {{ arender_document_converter_dc_query }}"
+    msg: "DeploymentConfig ready status: {{ arender_document_service_broker_dc_query }}"
   retries: 50
   delay: 10
   until:
     - arender_document_service_broker_dc_query
     - arender_document_converter_dc_query
-    - arender_document_file_storage_dc_query
     - arender_document_renderer_dc_query
     - arender_document_text_handler_dc_query
   when: state == 'present'
