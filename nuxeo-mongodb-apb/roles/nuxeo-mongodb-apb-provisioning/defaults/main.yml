@@ -26,8 +26,8 @@ port: 27017
 installImage_repository: k8s.gcr.io/mongodb-install
 installImage_tag: 0.6
 installImage_pullPolicy: IfNotPresent
-image_repository: docker.io/mongo
-image_tag: 3.4
+image_repository: public.ecr.aws/docker/library/mongo
+image_tag: 4
 image_pullPolicy: IfNotPresent
 podAnnotations: {}
 securityContext: {}
