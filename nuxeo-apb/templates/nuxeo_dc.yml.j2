@@ -67,6 +67,10 @@ spec:
         - name: minio-credentials
           mountPath: /opt/nuxeo/bindings/s3
 {% endif %}
+{% if useCustomBindings %}
+        - name: custom-bindings
+          mountPath: /opt/nuxeo/bindings/custom
+{% endif %}
 {% if nuxeo_clustering_enabled %}
         env:
         - name: NUXEO_CLUSTERING
@@ -223,6 +227,11 @@ spec:
       - name: minio-credentials
         secret:
           secretName: {{ minio_credentials_name }}
+{% endif %}
+{% if useCustomBindings %}
+      - name: custom-bindings
+        configMap:
+          name: {{ custom_bindings_name }}
 {% endif %}
 {% if use_front_ssl_proxy and item.nuxeo_type == "portal" %}
       - name: nginx-conf
