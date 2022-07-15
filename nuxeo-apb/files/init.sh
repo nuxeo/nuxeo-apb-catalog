@@ -4,7 +4,7 @@
 cp -f /docker-entrypoint-initnuxeo.d/log4j.xml $NUXEO_HOME/lib/log4j.xml
 
 
-cp $JAVA_HOME/jre/lib/security/cacerts $NUXEO_DATA/cacerts
+#cp $JAVA_HOME/jre/lib/security/cacerts $NUXEO_DATA/cacerts
 TRUSTSTORE_PATH=$NUXEO_DATA/cacerts
 
 
