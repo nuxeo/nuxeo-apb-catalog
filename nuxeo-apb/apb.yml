@@ -91,7 +91,7 @@ plans:
         title: Binaries persistent volume storage class (Must be RWX capable in cluster)
         display_group: Storage specs
       - name: binaries_persistentVolume_size
-        default: '10Gi'
+        default: '100Gi'
         type: string
         title: Binaries persistent volume size in Gi
         display_group: Storage specs
