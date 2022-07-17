@@ -3,7 +3,7 @@
 # Use the log4j we get from the config.
 cp -f /docker-entrypoint-initnuxeo.d/log4j.xml $NUXEO_HOME/lib/log4j.xml
 
-
+# removed to fix pod startup issue
 #cp $JAVA_HOME/jre/lib/security/cacerts $NUXEO_DATA/cacerts
 TRUSTSTORE_PATH=$NUXEO_DATA/cacerts
 
