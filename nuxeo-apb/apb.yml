@@ -385,6 +385,11 @@ plans:
         type: string
         title: Name of Minio service to bind to
         display_group: Nuxeo Config
+      - name: useCustomBindings
+        default: true
+        type: boolean
+        title: Use Custom bindings
+        display_group: Nuxeo Config
 
       - name: auth_adminUser
         default: 'Administrator'

@@ -75,12 +75,14 @@
     - name: nuxeo_config.yml.j2
       apply: nuxeo_version_post_11 is False
     - name: "{{ nuxeo_deployment_template }}.yml.j2"
+      apply: useCustomBindings
       dc_name: "{{ interactive_dc_name }}"
       replicas: "{{ interactive_replicas }}"
       nuxeo_type: portal
       nuxeoEnvironment: "{{ nuxeoEnvironment }}"
       nuxeoProfiles: nco-portal
     - name: "{{ nuxeo_deployment_template }}.yml.j2"
+      apply: useCustomBindings is False
       dc_name: "{{ worker_dc_name }}"
       replicas: "{{ worker_replicas }}"
       nuxeo_type: worker
